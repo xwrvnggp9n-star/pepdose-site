@@ -16,3 +16,5 @@ __pycache__/
 
 # Claude memory
 .claude/
+wp-content/plugins/
+xmlrpc.php?rsd
