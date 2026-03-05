@@ -1,0 +1,18 @@
+# Generated output — run `python3 build.py` to recreate
+_dist/
+
+# WordPress API cache — not needed in repo
+wp-json/
+
+# WordPress shortlink files (filenames contain ?)
+index.html?*
+
+# macOS
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Claude memory
+.claude/
