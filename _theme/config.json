@@ -14,22 +14,22 @@
   },
 
   "fonts": {
-    "_note": "@import stripped by WordPress.com Additional CSS. Using system stack. To add Space Grotesk use WP Admin > Appearance > Fonts.",
-    "family": "'Helvetica Neue', Arial, sans-serif"
+    "_note": "@import stripped by WordPress.com Additional CSS. Body copy uses Lora (serif) via header template injection. Headings use system sans-serif stack. To change fonts update the <style> block in the header template part on WP.com.",
+    "family": "'Lora', Georgia, 'Times New Roman', serif"
   },
 
-  "_color_comment": "Change any hex values here to retheme the entire site.",
+  "_color_comment": "Warm Slate palette applied 2026-03-06. Colors injected via <style> in header template part on WP.com (overrides CDN global styles). Run `python3 build.py` to apply to static build.",
   "colors": {
-    "header_bg":       "#2c3e50",
-    "primary_dark":    "#2c3e50",
-    "primary_mid":     "#34495e",
-    "primary_darkest": "#1a252f",
-    "accent":          "#e74c3c",
-    "teal":            "#1abc9c",
-    "secondary":       "#3498db",
-    "header_text":     "#ffffff",
-    "body_bg":         "#f4f7f9",
-    "body_text":       "#1e293b"
+    "header_bg":       "#2e2a22",
+    "primary_dark":    "#2e2a22",
+    "primary_mid":     "#413c32",
+    "primary_darkest": "#1a1710",
+    "accent":          "#c85a30",
+    "teal":            "#3aaa8c",
+    "secondary":       "#c48630",
+    "header_text":     "#fdf8f0",
+    "body_bg":         "#faf5ec",
+    "body_text":       "#2b2318"
   },
 
   "_wp_comment": "Live WordPress.com site identifiers (blog_id: 253153078)",
