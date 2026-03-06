@@ -73,6 +73,11 @@
       "children": []
     },
     {
+      "title": "Dosage Calculator",
+      "url": "/peptide-dosage-calculator/",
+      "children": []
+    },
+    {
       "title": "About Us",
       "url": "/about-us",
       "children": []
@@ -90,6 +95,7 @@
     "explore_links": [
       { "title": "Dosages and Protocols", "url": "/dosages-and-protocols" },
       { "title": "Articles",              "url": "/articles" },
+      { "title": "Dosage Calculator",     "url": "/peptide-dosage-calculator/" },
       { "title": "About Us",              "url": "/about-us" }
     ],
     "legal_links": [

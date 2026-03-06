@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Peptide Dosage Calculator — pep-dose.com</title>
+  <meta name="description" content="Free interactive peptide dosage calculator. Enter your vial size, bacteriostatic water volume, and desired dose to instantly calculate concentration, syringe volume, and doses per vial.">
+  <link rel="canonical" href="https://pep-dose.com/peptide-dosage-calculator/">
+  <meta property="og:title" content="Peptide Dosage Calculator — pep-dose.com">
+  <meta property="og:description" content="Free interactive calculator for peptide reconstitution and dosing. Instantly convert between mcg, mg, and syringe units.">
+  <meta property="og:url" content="https://pep-dose.com/peptide-dosage-calculator/">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="https://pep-dose.com/wp-content/uploads/2025/07/cropped-pdlogo-nr-32x32.png" sizes="32x32">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ── Base ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'Lora', Georgia, 'Times New Roman', serif;
+      background: #faf5ec;
+      color: #2b2318;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Header ──────────────────────────────────────────── */
+    .site-header {
+      background: #2e2a22;
+      padding: 0 20px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+    }
+    .site-header a {
+      text-decoration: none;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.02em;
+    }
+    .site-header .logo-pep  { color: #3aaa8c; }
+    .site-header .logo-sep  { color: #c85a30; }
+    .site-header .logo-dose { color: #fdf8f0; }
+    .site-header nav { margin-left: auto; }
+    .site-header nav a {
+      color: #c8bfb0;
+      font-size: 0.82rem;
+      margin-left: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 400;
+    }
+    .site-header nav a:hover { color: #fdf8f0; }
+
+    /* ── Page Layout ─────────────────────────────────────── */
+    .page-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 20px 60px;
+    }
+
+    /* ── Page Title ──────────────────────────────────────── */
+    .page-hero {
+      margin-bottom: 32px;
+    }
+    .page-hero h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #2e2a22;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .page-hero p {
+      font-size: 1rem;
+      color: #6b5d4f;
+      max-width: 640px;
+      line-height: 1.7;
+    }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    .site-footer {
+      background: #2e2a22;
+      color: #c8bfb0;
+      text-align: center;
+      padding: 24px 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.8rem;
+      line-height: 1.6;
+    }
+    .site-footer a { color: #3aaa8c; text-decoration: none; }
+    .site-footer a:hover { text-decoration: underline; }
+
+    /* ════════════════════════════════════════════════════
+       CALCULATOR STYLES (same as embed, scoped to #pdc-wrap)
+       ════════════════════════════════════════════════════ */
+    #pdc-wrap * { box-sizing: border-box; }
+    #pdc-wrap {
+      font-family: 'Lora', Georgia, 'Times New Roman', serif;
+      color: #2b2318;
+      max-width: 780px;
+    }
+    #pdc-wrap .pdc-instructions {
+      background: #2e2a22;
+      color: #fdf8f0;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+    #pdc-wrap .pdc-instructions h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0 0 12px 0;
+      color: #3aaa8c;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    #pdc-wrap .pdc-instructions ol {
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.8;
+      font-size: 0.92rem;
+      color: #e8e0d2;
+    }
+    #pdc-wrap .pdc-instructions ol li { margin-bottom: 2px; }
+    #pdc-wrap .pdc-card {
+      background: #ffffff;
+      border: 1px solid #e0d8ca;
+      border-radius: 8px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(43,35,24,0.06);
+    }
+    #pdc-wrap .pdc-field { margin-bottom: 22px; }
+    #pdc-wrap .pdc-field:last-child { margin-bottom: 0; }
+    #pdc-wrap .pdc-field label {
+      display: block;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #2e2a22;
+      margin-bottom: 4px;
+    }
+    #pdc-wrap .pdc-optional {
+      font-weight: 400;
+      font-size: 0.8rem;
+      color: #8a7a6a;
+      margin-left: 4px;
+    }
+    #pdc-wrap .pdc-hint {
+      font-size: 0.82rem;
+      color: #6b5d4f;
+      margin-bottom: 8px;
+      line-height: 1.5;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-style: italic;
+    }
+    #pdc-wrap input[type="text"],
+    #pdc-wrap input[type="number"],
+    #pdc-wrap select {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1px solid #cfc5b4;
+      border-radius: 5px;
+      font-size: 0.95rem;
+      font-family: 'Lora', Georgia, serif;
+      color: #2b2318;
+      background: #faf5ec;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    #pdc-wrap input[type="text"]:focus,
+    #pdc-wrap input[type="number"]:focus,
+    #pdc-wrap select:focus {
+      outline: none;
+      border-color: #3aaa8c;
+      box-shadow: 0 0 0 3px rgba(58,170,140,0.18);
+    }
+    #pdc-wrap select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a7a6a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 13px center;
+      padding-right: 34px;
+      cursor: pointer;
+    }
+    #pdc-wrap .pdc-dose-row { display: flex; gap: 10px; }
+    #pdc-wrap .pdc-dose-row input[type="number"] { flex: 1 1 55%; }
+    #pdc-wrap .pdc-dose-row select { flex: 1 1 45%; }
+    #pdc-wrap .pdc-section-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    #pdc-wrap .pdc-section-heading h3 {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2e2a22;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    #pdc-wrap .pdc-badge {
+      background: #c85a30;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    #pdc-wrap .pdc-divider {
+      border: none;
+      border-top: 1px solid #e0d8ca;
+      margin: 22px 0;
+    }
+    #pdc-wrap .pdc-results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    #pdc-wrap .pdc-result-item {
+      background: #faf5ec;
+      border: 1px solid #e0d8ca;
+      border-radius: 6px;
+      padding: 14px 16px;
+    }
+    #pdc-wrap .pdc-result-item.pdc-highlight {
+      background: #2e2a22;
+      border-color: #2e2a22;
+    }
+    #pdc-wrap .pdc-result-item.pdc-highlight .pdc-result-label,
+    #pdc-wrap .pdc-result-item.pdc-highlight .pdc-result-unit { color: #a89b8a; }
+    #pdc-wrap .pdc-result-item.pdc-highlight .pdc-result-value { color: #3aaa8c; }
+    #pdc-wrap .pdc-result-item.pdc-accent { border-left: 3px solid #c85a30; }
+    #pdc-wrap .pdc-result-label {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #8a7a6a;
+      margin-bottom: 6px;
+    }
+    #pdc-wrap .pdc-result-value {
+      font-family: 'Courier New', 'Courier', monospace;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #2b2318;
+      line-height: 1.1;
+      margin-bottom: 3px;
+      word-break: break-all;
+    }
+    #pdc-wrap .pdc-result-unit {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.75rem;
+      color: #8a7a6a;
+    }
+    #pdc-wrap .pdc-placeholder {
+      text-align: center;
+      padding: 32px 20px;
+      color: #a89b8a;
+      font-style: italic;
+      font-size: 0.9rem;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    #pdc-wrap .pdc-warning {
+      background: #fff4ed;
+      border: 1px solid #c85a30;
+      border-radius: 5px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: #7a3318;
+      margin-bottom: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    #pdc-wrap .pdc-btn-print {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #2e2a22;
+      color: #fdf8f0;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+      letter-spacing: 0.02em;
+    }
+    #pdc-wrap .pdc-btn-print:hover { background: #413c32; }
+    #pdc-wrap .pdc-btn-print svg { width: 15px; height: 15px; flex-shrink: 0; }
+    #pdc-wrap .pdc-disclaimer {
+      font-size: 0.78rem;
+      color: #8a7a6a;
+      font-style: italic;
+      line-height: 1.5;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      margin-top: 14px;
+    }
+
+    /* ── Explainer Section (below calculator) ─────────── */
+    .pdc-explainer {
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid #e0d8ca;
+    }
+    .pdc-explainer h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #2e2a22;
+      margin-bottom: 12px;
+    }
+    .pdc-explainer h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2e2a22;
+      margin: 22px 0 6px;
+    }
+    .pdc-explainer p, .pdc-explainer li {
+      font-size: 0.93rem;
+      color: #4a3d2e;
+      line-height: 1.75;
+    }
+    .pdc-explainer ul { padding-left: 20px; }
+    .pdc-explainer li { margin-bottom: 4px; }
+    .pdc-explainer .pdc-formula {
+      background: #2e2a22;
+      color: #fdf8f0;
+      font-family: 'Courier New', 'Courier', monospace;
+      font-size: 0.85rem;
+      padding: 12px 16px;
+      border-radius: 5px;
+      margin: 10px 0;
+      line-height: 1.8;
+    }
+
+    /* ── Print ───────────────────────────────────────────── */
+    @media print {
+      .site-header, .site-footer, .page-hero, .pdc-explainer,
+      .pdc-instructions, .pdc-card:not(#pdc-printable),
+      .pdc-btn-print { display: none !important; }
+      #pdc-printable { box-shadow: none !important; border: none !important; }
+      body { background: #fff; }
+      #pdc-print-header { display: block !important; }
+    }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .page-hero h1 { font-size: 1.5rem; }
+      #pdc-wrap .pdc-card { padding: 18px; }
+      #pdc-wrap .pdc-dose-row { flex-direction: column; }
+      #pdc-wrap .pdc-results-grid { grid-template-columns: 1fr 1fr; }
+      #pdc-wrap .pdc-result-value { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <a href="https://pep-dose.com/">
+      <span class="logo-pep">pep</span><span class="logo-sep">-</span><span class="logo-dose">dose</span>
+    </a>
+    <nav>
+      <a href="https://pep-dose.com/dosages-and-protocols/">Dosages</a>
+      <a href="https://pep-dose.com/articles/">Articles</a>
+      <a href="https://pep-dose.com/about-us/">About</a>
+    </nav>
+  </header>
+
+  <main class="page-wrap">
+
+    <!-- Page Title -->
+    <div class="page-hero">
+      <h1>Peptide Dosage Calculator</h1>
+      <p>Enter your vial size, how much bacteriostatic water you're adding, and your desired dose. The calculator instantly shows your concentration, exact volumes to draw, and how many injections you'll get from the vial.</p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         CALCULATOR — this section is the WordPress embed
+         ═══════════════════════════════════════════════ -->
+    <div id="pdc-wrap">
+
+      <!-- Instructions -->
+      <div class="pdc-instructions">
+        <h2>How to Use This Calculator</h2>
+        <ol>
+          <li><strong>Select the vial size</strong> — the total milligrams of peptide printed on your vial label.</li>
+          <li><strong>Choose your water volume</strong> — how many mL of bacteriostatic water you'll inject into the vial to reconstitute the peptide.</li>
+          <li><strong>Enter your desired dose</strong> — type the number and pick your unit (mcg, mg, or syringe units). Results update automatically.</li>
+          <li><strong>Read your results</strong> — concentration, all dose equivalents, and injections per vial appear below.</li>
+        </ol>
+      </div>
+
+      <!-- Form Card -->
+      <div class="pdc-card">
+        <div class="pdc-section-heading">
+          <h3>Your Vial Details</h3>
+        </div>
+
+        <!-- Peptide Name -->
+        <div class="pdc-field">
+          <label for="pdc-name">Peptide Name <span class="pdc-optional">(optional)</span></label>
+          <p class="pdc-hint">For your own reference — appears on the printed summary. Does not affect calculations.</p>
+          <input type="text" id="pdc-name" placeholder="e.g. BPC-157" autocomplete="off" oninput="pdcCalc()">
+        </div>
+
+        <hr class="pdc-divider">
+
+        <!-- Vial Amount -->
+        <div class="pdc-field">
+          <label for="pdc-vial">Amount in Vial</label>
+          <p class="pdc-hint">Total milligrams of peptide in the vial, as stated on the label. This is the <em>entire contents</em> of the vial, not your dose.</p>
+          <select id="pdc-vial" onchange="pdcCalc()">
+            <option value="">— Select vial size —</option>
+            <option value="1">1 mg</option>
+            <option value="5">5 mg</option>
+            <option value="10">10 mg</option>
+            <option value="15">15 mg</option>
+            <option value="20">20 mg</option>
+            <option value="30">30 mg</option>
+            <option value="50">50 mg</option>
+          </select>
+        </div>
+
+        <!-- Bacteriostatic Water -->
+        <div class="pdc-field">
+          <label for="pdc-water">Bacteriostatic Water to Add</label>
+          <p class="pdc-hint">How many mL of bacteriostatic water (BW) you'll inject into the vial. More water lowers the concentration per mL and increases the volume per dose. Most users choose 1–2 mL for convenient dosing with an insulin syringe.</p>
+          <select id="pdc-water" onchange="pdcCalc()">
+            <option value="">— Select water volume —</option>
+            <option value="0.5">0.5 mL</option>
+            <option value="1.0">1.0 mL</option>
+            <option value="1.5">1.5 mL</option>
+            <option value="2.0">2.0 mL</option>
+            <option value="3.0">3.0 mL</option>
+            <option value="5.0">5.0 mL</option>
+          </select>
+        </div>
+
+        <hr class="pdc-divider">
+
+        <div class="pdc-section-heading">
+          <h3>Your Desired Dose</h3>
+          <span class="pdc-badge">Required</span>
+        </div>
+
+        <!-- Dose -->
+        <div class="pdc-field">
+          <label for="pdc-dose">Dose Amount &amp; Unit</label>
+          <p class="pdc-hint">Type your dose in whichever unit you prefer. <strong>mcg</strong> (micrograms) is most common for peptides. <strong>Syringe units</strong> are the tick marks on a standard U-100 insulin syringe — 100 units equals 1 mL, so drawing to the "25" mark means 0.25 mL.</p>
+          <div class="pdc-dose-row">
+            <input type="number" id="pdc-dose" placeholder="e.g. 250" min="0" step="any" oninput="pdcCalc()">
+            <select id="pdc-unit" onchange="pdcCalc()">
+              <option value="mcg">mcg (micrograms)</option>
+              <option value="mg">mg (milligrams)</option>
+              <option value="units">Syringe units (U-100)</option>
+            </select>
+          </div>
+        </div>
+      </div><!-- /form card -->
+
+      <!-- Results Card -->
+      <div class="pdc-card" id="pdc-printable">
+        <div class="pdc-section-heading">
+          <h3>Results</h3>
+        </div>
+
+        <div id="pdc-print-header" style="display:none;"></div>
+        <div id="pdc-warning-box"></div>
+        <div id="pdc-results-area">
+          <div class="pdc-placeholder">Fill in the fields above — results will appear here automatically.</div>
+        </div>
+
+        <div style="margin-top:16px;">
+          <button class="pdc-btn-print" id="pdc-print-btn" onclick="pdcPrint()" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9"/>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+              <rect x="6" y="14" width="12" height="8"/>
+            </svg>
+            Print / Save as PDF
+          </button>
+        </div>
+
+        <p class="pdc-disclaimer">For educational and research purposes only. Always follow the guidance of a qualified healthcare professional. Verify all figures independently before use.</p>
+      </div><!-- /results card -->
+
+    </div><!-- /#pdc-wrap -->
+    <!-- ═══════════════════════════════════════════════ -->
+
+    <!-- Explainer Section -->
+    <div class="pdc-explainer">
+      <h2>How the Calculator Works</h2>
+      <p>When you reconstitute a peptide, you dissolve a measured amount (in mg) of lyophilized powder into a measured volume (in mL) of bacteriostatic water. The resulting liquid has a known <strong>concentration</strong>, which is the foundation for every other calculation.</p>
+
+      <h3>Concentration</h3>
+      <p>Concentration is simply the amount of peptide divided by the volume of water:</p>
+      <div class="pdc-formula">Concentration (mg/mL) = Vial amount (mg) ÷ Water added (mL)</div>
+      <p>For example, a 5 mg vial reconstituted with 2 mL of water gives a concentration of 2.5 mg/mL (or 2,500 mcg/mL).</p>
+
+      <h3>Converting Your Dose</h3>
+      <p>Once you know the concentration, you can convert any dose into a volume:</p>
+      <div class="pdc-formula">Volume to draw (mL) = Dose (mg) ÷ Concentration (mg/mL)
+Syringe units      = Volume (mL) × 100 &nbsp; &nbsp;(for a standard U-100 syringe)</div>
+      <p>The calculator handles all three input units — mcg, mg, and syringe units — and shows all the equivalents at once.</p>
+
+      <h3>Doses Per Vial</h3>
+      <div class="pdc-formula">Doses per vial = Vial amount (mg) ÷ Dose per injection (mg)</div>
+
+      <h3>Understanding Syringe Units</h3>
+      <p>Standard insulin syringes are calibrated for U-100 insulin, where <strong>100 units = 1 mL</strong>. The tick marks on the barrel are in these "units." This convention is routinely borrowed for peptide dosing since the same syringes are typically used. If you draw to the 25-unit mark, you are drawing 0.25 mL of solution.</p>
+
+      <h3>Tips for Accurate Reconstitution</h3>
+      <ul>
+        <li>Always add bacteriostatic water to the vial slowly, aiming the stream at the glass wall rather than directly onto the powder.</li>
+        <li>Gently roll or swirl the vial — do not shake — until the powder is fully dissolved.</li>
+        <li>1–2 mL of water is a practical range for most peptide doses when using a 0.5 mL or 1 mL insulin syringe.</li>
+        <li>Store reconstituted peptides refrigerated (2–8 °C) and use within the timeframe specified by the manufacturer.</li>
+      </ul>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>© 2026 <a href="https://pep-dose.com/">pep-dose.com</a> · For research and educational purposes only. Not medical advice.</p>
+    <p style="margin-top:6px;">
+      <a href="https://pep-dose.com/disclaimer/">Disclaimer</a> ·
+      <a href="https://pep-dose.com/privacy-policy/">Privacy Policy</a> ·
+      <a href="https://pep-dose.com/contact-us/">Contact</a>
+    </p>
+  </footer>
+
+  <script>
+  (function () {
+    'use strict';
+
+    function fmt(n, decimals) {
+      if (!isFinite(n) || n < 0) return '—';
+      return parseFloat(n.toFixed(decimals)).toString();
+    }
+
+    function pdcCalc() {
+      var nameEl   = document.getElementById('pdc-name');
+      var vialEl   = document.getElementById('pdc-vial');
+      var waterEl  = document.getElementById('pdc-water');
+      var doseEl   = document.getElementById('pdc-dose');
+      var unitEl   = document.getElementById('pdc-unit');
+      var areaEl   = document.getElementById('pdc-results-area');
+      var warnEl   = document.getElementById('pdc-warning-box');
+      var printBtn = document.getElementById('pdc-print-btn');
+
+      warnEl.innerHTML = '';
+      printBtn.style.display = 'none';
+
+      var vialMg  = parseFloat(vialEl.value);
+      var waterMl = parseFloat(waterEl.value);
+      var doseVal = parseFloat(doseEl.value);
+      var unit    = unitEl.value;
+
+      if (!vialMg || !waterMl || !doseVal || doseVal <= 0) {
+        areaEl.innerHTML = '<div class="pdc-placeholder">Fill in the fields above — results will appear here automatically.</div>';
+        return;
+      }
+
+      var concMgMl = vialMg / waterMl;
+
+      // Normalise dose to mg
+      var doseMg;
+      if (unit === 'mcg')   { doseMg = doseVal / 1000; }
+      else if (unit === 'mg') { doseMg = doseVal; }
+      else                  { doseMg = (doseVal / 100) * concMgMl; }   // syringe units → mg via volume
+
+      var doseMcg    = doseMg * 1000;
+      var doseMl     = doseMg / concMgMl;
+      var doseUnits  = doseMl * 100;
+      var dosesInVial = vialMg / doseMg;
+
+      // Validation warnings
+      var warnings = [];
+      if (doseMg > vialMg) {
+        warnings.push('⚠ Your desired dose (' + fmt(doseMcg, 1) + ' mcg) exceeds the entire vial (' + fmt(vialMg * 1000, 0) + ' mcg). Check your inputs.');
+      }
+      if (doseMl < 0.005 && doseMl > 0) {
+        warnings.push('⚠ Volume per dose (' + doseMl.toFixed(4) + ' mL) is very small and may be difficult to measure accurately. Consider adding more bacteriostatic water.');
+      }
+      if (warnings.length) {
+        warnEl.innerHTML = warnings.map(function (w) {
+          return '<div class="pdc-warning">' + w + '</div>';
+        }).join('');
+      }
+
+      // Name / summary line
+      var nameStr = (nameEl && nameEl.value.trim())
+        ? '<p style="font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif;font-size:0.88rem;color:#6b5d4f;margin:0 0 18px 0;">'
+          + '<strong style="color:#2b2318;">' + nameEl.value.trim() + '</strong>'
+          + ' &nbsp;·&nbsp; ' + vialEl.options[vialEl.selectedIndex].text + ' vial'
+          + ' &nbsp;·&nbsp; ' + waterEl.options[waterEl.selectedIndex].text + ' BW'
+          + '</p>'
+        : '';
+
+      var html = nameStr + '<div class="pdc-results-grid">';
+
+      html += cell('Concentration',   fmt(concMgMl, 4),   'mg / mL',                     '',             'Amount of peptide dissolved per 1 mL of solution.');
+      html += cell('Dose',            fmt(doseMcg, 2),    'mcg &nbsp;(micrograms)',        unit==='mcg' ? 'pdc-accent' : '', 'Your dose in micrograms.');
+      html += cell('Dose',            fmt(doseMg, 4),     'mg &nbsp;(milligrams)',         unit==='mg'  ? 'pdc-accent' : '', 'Your dose in milligrams. 1 mg = 1,000 mcg.');
+      html += cell('Volume to Draw',  fmt(doseMl, 4),     'mL per injection',             '',             'Millilitres to draw into the syringe.');
+      html += cell('Syringe Units',   fmt(doseUnits, 1),  'units &nbsp;(U-100 syringe)',  unit==='units'? 'pdc-accent' : '', 'Tick-mark to draw to on a standard 100-unit insulin syringe.');
+      html += cell('Doses Per Vial',  fmt(dosesInVial, 1),'total injections',             'pdc-highlight','How many full doses in this vial at your selected dose.');
+
+      html += '</div>';
+      areaEl.innerHTML = html;
+      printBtn.style.display = 'inline-flex';
+    }
+
+    function cell(label, value, unit, extraClass, tooltip) {
+      return '<div class="pdc-result-item ' + (extraClass || '') + '" title="' + tooltip + '">'
+        + '<div class="pdc-result-label">' + label + '</div>'
+        + '<div class="pdc-result-value">' + value + '</div>'
+        + '<div class="pdc-result-unit">' + unit + '</div>'
+        + '</div>';
+    }
+
+    function pdcPrint() {
+      var vialEl   = document.getElementById('pdc-vial');
+      var waterEl  = document.getElementById('pdc-water');
+      var nameEl   = document.getElementById('pdc-name');
+      var header   = document.getElementById('pdc-print-header');
+      var dateStr  = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      var peptide  = (nameEl && nameEl.value.trim()) ? nameEl.value.trim() : 'Peptide';
+
+      header.innerHTML =
+        '<div style="font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif;border-bottom:2px solid #2e2a22;padding-bottom:14px;margin-bottom:20px;">'
+        + '<div style="font-size:1.4rem;font-weight:700;color:#2b2318;">' + peptide + ' — Dosage Calculation</div>'
+        + '<div style="font-size:0.85rem;color:#6b5d4f;margin-top:5px;">'
+        +   'Vial: ' + (vialEl.value || '—') + ' mg &nbsp;·&nbsp; '
+        +   'Bacteriostatic Water: ' + (waterEl.value || '—') + ' mL &nbsp;·&nbsp; '
+        +   'Printed: ' + dateStr
+        + '</div>'
+        + '<div style="font-size:0.72rem;color:#8a7a6a;margin-top:4px;">pep-dose.com &nbsp;·&nbsp; For educational and research purposes only. Not medical advice.</div>'
+        + '</div>';
+      header.style.display = 'block';
+
+      window.print();
+
+      setTimeout(function () { header.style.display = 'none'; }, 500);
+    }
+
+    window.pdcCalc  = pdcCalc;
+    window.pdcPrint = pdcPrint;
+  })();
+  </script>
+
+</body>
+</html>
