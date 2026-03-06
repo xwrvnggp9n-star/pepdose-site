@@ -1,92 +1,83 @@
 {
   "_comment": "Edit this file to change your site theme. Run `python3 build.py` to rebuild.",
 
-  "site_name": "Peptide Dosages",
-  "site_tagline": "Educational Peptide Hub",
+  "site_name": "pep-dose.com",
+  "site_tagline": "Clear protocols for complex peptides.",
   "site_url": "https://pep-dose.com",
 
+  "_logo_comment": "CSS text logo — no image file. Rendered as styled spans: pep·dose",
   "logo": {
-    "img_url": "/wp-content/uploads/2025/07/cropped-pdlogo-nr.png",
-    "img_alt": "Peptide Dosages Logo",
-    "span_1": "Peptide",
-    "span_2": "Dosages"
-  },
-
-  "favicon": {
-    "32x32": "/wp-content/uploads/2025/07/cropped-pdlogo-nr-32x32.png",
-    "192x192": "/wp-content/uploads/2025/07/cropped-pdlogo-nr-192x192.png",
-    "apple_touch": "/wp-content/uploads/2025/07/cropped-pdlogo-nr-180x180.png",
-    "mstile": "/wp-content/uploads/2025/07/cropped-pdlogo-nr-270x270.png"
+    "type": "css-text",
+    "pep_color":  "#1abc9c",
+    "sep_color":  "#e74c3c",
+    "dose_color": "#ffffff"
   },
 
   "fonts": {
-    "google_url": "https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap",
-    "family": "'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    "_note": "@import stripped by WordPress.com Additional CSS. Using system stack. To add Space Grotesk use WP Admin > Appearance > Fonts.",
+    "family": "'Helvetica Neue', Arial, sans-serif"
   },
 
-  "_color_comment": "Change any hex values here to retheme the entire site. Run build.py after changes.",
+  "_color_comment": "Change any hex values here to retheme the entire site.",
   "colors": {
+    "header_bg":       "#2c3e50",
     "primary_dark":    "#2c3e50",
     "primary_mid":     "#34495e",
     "primary_darkest": "#1a252f",
     "accent":          "#e74c3c",
+    "teal":            "#1abc9c",
     "secondary":       "#3498db",
-    "header_text":     "#ecf0f1",
-    "body_bg":         "#f9f9f9",
-    "body_text":       "#333333"
+    "header_text":     "#ffffff",
+    "body_bg":         "#f4f7f9",
+    "body_text":       "#1e293b"
+  },
+
+  "_wp_comment": "Live WordPress.com site identifiers (blog_id: 253153078)",
+  "wp_site": {
+    "blog_id":        253153078,
+    "theme":          "pub/blank-canvas-3",
+    "page_on_front":  55,
+    "page_for_posts": 101,
+    "nav_id":         5
   },
 
   "nav": [
     {
-      "title": "Single Peptides",
+      "title": "Dosages and Protocols",
       "url": "/single-peptide-dosages",
-      "children": [
-        { "title": "Retatrutide 5mg",  "url": "/single-peptide-dosages/retatrutide-5mg-vial-dosage-protocol/" },
-        { "title": "Retatrutide 10mg", "url": "/single-peptide-dosages/retatrutide-10mg-vial-dosage-protocol/" },
-        { "title": "Retatrutide 30mg", "url": "/single-peptide-dosages/retatrutide-30mg-vial-dosage-protocol/" }
-      ]
-    },
-    {
-      "title": "Peptide Blends",
-      "url": "/peptide-blend-dosages",
-      "children": [
-        { "title": "GLOW 70mg Vial Protocol", "url": "/peptide-blend-dosages/glow-70-mg-vial-dosage-protocol/" }
-      ]
-    },
-    {
-      "title": "Peptide Stacks",
-      "url": "/peptide-stack-dosages",
       "children": []
     },
     {
-      "title": "Blog",
-      "url": "/blog",
+      "title": "Articles",
+      "url": "/articles",
+      "children": []
+    },
+    {
+      "title": "About Us",
+      "url": "/about-us",
+      "children": []
+    },
+    {
+      "title": "Contact",
+      "url": "/contact-us",
       "children": []
     }
   ],
 
   "footer": {
-    "about_text": "Your trusted source for comprehensive peptide dosage protocols and research information. Empowering researchers with accurate, science-based guidance.",
-    "disclaimer": "All information provided on this site is for research and educational purposes only. Not intended to diagnose, treat, cure, or prevent any disease. Always consult with a qualified healthcare professional before starting any new research protocol.",
-    "quick_links": [
-      { "title": "Single Peptides",   "url": "/single-peptide-dosages" },
-      { "title": "Peptide Blends",    "url": "/peptide-blend-dosages" },
-      { "title": "Peptide Stacks",    "url": "/peptide-stack-dosages" },
-      { "title": "About Us",          "url": "/about-us" },
-      { "title": "Blog",              "url": "/blog" }
+    "tagline": "Clear protocols for complex peptides.",
+    "disclaimer": "© 2026 pep-dose.com · For research and educational purposes only. Not medical advice.",
+    "explore_links": [
+      { "title": "Dosages and Protocols", "url": "/single-peptide-dosages" },
+      { "title": "Peptide Stacks",        "url": "/peptide-stack-dosages" },
+      { "title": "Articles",              "url": "/articles" },
+      { "title": "About Us",              "url": "/about-us" }
     ],
-    "resource_links": [
-      { "title": "What Are Peptides?", "url": "/what-are-peptides/" },
-      { "title": "Combine Peptides",   "url": "/combine-peptides-same-syringe/" },
-      { "title": "Dosage Calculator",  "url": "/" },
-      { "title": "Contact Us",         "url": "/contact-us" }
-    ],
-    "social": {
-      "facebook":  "#",
-      "twitter":   "#",
-      "linkedin":  "#",
-      "youtube":   "#"
-    },
-    "copyright": "Peptide Dosages"
+    "legal_links": [
+      { "title": "Disclaimer",         "url": "/disclaimer" },
+      { "title": "Privacy Policy",     "url": "/privacy-policy" },
+      { "title": "Terms & Conditions", "url": "/terms-conditions" },
+      { "title": "Contact",            "url": "/contact-us" }
+    ]
   }
 }
