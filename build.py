@@ -567,7 +567,7 @@ SKIP_DIRS = {'_dist', '_theme', 'wp-json', '.claude', '.git', '__pycache__'}
 BARE_HTML_FILES = [
     'about-us', 'contact-us', 'cookie-policy', 'disclaimer',
     'privacy-policy', 'terms-conditions',
-    'single-peptide-dosages', 'peptide-stack-dosages',
+    'peptide-stack-dosages',
     'retatrutide-5mg', 'retatrutide-10mg', 'retatrutide-30mg',
 ]
 

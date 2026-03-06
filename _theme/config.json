@@ -5,12 +5,23 @@
   "site_tagline": "Clear protocols for complex peptides.",
   "site_url": "https://pep-dose.com",
 
-  "_logo_comment": "CSS text logo — no image file. Rendered as styled spans: pep·dose",
+  "favicon": {
+    "32x32":       "/wp-content/uploads/2025/07/cropped-pdlogo-nr-32x32.png",
+    "192x192":     "/wp-content/uploads/2025/07/cropped-pdlogo-nr-192x192.png",
+    "apple_touch": "/wp-content/uploads/2025/07/cropped-pdlogo-nr-180x180.png",
+    "mstile":      "/wp-content/uploads/2025/07/cropped-pdlogo-nr-192x192.png"
+  },
+
+  "_logo_comment": "CSS text logo rendered via header CSS. img_url kept for build.py compatibility (image hidden by CSS).",
   "logo": {
     "type": "css-text",
     "pep_color":  "#1abc9c",
     "sep_color":  "#e74c3c",
-    "dose_color": "#ffffff"
+    "dose_color": "#ffffff",
+    "img_url":    "/wp-content/uploads/2025/07/cropped-pdlogo-nr.png",
+    "img_alt":    "pep-dose.com",
+    "span_1":     "pep",
+    "span_2":     "dose"
   },
 
   "fonts": {
