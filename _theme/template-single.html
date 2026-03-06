@@ -1,0 +1,55 @@
+<!-- ============================================================
+ * pep-dose.com | Single Posts template
+ * WP template ID: pub/blank-canvas-3//single  (source: custom)
+ * Saved: 2026-03-05
+ *
+ * Key customisation vs theme default:
+ *   wp:post-author-name replaced with wp:html block containing
+ *   <a href="mailto:info@pep-dose.com">Pep-Dose Staff</a>
+ *   so the author byline never exposes the site owner's real name
+ *   and clicking it opens a compose window to info@pep-dose.com.
+ *
+ * To re-apply after a theme reset, POST this content to:
+ *   PUT /wp/v2/templates/pub%2Fblank-canvas-3%2F%2Fsingle
+ * ============================================================ -->
+
+<!-- wp:template-part {"slug":"header","theme":"pub/blank-canvas-3","tagName":"header"} /-->
+
+<!-- wp:group {"tagName":"main","layout":{"type":"constrained"}} -->
+<main class="wp-block-group">
+
+  <!-- wp:group {"layout":{"type":"constrained"}} -->
+  <div class="wp-block-group">
+
+    <!-- wp:post-title {"level":1} /-->
+
+    <!-- wp:group {"layout":{"type":"flex"}} -->
+    <div class="wp-block-group">
+
+      <!-- wp:html -->
+      <a href="mailto:info@pep-dose.com" class="has-small-font-size" style="font-size:var(--wp--preset--font-size--small)">Pep-Dose Staff</a>
+      <!-- /wp:html -->
+
+      <!-- wp:post-date {"isLink":true,"metadata":{"bindings":{"datetime":{"source":"core/post-data","args":{"field":"date"}}}},"fontSize":"small"} /-->
+
+      <!-- wp:post-terms {"term":"category","fontSize":"small"} /-->
+
+      <!-- wp:post-terms {"term":"post_tag","fontSize":"small"} /-->
+
+    </div>
+    <!-- /wp:group -->
+
+  </div>
+  <!-- /wp:group -->
+
+  <!-- wp:post-content {"layout":{"type":"constrained"}} /-->
+
+  <!-- wp:post-navigation-link {"type":"previous"} /-->
+  <!-- wp:post-navigation-link {"type":"next"} /-->
+
+  <!-- wp:post-comments-form /-->
+
+</main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","theme":"pub/blank-canvas-3","tagName":"footer"} /-->

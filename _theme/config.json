@@ -41,6 +41,14 @@
     "nav_id":         5
   },
 
+  "_author_comment": "Author display name changed from 'Sandor Sklar'. Single Posts template overridden to replace wp:post-author-name with custom HTML mailto link.",
+  "author": {
+    "display_name":   "Pep-Dose Staff",
+    "contact_email":  "info@pep-dose.com",
+    "author_link":    "mailto:info@pep-dose.com",
+    "_note": "Template override saved in _theme/template-single.html. Single Posts template (pub/blank-canvas-3//single) is now source=custom on WP.com."
+  },
+
   "nav": [
     {
       "title": "Dosages and Protocols",
