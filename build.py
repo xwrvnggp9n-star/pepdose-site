@@ -89,7 +89,7 @@ def apply_colors(text):
 # ─────────────────────────────────────────────────────────────────────────────
 # URL helpers
 # ─────────────────────────────────────────────────────────────────────────────
-DOMAIN = 'https://peptidedosages.com'
+DOMAIN = 'https://pep-dose.com'
 
 def fix_urls(text):
     """Make internal absolute URLs relative."""
@@ -98,7 +98,7 @@ def fix_urls(text):
 def fix_logo_urls(text):
     """Replace logo src and site name spans in header/footer HTML."""
     # Replace logo img src
-    old_logo = 'https://peptidedosages.com/wp-content/uploads/2025/07/cropped-pdlogo-nr.png'
+    old_logo = 'https://pep-dose.com/wp-content/uploads/2025/07/cropped-pdlogo-nr.png'
     new_logo = LOGO['img_url']
     text = text.replace(old_logo, new_logo)
 
