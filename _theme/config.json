@@ -84,6 +84,7 @@
     "legal_links": [
       { "title": "Disclaimer",         "url": "/disclaimer" },
       { "title": "Privacy Policy",     "url": "/privacy-policy" },
+      { "title": "Cookie Policy",      "url": "/cookie-policy" },
       { "title": "Terms & Conditions", "url": "/terms-conditions" },
       { "title": "Contact",            "url": "/contact-us" }
     ]
