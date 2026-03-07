@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220" width="400" height="220">
+  <defs>
+    <!-- Glow filter for dots and chain -->
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="3.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glow-strong" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="220" fill="#1400CC"/>
+
+  <!-- Molecular zigzag chain -->
+  <!-- Nodes: 7 points forming zigzag -->
+  <!-- y positions alternate between 60 and 100 -->
+  <polyline
+    points="60,100 100,60 145,100 190,60 235,100 280,60 325,100 370,60"
+    fill="none"
+    stroke="rgba(255,255,255,0.6)"
+    stroke-width="2"
+    filter="url(#glow)"
+  />
+  <!-- Bright overlay line -->
+  <polyline
+    points="60,100 100,60 145,100 190,60 235,100 280,60 325,100 370,60"
+    fill="none"
+    stroke="white"
+    stroke-width="1.5"
+  />
+
+  <!-- Glowing dots at each node -->
+  <!-- Outer glow circles -->
+  <circle cx="60"  cy="100" r="7" fill="rgba(255,255,255,0.2)" filter="url(#glow-strong)"/>
+  <circle cx="100" cy="60"  r="7" fill="rgba(255,255,255,0.2)" filter="url(#glow-strong)"/>
+  <circle cx="145" cy="100" r="7" fill="rgba(255,255,255,0.2)" filter="url(#glow-strong)"/>
+  <circle cx="190" cy="60"  r="7" fill="rgba(255,255,255,0.2)" filter="url(#glow-strong)"/>
+  <circle cx="235" cy="100" r="7" fill="rgba(255,255,255,0.2)" filter="url(#glow-strong)"/>
+  <circle cx="280" cy="60"  r="7" fill="rgba(255,255,255,0.2)" filter="url(#glow-strong)"/>
+  <circle cx="325" cy="100" r="7" fill="rgba(255,255,255,0.2)" filter="url(#glow-strong)"/>
+  <circle cx="370" cy="60"  r="7" fill="rgba(255,255,255,0.2)" filter="url(#glow-strong)"/>
+
+  <!-- Core bright dots -->
+  <circle cx="60"  cy="100" r="4" fill="white" filter="url(#glow)"/>
+  <circle cx="100" cy="60"  r="4" fill="white" filter="url(#glow)"/>
+  <circle cx="145" cy="100" r="4" fill="white" filter="url(#glow)"/>
+  <circle cx="190" cy="60"  r="4" fill="white" filter="url(#glow)"/>
+  <circle cx="235" cy="100" r="4" fill="white" filter="url(#glow)"/>
+  <circle cx="280" cy="60"  r="4" fill="white" filter="url(#glow)"/>
+  <circle cx="325" cy="100" r="4" fill="white" filter="url(#glow)"/>
+  <circle cx="370" cy="60"  r="4" fill="white" filter="url(#glow)"/>
+
+  <!-- Text: WHITE MARKET PEPTIDES -->
+  <text
+    x="200"
+    y="155"
+    font-family="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+    font-size="22"
+    font-weight="900"
+    fill="white"
+    text-anchor="middle"
+    letter-spacing="4"
+    dominant-baseline="middle"
+  >WHITE MARKET</text>
+  <text
+    x="200"
+    y="185"
+    font-family="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+    font-size="22"
+    font-weight="900"
+    fill="white"
+    text-anchor="middle"
+    letter-spacing="4"
+    dominant-baseline="middle"
+  >PEPTIDES</text>
+</svg>

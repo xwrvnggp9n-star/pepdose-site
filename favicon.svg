@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Dark rounded square background -->
+  <rect width="32" height="32" rx="6" ry="6" fill="#2c3e50"/>
+  <!-- "p" in teal -->
+  <text x="3" y="23" font-family="'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="300" fill="#1abc9c">p</text>
+  <!-- "·" in red -->
+  <text x="14" y="21" font-family="'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#e74c3c">·</text>
+  <!-- "d" in white -->
+  <text x="18" y="23" font-family="'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">d</text>
+</svg>
