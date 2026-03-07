@@ -43,6 +43,11 @@
     "body_text":       "#2b2318"
   },
 
+  "analytics": {
+    "ga4_id": "G-L0GM1GF6FK",
+    "search_console_verification": ""
+  },
+
   "_wp_comment": "Live WordPress.com site identifiers (blog_id: 253153078)",
   "wp_site": {
     "blog_id":           253153078,

@@ -3,6 +3,6 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://pep-dose.com/sitemap_index.xml
+Sitemap: https://pep-dose.com/sitemap.xml
 # ---------------------------
 # END YOAST BLOCK
