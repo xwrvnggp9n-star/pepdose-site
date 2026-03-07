@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Peptide Dosages — Static Site Builder
-======================================
+pep-dose.com — Static Site Builder
+===================================
 Converts the WordPress static export into a clean, themeable site.
 
 USAGE:
@@ -340,9 +340,9 @@ def build_header():
     </button>
 
     <a href="/" class="header-logo" aria-label="{SITE_NAME} - Home">
-      <img src="{logo_url}" alt="{logo_alt}">
       <div class="header-logo-text">
         <span class="peptide">{span1}</span>
+        <span class="sep">&middot;</span>
         <span class="dosages">{span2}</span>
       </div>
     </a>
@@ -471,19 +471,12 @@ def build_header():
 
 
 def build_footer():
-    quick_links   = build_footer_links(FOOTER_CFG.get('quick_links', []))
-    resource_links = build_footer_links(FOOTER_CFG.get('resource_links', []))
-    social        = FOOTER_CFG.get('social', {})
-    about_text    = FOOTER_CFG.get('about_text', '')
+    tagline       = FOOTER_CFG.get('tagline', '')
     disclaimer    = FOOTER_CFG.get('disclaimer', '')
-    copyright_name = FOOTER_CFG.get('copyright', SITE_NAME)
-    logo_url      = LOGO['img_url']
+    explore_links = build_footer_links(FOOTER_CFG.get('explore_links', []))
+    legal_links   = build_footer_links(FOOTER_CFG.get('legal_links', []))
     span1         = LOGO['span_1']
     span2         = LOGO['span_2']
-
-    def social_link(platform, icon):
-        url = social.get(platform, '#')
-        return f'<a href="{url}" class="social-link" aria-label="{platform.title()}"><i class="fab fa-{icon}"></i></a>'
 
     return f'''\
 <footer class="site-footer" role="contentinfo">
@@ -494,47 +487,25 @@ def build_footer():
 
         <div class="footer-column footer-about">
           <div class="footer-logo">
-            <img src="{logo_url}" alt="{SITE_NAME}">
-            <span><span class="peptide">{span1}</span><span class="dosages">{span2}</span></span>
+            <span><span class="peptide">{span1}</span><span class="sep">&middot;</span><span class="dosages">{span2}</span></span>
           </div>
-          <p>{about_text}</p>
-          <div class="footer-social">
-            {social_link('facebook', 'facebook-f')}
-            {social_link('twitter', 'twitter')}
-            {social_link('linkedin', 'linkedin-in')}
-            {social_link('youtube', 'youtube')}
-          </div>
+          <p class="footer-tagline">{tagline}</p>
         </div>
 
         <div class="footer-column">
-          <h3>Quick Links</h3>
+          <h3>Explore</h3>
           <ul class="footer-links">
-{quick_links}
+{explore_links}
           </ul>
         </div>
 
         <div class="footer-column">
-          <h3>Resources</h3>
+          <h3>Legal</h3>
           <ul class="footer-links">
-{resource_links}
+{legal_links}
           </ul>
         </div>
 
-        <div class="footer-column">
-          <div class="footer-newsletter">
-            <h3>Stay Updated</h3>
-            <p style="color:#bdc3c7;margin-bottom:15px;">Get the latest peptide research and protocols delivered to your inbox.</p>
-            <form class="newsletter-form" onsubmit="return false;">
-              <input type="email" placeholder="Your email" required>
-              <button type="submit">Subscribe</button>
-            </form>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="footer-disclaimer">
-        <p><strong>Important Disclaimer:</strong> {disclaimer}</p>
       </div>
     </div>
   </div>
@@ -543,14 +514,8 @@ def build_footer():
     <div class="footer-container">
       <div class="footer-bottom-content">
         <div class="footer-copyright">
-          &copy; <span id="currentYear"></span> {copyright_name}. All rights reserved.
+          {disclaimer}
         </div>
-        <ul class="footer-legal-links">
-          <li><a href="/privacy-policy">Privacy Policy</a></li>
-          <li><a href="/terms-conditions">Terms &amp; Conditions</a></li>
-          <li><a href="/cookie-policy">Cookie Policy</a></li>
-          <li><a href="/disclaimer">Disclaimer</a></li>
-        </ul>
       </div>
     </div>
   </div>
@@ -583,6 +548,27 @@ def add_lazy_loading(html):
             return tag
         return tag.replace('<img ', '<img loading="lazy" ')
     return re.sub(r'<img [^>]+/?>', lazy_replace, html)
+
+
+def strip_sponsor_sections(text):
+    """Remove White Market Peptides sponsor ad sections and external images."""
+    text = re.sub(
+        r'<section\s+id="recommended-source"[^>]*>.*?</section>',
+        '', text, flags=re.DOTALL)
+    # Remove product images hosted on the old sponsor's domain
+    text = re.sub(
+        r'<img[^>]*src="https?://whitemarketpeptides\.com/[^"]*"[^>]*/?>',
+        '', text)
+    return text
+
+
+def sanitize_old_branding(text):
+    """Replace old domain references that may linger in Yoast JSON-LD schema."""
+    # Domain-level references only (safe — these are always the old brand)
+    text = text.replace('PeptideDosage.com', SITE_NAME)
+    text = text.replace('PeptideDosages.com', SITE_NAME)
+    text = text.replace('peptidedosages.com', SITE_NAME)
+    return text
 
 
 def sanitize_author(text):
@@ -631,8 +617,9 @@ def process_file(src_path, dst_path):
     # Page-specific custom CSS (from wp-custom-css block)
     custom_css = extract(r'<style[^>]*id="wp-custom-css"[^>]*>(.*?)</style>', head_html)
 
-    # ── Sanitize author email ─────────────────────────────────────────────────
+    # ── Sanitize author email + old branding ──────────────────────────────────
     schema = sanitize_author(schema)
+    schema = sanitize_old_branding(schema)
 
     # ── Extract body ──────────────────────────────────────────────────────────
     body_html = extract(r'<body[^>]*>(.*?)</body>', raw)
@@ -646,6 +633,8 @@ def process_file(src_path, dst_path):
     main_html  = apply_colors(main_html)
     main_html  = fix_urls(main_html)
     main_html  = fix_logo_urls(main_html)
+    main_html  = sanitize_old_branding(main_html)
+    main_html  = strip_sponsor_sections(main_html)
     main_html  = add_lazy_loading(main_html)
     custom_css = apply_colors(custom_css)
 

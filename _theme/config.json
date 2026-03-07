@@ -72,7 +72,7 @@
     "_note": "Template override saved in _theme/template-single.html. Single Posts template (pub/blank-canvas-3//single) is now source=custom on WP.com."
   },
 
-  "_nav_comment": "Nav consolidated: Single Peptide Dosages + Peptide Stack Dosages merged into Dosages and Protocols → /dosages-and-protocols (WP page ID 144).",
+  "_nav_comment": "Nav consolidated: Single pep-dose.com + Peptide Stack Dosages merged into Dosages and Protocols → /dosages-and-protocols (WP page ID 144).",
   "nav": [
     {
       "title": "Dosages and Protocols",

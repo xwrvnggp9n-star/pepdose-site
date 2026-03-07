@@ -13,7 +13,7 @@
 	<meta property="og:locale" content="en_US" />
 	<meta property="og:type" content="article" />
 	<meta property="og:title" content="Cookie Plolicy" />
-	<meta property="og:description" content="Cookie Policy Last updated: August 13, 2025 This Cookie Policy explains how Peptide Dosages (“we,” “us,” or “our”) uses cookies and similar technologies on pep-dose.com. Our site is an informational resource; we do not sell products. We may collect limited information if you request a free dosage protocol so we can respond to your inquiry. [&hellip;]" />
+	<meta property="og:description" content="Cookie Policy Last updated: August 13, 2025 This Cookie Policy explains how pep-dose.com (“we,” “us,” or “our”) uses cookies and similar technologies on pep-dose.com. Our site is an informational resource; we do not sell products. We may collect limited information if you request a free dosage protocol so we can respond to your inquiry. [&hellip;]" />
 	<meta property="og:url" content="https://pep-dose.com/cookie-policy/" />
 	<meta property="og:site_name" content="pep-dose.com" />
 	<meta property="article:modified_time" content="2025-08-13T06:37:07+00:00" />
@@ -22,7 +22,7 @@
 	<meta property="og:image:height" content="450" />
 	<meta property="og:image:type" content="image/webp" />
 	<meta name="twitter:card" content="summary_large_image" />
-	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://pep-dose.com/cookie-policy/","url":"https://pep-dose.com/cookie-policy/","name":"Cookie Plolicy | pep-dose.com","isPartOf":{"@id":"https://pep-dose.com/#website"},"datePublished":"2025-08-13T06:35:22+00:00","dateModified":"2025-08-13T06:37:07+00:00","breadcrumb":{"@id":"https://pep-dose.com/cookie-policy/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https://pep-dose.com/cookie-policy/"]}]},{"@type":"BreadcrumbList","@id":"https://pep-dose.com/cookie-policy/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://pep-dose.com/"},{"@type":"ListItem","position":2,"name":"Cookie Plolicy"}]},{"@type":"WebSite","@id":"https://pep-dose.com/#website","url":"https://pep-dose.com/","name":"PeptideDosage.com","description":"Educational Peptide Hub","publisher":{"@id":"https://pep-dose.com/#organization"},"alternateName":"PeptideDosages","potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://pep-dose.com/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"},{"@type":"Organization","@id":"https://pep-dose.com/#organization","name":"Peptide Dosages","url":"https://pep-dose.com/","logo":{"@type":"ImageObject","inLanguage":"en-US","@id":"https://pep-dose.com/#/schema/logo/image/","url":"https://pep-dose.com/wp-content/uploads/2025/07/pdlogo-nr.png","contentUrl":"https://pep-dose.com/wp-content/uploads/2025/07/pdlogo-nr.png","width":512,"height":512,"caption":"Peptide Dosages"},"image":{"@id":"https://pep-dose.com/#/schema/logo/image/"}}]}</script>
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://pep-dose.com/cookie-policy/","url":"https://pep-dose.com/cookie-policy/","name":"Cookie Plolicy | pep-dose.com","isPartOf":{"@id":"https://pep-dose.com/#website"},"datePublished":"2025-08-13T06:35:22+00:00","dateModified":"2025-08-13T06:37:07+00:00","breadcrumb":{"@id":"https://pep-dose.com/cookie-policy/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https://pep-dose.com/cookie-policy/"]}]},{"@type":"BreadcrumbList","@id":"https://pep-dose.com/cookie-policy/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://pep-dose.com/"},{"@type":"ListItem","position":2,"name":"Cookie Plolicy"}]},{"@type":"WebSite","@id":"https://pep-dose.com/#website","url":"https://pep-dose.com/","name":"pep-dose.com","description":"Educational Peptide Hub","publisher":{"@id":"https://pep-dose.com/#organization"},"alternateName":"pep-dose","potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://pep-dose.com/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"},{"@type":"Organization","@id":"https://pep-dose.com/#organization","name":"pep-dose.com","url":"https://pep-dose.com/","logo":{"@type":"ImageObject","inLanguage":"en-US","@id":"https://pep-dose.com/#/schema/logo/image/","url":"https://pep-dose.com/wp-content/uploads/2025/07/pdlogo-nr.png","contentUrl":"https://pep-dose.com/wp-content/uploads/2025/07/pdlogo-nr.png","width":512,"height":512,"caption":"pep-dose.com"},"image":{"@id":"https://pep-dose.com/#/schema/logo/image/"}}]}</script>
 	<!-- / Yoast SEO Premium plugin. -->
 
 
@@ -958,8 +958,8 @@ body {
     </button>
     
     <!-- Logo (center on mobile, left on desktop) -->
-    <a href="https://pep-dose.com" class="header-logo" aria-label="Peptide Dosages - Home">
-      <img src="https://pep-dose.com/wp-content/uploads/2025/07/cropped-pdlogo-nr.png" alt="Peptide Dosages Logo">
+    <a href="https://pep-dose.com" class="header-logo" aria-label="pep-dose.com - Home">
+      <img src="https://pep-dose.com/wp-content/uploads/2025/07/cropped-pdlogo-nr.png" alt="pep-dose.com">
       <div class="header-logo-text">
         <span class="peptide">Peptide</span>
         <span class="dosages">Dosages</span>
@@ -2944,7 +2944,7 @@ body {
   <article class="page-content">
           <h1>Cookie Policy</h1>
 <p><strong>Last updated:</strong> August 13, 2025</p>
-<p>This Cookie Policy explains how <strong>Peptide Dosages</strong> (“we,” “us,” or “our”) uses cookies and similar technologies on <em>pep-dose.com</em>. Our site is an informational resource; we do not sell products. We may collect limited information if you request a free dosage protocol so we can respond to your inquiry.</p>
+<p>This Cookie Policy explains how <strong>pep-dose.com</strong> (“we,” “us,” or “our”) uses cookies and similar technologies on <em>pep-dose.com</em>. Our site is an informational resource; we do not sell products. We may collect limited information if you request a free dosage protocol so we can respond to your inquiry.</p>
 <h2>1. What are cookies?</h2>
 <p>Cookies are small text files placed on your device by websites you visit. They are used to make websites work, to improve efficiency, and to provide certain information to site owners. We also use similar technologies, such as local storage, to remember preferences like light/dark mode.</p>
 <h2>2. How we use cookies</h2>
@@ -3488,7 +3488,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <!-- About Column -->
         <div class="footer-column footer-about">
           <div class="footer-logo">
-            <img src="https://pep-dose.com/wp-content/uploads/2025/07/cropped-pdlogo-nr.png" alt="Peptide Dosages">
+            <img src="https://pep-dose.com/wp-content/uploads/2025/07/cropped-pdlogo-nr.png" alt="pep-dose.com">
             <span><span class="peptide">Peptide</span><span class="dosages">Dosages</span></span>
           </div>
           <p>Your trusted source for comprehensive peptide dosage protocols and research information. Empowering researchers with accurate, science-based guidance.</p>
@@ -3548,7 +3548,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       <!-- Disclaimer -->
       <div class="footer-disclaimer">
-        <p><strong>Important Disclaimer:</strong> All information provided on PeptideDosages.com is for research and educational purposes only. Not intended to diagnose, treat, cure, or prevent any disease. Always consult with a qualified healthcare professional before starting any new research protocol.</p>
+        <p><strong>Important Disclaimer:</strong> All information provided on pep-dose.com is for research and educational purposes only. Not intended to diagnose, treat, cure, or prevent any disease. Always consult with a qualified healthcare professional before starting any new research protocol.</p>
       </div>
       
     </div>
@@ -3559,7 +3559,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="footer-container">
       <div class="footer-bottom-content">
         <div class="footer-copyright">
-          © <span id="currentYear"></span> Peptide Dosages. All rights reserved.
+          © <span id="currentYear"></span> pep-dose.com. All rights reserved.
         </div>
         <ul class="footer-legal-links">
           <li><a href="/privacy-policy">Privacy Policy</a></li>

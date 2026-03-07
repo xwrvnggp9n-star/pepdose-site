@@ -8,7 +8,7 @@
 	<style>img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 3000px 1500px }</style>
 	
 	<!-- This site is optimized with the Yoast SEO Premium plugin v25.7.1 (Yoast SEO v25.7) - https://yoast.com/wordpress/plugins/seo/ -->
-	<title>Terms &amp; Conditions | Peptide Dosages</title>
+	<title>Terms &amp; Conditions | pep-dose.com</title>
 	<meta name="description" content="Site terms including acceptable use, disclaimers, limitations, and contact details." />
 	<link rel="canonical" href="https://pep-dose.com/terms-conditions/" />
 	<meta property="og:locale" content="en_US" />
@@ -23,7 +23,7 @@
 	<meta property="og:image:height" content="450" />
 	<meta property="og:image:type" content="image/webp" />
 	<meta name="twitter:card" content="summary_large_image" />
-	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://pep-dose.com/terms-conditions/","url":"https://pep-dose.com/terms-conditions/","name":"Terms & Conditions | Peptide Dosages","isPartOf":{"@id":"https://pep-dose.com/#website"},"datePublished":"2025-01-05T07:23:07+00:00","dateModified":"2025-08-18T01:01:26+00:00","description":"Site terms including acceptable use, disclaimers, limitations, and contact details.","breadcrumb":{"@id":"https://pep-dose.com/terms-conditions/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https://pep-dose.com/terms-conditions/"]}]},{"@type":"BreadcrumbList","@id":"https://pep-dose.com/terms-conditions/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://pep-dose.com/"},{"@type":"ListItem","position":2,"name":"Terms &amp; Conditions"}]},{"@type":"WebSite","@id":"https://pep-dose.com/#website","url":"https://pep-dose.com/","name":"PeptideDosage.com","description":"Educational Peptide Hub","publisher":{"@id":"https://pep-dose.com/#organization"},"alternateName":"PeptideDosages","potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://pep-dose.com/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"},{"@type":"Organization","@id":"https://pep-dose.com/#organization","name":"Peptide Dosages","url":"https://pep-dose.com/","logo":{"@type":"ImageObject","inLanguage":"en-US","@id":"https://pep-dose.com/#/schema/logo/image/","url":"https://pep-dose.com/wp-content/uploads/2025/07/pdlogo-nr.png","contentUrl":"https://pep-dose.com/wp-content/uploads/2025/07/pdlogo-nr.png","width":512,"height":512,"caption":"Peptide Dosages"},"image":{"@id":"https://pep-dose.com/#/schema/logo/image/"}}]}</script>
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://pep-dose.com/terms-conditions/","url":"https://pep-dose.com/terms-conditions/","name":"Terms & Conditions | pep-dose.com","isPartOf":{"@id":"https://pep-dose.com/#website"},"datePublished":"2025-01-05T07:23:07+00:00","dateModified":"2025-08-18T01:01:26+00:00","description":"Site terms including acceptable use, disclaimers, limitations, and contact details.","breadcrumb":{"@id":"https://pep-dose.com/terms-conditions/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https://pep-dose.com/terms-conditions/"]}]},{"@type":"BreadcrumbList","@id":"https://pep-dose.com/terms-conditions/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://pep-dose.com/"},{"@type":"ListItem","position":2,"name":"Terms &amp; Conditions"}]},{"@type":"WebSite","@id":"https://pep-dose.com/#website","url":"https://pep-dose.com/","name":"pep-dose.com","description":"Educational Peptide Hub","publisher":{"@id":"https://pep-dose.com/#organization"},"alternateName":"pep-dose","potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://pep-dose.com/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"},{"@type":"Organization","@id":"https://pep-dose.com/#organization","name":"pep-dose.com","url":"https://pep-dose.com/","logo":{"@type":"ImageObject","inLanguage":"en-US","@id":"https://pep-dose.com/#/schema/logo/image/","url":"https://pep-dose.com/wp-content/uploads/2025/07/pdlogo-nr.png","contentUrl":"https://pep-dose.com/wp-content/uploads/2025/07/pdlogo-nr.png","width":512,"height":512,"caption":"pep-dose.com"},"image":{"@id":"https://pep-dose.com/#/schema/logo/image/"}}]}</script>
 	<!-- / Yoast SEO Premium plugin. -->
 
 
@@ -959,8 +959,8 @@ body {
     </button>
     
     <!-- Logo (center on mobile, left on desktop) -->
-    <a href="https://pep-dose.com" class="header-logo" aria-label="Peptide Dosages - Home">
-      <img src="https://pep-dose.com/wp-content/uploads/2025/07/cropped-pdlogo-nr.png" alt="Peptide Dosages Logo">
+    <a href="https://pep-dose.com" class="header-logo" aria-label="pep-dose.com - Home">
+      <img src="https://pep-dose.com/wp-content/uploads/2025/07/cropped-pdlogo-nr.png" alt="pep-dose.com">
       <div class="header-logo-text">
         <span class="peptide">Peptide</span>
         <span class="dosages">Dosages</span>
@@ -2947,13 +2947,13 @@ body {
 <div class="page-container">
 <h1>Terms &amp; Conditions</h1>
 <p>Last updated: January 29, 2024</p>
-<p>Welcome to <strong>Peptide Dosages</strong> (the “Website”). These Terms &amp; Conditions (the “Terms”) govern your access to and use of our Website. By using our Website, you agree to be bound by these Terms.</p>
+<p>Welcome to <strong>pep-dose.com</strong> (the “Website”). These Terms &amp; Conditions (the “Terms”) govern your access to and use of our Website. By using our Website, you agree to be bound by these Terms.</p>
 <h2>1. Informational Nature of the Website</h2>
-<p>Peptide Dosages provides educational and informational content about peptide dosages, research protocols, and related topics. We do not sell products or services, and the information presented is not intended to replace professional medical advice or treatment.</p>
+<p>pep-dose.com provides educational and informational content about peptide dosages, research protocols, and related topics. We do not sell products or services, and the information presented is not intended to replace professional medical advice or treatment.</p>
 <h2>2. No Medical or Professional Advice</h2>
 <p>The content on this Website is provided for general informational and research purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the guidance of a qualified healthcare provider with any questions you may have regarding a medical condition or treatment plan.</p>
 <h2>3. Intellectual Property</h2>
-<p>All materials on the Website, including text, graphics, logos, and images, are the property of Peptide Dosages or its content suppliers and are protected by applicable intellectual property laws. You may not reproduce, distribute, modify, or create derivative works of any materials from this Website without our express written permission.</p>
+<p>All materials on the Website, including text, graphics, logos, and images, are the property of pep-dose.com or its content suppliers and are protected by applicable intellectual property laws. You may not reproduce, distribute, modify, or create derivative works of any materials from this Website without our express written permission.</p>
 <h2>4. User Responsibilities</h2>
 <p>When you use this Website, you agree:</p>
 <ul>
@@ -2967,16 +2967,16 @@ body {
 <h2>6. Disclaimer of Warranties</h2>
 <p>The Website is provided on an “as is” and “as available” basis. We make no warranties or representations of any kind, express or implied, about the completeness, accuracy, reliability, suitability, or availability of the Website or the information contained on it. You understand and agree that you use the Website at your own risk.</p>
 <h2>7. Limitation of Liability</h2>
-<p>Under no circumstances shall Peptide Dosages, its affiliates, contributors, or employees be liable for any direct, indirect, incidental, special, or consequential damages arising from or in connection with your use of the Website or reliance on any information provided on the Website.</p>
+<p>Under no circumstances shall pep-dose.com, its affiliates, contributors, or employees be liable for any direct, indirect, incidental, special, or consequential damages arising from or in connection with your use of the Website or reliance on any information provided on the Website.</p>
 <h2>8. External Links</h2>
 <p>The Website may contain links to external sites or resources operated by third parties. These links are provided for your convenience only. We have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party websites.</p>
 <h2>9. Changes to These Terms</h2>
 <p>We may update or modify these Terms at any time. Any changes will be effective immediately upon posting the revised Terms on this page. By continuing to use the Website after such updates or modifications, you agree to be bound by the revised Terms.</p>
 <h2>10. Governing Law</h2>
-<p>These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which Peptide Dosages operates, without regard to its conflict of law provisions.</p>
+<p>These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which pep-dose.com operates, without regard to its conflict of law provisions.</p>
 <h2>11. Contact Us</h2>
 <p>If you have any questions or concerns regarding these Terms &amp; Conditions, please contact us at <a href="mailto:info@pep-dose.com">info@pep-dose.com</a>.</p>
-<p>Your continued use of Peptide Dosages indicates that you accept and agree to abide by these Terms &amp; Conditions.</p>
+<p>Your continued use of pep-dose.com indicates that you accept and agree to abide by these Terms &amp; Conditions.</p>
 </div>
       </article>
 </div>
@@ -3492,7 +3492,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <!-- About Column -->
         <div class="footer-column footer-about">
           <div class="footer-logo">
-            <img src="https://pep-dose.com/wp-content/uploads/2025/07/cropped-pdlogo-nr.png" alt="Peptide Dosages">
+            <img src="https://pep-dose.com/wp-content/uploads/2025/07/cropped-pdlogo-nr.png" alt="pep-dose.com">
             <span><span class="peptide">Peptide</span><span class="dosages">Dosages</span></span>
           </div>
           <p>Your trusted source for comprehensive peptide dosage protocols and research information. Empowering researchers with accurate, science-based guidance.</p>
@@ -3552,7 +3552,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       <!-- Disclaimer -->
       <div class="footer-disclaimer">
-        <p><strong>Important Disclaimer:</strong> All information provided on PeptideDosages.com is for research and educational purposes only. Not intended to diagnose, treat, cure, or prevent any disease. Always consult with a qualified healthcare professional before starting any new research protocol.</p>
+        <p><strong>Important Disclaimer:</strong> All information provided on pep-dose.com is for research and educational purposes only. Not intended to diagnose, treat, cure, or prevent any disease. Always consult with a qualified healthcare professional before starting any new research protocol.</p>
       </div>
       
     </div>
@@ -3563,7 +3563,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="footer-container">
       <div class="footer-bottom-content">
         <div class="footer-copyright">
-          © <span id="currentYear"></span> Peptide Dosages. All rights reserved.
+          © <span id="currentYear"></span> pep-dose.com. All rights reserved.
         </div>
         <ul class="footer-legal-links">
           <li><a href="/privacy-policy">Privacy Policy</a></li>
