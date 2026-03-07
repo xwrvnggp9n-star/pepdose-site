@@ -814,6 +814,13 @@ def main():
         shutil.copy2(robots_src, DIST_DIR / 'robots.txt')
         print(f"\n  ✓  robots.txt copied")
 
+    # Standalone pages (not processed through the theme pipeline)
+    for standalone in ['calculator-widget.html']:
+        src = BASE / standalone
+        if src.exists():
+            shutil.copy2(src, DIST_DIR / standalone)
+            print(f"  ✓  {standalone} copied")
+
     # Generate sitemap.xml
     generate_sitemap()
 
