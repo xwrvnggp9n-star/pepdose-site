@@ -651,9 +651,26 @@ Syringe units      = Volume (mL) × 100 &nbsp; &nbsp;(for a standard U-100 syrin
         + '</div>';
       header.style.display = 'block';
 
+      // Inject print-only sponsor footer
+      var footer = document.getElementById('pdc-print-footer');
+      if (!footer) {
+        footer = document.createElement('div');
+        footer.id = 'pdc-print-footer';
+        footer.style.cssText = 'display:none;';
+        document.getElementById('pdc-printable').appendChild(footer);
+      }
+      footer.innerHTML = '<div style="margin-top:2rem;padding-top:.75rem;border-top:1px solid #ccc;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif;font-size:1rem;color:#555;text-align:center;">'
+        + 'Sponsored by <a href="https://whitemarketpeptides.com" style="color:#3498db;">White Market Peptides</a>'
+        + ' &mdash; use code <strong>PEPDOSE</strong> for 10% off + free 2-day shipping over $200.'
+        + '</div>';
+      footer.style.display = 'block';
+
       window.print();
 
-      setTimeout(function () { header.style.display = 'none'; }, 500);
+      setTimeout(function () {
+        header.style.display = 'none';
+        footer.style.display = 'none';
+      }, 500);
     }
 
     window.pdcCalc  = pdcCalc;
