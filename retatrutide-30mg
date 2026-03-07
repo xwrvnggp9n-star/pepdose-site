@@ -3224,19 +3224,16 @@ body {
 </ul>
 </section>
 <p><!-- Recommended Source --></p>
-<section id="recommended-source" class="supplier-info fade-in delay-4">
-<h2><i class="fas fa-key"></i> Recommended Source</h2>
-<p>We recommend <strong>Pure Lab Peptides</strong> for high-purity Retatrutide (30 mg vials).</p>
-<div class="benefits">
-<h3>Why Pure Lab Peptides?</h3>
-<ul>
-<li><strong>Third-party tested:</strong> Each batch includes Certificate of Analysis (COA) verifying purity and composition.</li>
-<li><strong>Consistent quality:</strong> ISO-aligned manufacturing and handling standards ensure reliable product integrity.</li>
-<li><strong>Cold-chain integrity:</strong> Temperature-controlled shipping and storage throughout fulfillment process.</li>
-<li><strong>Research-grade purity:</strong> Suitable for educational and research applications requiring high-quality peptides.</li>
-<li><strong>Optimal vial size:</strong> The 30 mg vial provides excellent value with minimal waste—ideal for weekly protocols.</li>
-</ul></div>
-<p>  <a class="btn" href="https://purelabpeptides.com/buy-peptides/buy-retatrutide-30mg/" target="_blank" rel="nofollow sponsored noopener">Shop at Pure Lab Peptides</a><br />
+<section id="recommended-source" style="background:#f0f4f8;border:1px solid #d1d9e0;border-left:4px solid #1400CC;border-radius:8px;padding:1.5rem;margin:2rem 0;">
+<p style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#718096;margin:0 0 .75rem;">Sponsored Partner</p>
+<img src="https://xwrvnggp9n-star.github.io/pepdose-site/wmp-logo.svg" alt="White Market Peptides" style="height:60px;display:block;margin-bottom:1rem;" />
+<p>We source our protocol recommendations from <strong>White Market Peptides</strong> &mdash; batch-tested peptides with COA verification, lyophilised powder, and &ge;99% purity.</p>
+<div style="background:#fff;border:1px dashed #1400CC;border-radius:6px;padding:.85rem 1rem;margin:.75rem 0;font-size:.9rem;">
+<strong>Exclusive offer for pep-dose.com readers:</strong><br>
+&#x1F3F7; <strong>10% off all orders</strong> &mdash; use code <code style="background:#eef2ff;padding:2px 6px;border-radius:3px;font-weight:700;">PEPDOSE</code><br>
+&#x1F69A; <strong>Free 2-day shipping</strong> on orders over $200
+</div>
+<a href="https://whitemarketpeptides.com" target="_blank" rel="nofollow sponsored noopener" style="display:inline-block;background:#1400CC;color:#fff;padding:.6rem 1.4rem;border-radius:5px;font-weight:600;text-decoration:none;font-size:.9rem;">Shop at White Market Peptides &rarr;</a>
 </section>
 <p><!-- Important Note --></p>
 <section id="important-note" class="important-note fade-in delay-4">
