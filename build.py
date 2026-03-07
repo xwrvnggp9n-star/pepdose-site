@@ -46,12 +46,14 @@ with open(CONFIG_FILE, encoding='utf-8') as f:
     C = json.load(f)
 
 SITE_NAME  = C['site_name']
+SITE_URL   = C.get('site_url', 'https://pep-dose.com')
 LOGO       = C['logo']
 FAVICONS   = C['favicon']
 FONTS      = C['fonts']
 COLORS     = C['colors']
 NAV_ITEMS  = C.get('nav', [])
 FOOTER_CFG = C.get('footer', {})
+ANALYTICS  = C.get('analytics', {})
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Color replacement: map original hardcoded colors → theme colors
@@ -218,11 +220,55 @@ def build_footer_links(links):
 # ─────────────────────────────────────────────────────────────────────────────
 # Page template
 # ─────────────────────────────────────────────────────────────────────────────
-def build_head(title, meta_desc, canonical, og_image, schema, custom_css_text):
-    font_link = f'<link href="{FONTS["google_url"]}" rel="stylesheet"/>' if FONTS.get('google_url') else ''
+def build_head(title, meta_desc, canonical, og_image, schema, custom_css_text,
+               og_extras=None):
+    """Build the <head> section with full SEO meta tags, analytics, and performance hints."""
+    if og_extras is None:
+        og_extras = {}
+
+    font_link = f'<link href="{FONTS["google_url"]}&display=swap" rel="stylesheet"/>' if FONTS.get('google_url') else ''
     custom_css_block = f'\n    <style id="wp-custom-css">{custom_css_text}</style>' if custom_css_text.strip() else ''
     canon_tag = f'\n    <link rel="canonical" href="{fix_urls(canonical)}" />' if canonical else ''
-    og_tag = f'\n    <meta property="og:image" content="{fix_urls(og_image)}" />' if og_image else ''
+
+    # OG image tags (image + width + height + type)
+    og_image_tags = ''
+    if og_image:
+        og_image_tags = f'\n    <meta property="og:image" content="{fix_urls(og_image)}" />'
+        if og_extras.get('og_image_width'):
+            og_image_tags += f'\n    <meta property="og:image:width" content="{og_extras["og_image_width"]}" />'
+        if og_extras.get('og_image_height'):
+            og_image_tags += f'\n    <meta property="og:image:height" content="{og_extras["og_image_height"]}" />'
+        if og_extras.get('og_image_type'):
+            og_image_tags += f'\n    <meta property="og:image:type" content="{og_extras["og_image_type"]}" />'
+
+    # Extra OG/Twitter/article meta tags
+    og_locale = og_extras.get('og_locale', 'en_US')
+    og_site_name = og_extras.get('og_site_name', SITE_NAME)
+    og_type = og_extras.get('og_type', 'website')
+    og_url = fix_urls(og_extras.get('og_url', canonical or ''))
+    twitter_card = og_extras.get('twitter_card', 'summary_large_image')
+
+    article_times = ''
+    if og_extras.get('article_published'):
+        article_times += f'\n    <meta property="article:published_time" content="{og_extras["article_published"]}" />'
+    if og_extras.get('article_modified'):
+        article_times += f'\n    <meta property="article:modified_time" content="{og_extras["article_modified"]}" />'
+
+    # Analytics (GA4 + Search Console verification)
+    analytics_tags = ''
+    ga4_id = ANALYTICS.get('ga4_id', '')
+    sc_verify = ANALYTICS.get('search_console_verification', '')
+    if sc_verify:
+        analytics_tags += f'\n    <meta name="google-site-verification" content="{sc_verify}" />'
+    if ga4_id:
+        analytics_tags += f'''
+    <script async src="https://www.googletagmanager.com/gtag/js?id={ga4_id}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){{dataLayer.push(arguments);}}
+      gtag('js', new Date());
+      gtag('config', '{ga4_id}');
+    </script>'''
 
     return f'''\
 <!DOCTYPE html>
@@ -230,18 +276,29 @@ def build_head(title, meta_desc, canonical, og_image, schema, custom_css_text):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
     <title>{title}</title>
     <meta name="description" content="{meta_desc}" />{canon_tag}
-    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="{og_locale}" />
+    <meta property="og:type" content="{og_type}" />
     <meta property="og:title" content="{title}" />
-    <meta property="og:description" content="{meta_desc}" />{og_tag}
-    {fix_urls(schema)}
+    <meta property="og:description" content="{meta_desc}" />
+    <meta property="og:url" content="{og_url}" />
+    <meta property="og:site_name" content="{og_site_name}" />{og_image_tags}{article_times}
+    <meta name="twitter:card" content="{twitter_card}" />
+    <meta name="twitter:title" content="{title}" />
+    <meta name="twitter:description" content="{meta_desc}" />
+    {fix_urls(schema)}{analytics_tags}
     <link rel="icon" href="{FAVICONS['32x32']}" sizes="32x32" />
     <link rel="icon" href="{FAVICONS['192x192']}" sizes="192x192" />
     <link rel="apple-touch-icon" href="{FAVICONS['apple_touch']}" />
     <meta name="msapplication-TileImage" content="{FAVICONS['mstile']}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     {font_link}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" media="print" onload="this.media='all'"/>
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/></noscript>
     <link rel="stylesheet" href="/theme/theme.css"/>
     <link rel="stylesheet" href="/wp-includes/css/dist/block-library/style.min.css"/>{custom_css_block}
 </head>'''
@@ -513,6 +570,38 @@ def build_footer():
 # ─────────────────────────────────────────────────────────────────────────────
 # Process a single HTML file
 # ─────────────────────────────────────────────────────────────────────────────
+def add_lazy_loading(html):
+    """Add loading='lazy' to images, except the first one (LCP candidate)."""
+    img_count = [0]
+    def lazy_replace(match):
+        img_count[0] += 1
+        tag = match.group(0)
+        # Skip first image (likely LCP element) and images that already have loading attr
+        if img_count[0] == 1 or 'loading=' in tag:
+            return tag
+        if 'fetchpriority="high"' in tag:
+            return tag
+        return tag.replace('<img ', '<img loading="lazy" ')
+    return re.sub(r'<img [^>]+/?>', lazy_replace, html)
+
+
+def sanitize_author(text):
+    """Remove personal email from author meta tags and schema JSON-LD."""
+    text = text.replace('sec9vzion@outlook.com', 'Pep-Dose Staff')
+    text = re.sub(
+        r'"url"\s*:\s*"https?://pep-dose\.com/author/sec9vzionoutlook-com/?[^"]*"',
+        '"url":"https://pep-dose.com/about-us/"',
+        text,
+    )
+    # Strip <meta name="author" content="sec9vzion...">
+    text = re.sub(
+        r'<meta\s+name="author"\s+content="sec9vzion[^"]*"\s*/?>',
+        '<meta name="author" content="Pep-Dose Staff" />',
+        text,
+    )
+    return text
+
+
 def process_file(src_path, dst_path):
     with open(src_path, 'r', errors='replace') as f:
         raw = f.read()
@@ -525,8 +614,25 @@ def process_file(src_path, dst_path):
     og_image  = extract(r'<meta\s+property="og:image"\s+content="([^"]*)"', head_html, flags=0)
     schema    = extract(r'(<script type="application/ld\+json"[^>]*>.*?</script>)', head_html)
 
+    # Extract additional OG/Twitter/article meta tags
+    og_extras = {
+        'og_locale':         extract(r'<meta\s+property="og:locale"\s+content="([^"]*)"', head_html, flags=0) or 'en_US',
+        'og_site_name':      extract(r'<meta\s+property="og:site_name"\s+content="([^"]*)"', head_html, flags=0) or SITE_NAME,
+        'og_type':           extract(r'<meta\s+property="og:type"\s+content="([^"]*)"', head_html, flags=0) or 'website',
+        'og_url':            extract(r'<meta\s+property="og:url"\s+content="([^"]*)"', head_html, flags=0) or canonical,
+        'twitter_card':      extract(r'<meta\s+name="twitter:card"\s+content="([^"]*)"', head_html, flags=0) or 'summary_large_image',
+        'article_published': extract(r'<meta\s+property="article:published_time"\s+content="([^"]*)"', head_html, flags=0),
+        'article_modified':  extract(r'<meta\s+property="article:modified_time"\s+content="([^"]*)"', head_html, flags=0),
+        'og_image_width':    extract(r'<meta\s+property="og:image:width"\s+content="([^"]*)"', head_html, flags=0),
+        'og_image_height':   extract(r'<meta\s+property="og:image:height"\s+content="([^"]*)"', head_html, flags=0),
+        'og_image_type':     extract(r'<meta\s+property="og:image:type"\s+content="([^"]*)"', head_html, flags=0),
+    }
+
     # Page-specific custom CSS (from wp-custom-css block)
     custom_css = extract(r'<style[^>]*id="wp-custom-css"[^>]*>(.*?)</style>', head_html)
+
+    # ── Sanitize author email ─────────────────────────────────────────────────
+    schema = sanitize_author(schema)
 
     # ── Extract body ──────────────────────────────────────────────────────────
     body_html = extract(r'<body[^>]*>(.*?)</body>', raw)
@@ -540,10 +646,12 @@ def process_file(src_path, dst_path):
     main_html  = apply_colors(main_html)
     main_html  = fix_urls(main_html)
     main_html  = fix_logo_urls(main_html)
+    main_html  = add_lazy_loading(main_html)
     custom_css = apply_colors(custom_css)
 
     # ── Assemble page ─────────────────────────────────────────────────────────
-    head_section = build_head(title, meta_desc, canonical, og_image, schema, custom_css)
+    head_section = build_head(title, meta_desc, canonical, og_image, schema, custom_css,
+                              og_extras=og_extras)
     page = '\n'.join([
         head_section,
         build_header(),
@@ -633,6 +741,53 @@ def copy_assets():
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Sitemap generator
+# ─────────────────────────────────────────────────────────────────────────────
+def generate_sitemap():
+    """Generate sitemap.xml from all built HTML pages in _dist."""
+    urls = []
+    for html_file in sorted(DIST_DIR.rglob('index.html')):
+        rel = html_file.parent.relative_to(DIST_DIR)
+        path = '/' if str(rel) == '.' else f'/{rel}/'
+
+        # Assign priority and changefreq based on content type
+        if path == '/':
+            priority, changefreq = '1.0', 'weekly'
+        elif '/what-is-' in path or '/peptide-dosage-calculator' in path:
+            priority, changefreq = '0.8', 'monthly'
+        elif '/single-peptide-dosages/' in path or '/peptide-blend-dosages/' in path:
+            priority, changefreq = '0.7', 'monthly'
+        elif '/retatrutide' in path:
+            priority, changefreq = '0.7', 'monthly'
+        elif '/dosages' in path or '/blog' in path:
+            priority, changefreq = '0.5', 'weekly'
+        elif '/category/' in path:
+            priority, changefreq = '0.4', 'weekly'
+        elif any(x in path for x in ['/privacy-', '/cookie-', '/terms-', '/disclaimer']):
+            priority, changefreq = '0.2', 'yearly'
+        else:
+            priority, changefreq = '0.6', 'monthly'
+
+        urls.append((f'{SITE_URL}{path}', priority, changefreq))
+
+    xml_lines = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ]
+    for loc, priority, changefreq in urls:
+        xml_lines.append(f'  <url>')
+        xml_lines.append(f'    <loc>{loc}</loc>')
+        xml_lines.append(f'    <changefreq>{changefreq}</changefreq>')
+        xml_lines.append(f'    <priority>{priority}</priority>')
+        xml_lines.append(f'  </url>')
+    xml_lines.append('</urlset>')
+
+    sitemap_path = DIST_DIR / 'sitemap.xml'
+    sitemap_path.write_text('\n'.join(xml_lines), encoding='utf-8')
+    print(f"\n  ✓  sitemap.xml generated with {len(urls)} URLs")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Main
 # ─────────────────────────────────────────────────────────────────────────────
 def main():
@@ -669,6 +824,9 @@ def main():
     if robots_src.exists():
         shutil.copy2(robots_src, DIST_DIR / 'robots.txt')
         print(f"\n  ✓  robots.txt copied")
+
+    # Generate sitemap.xml
+    generate_sitemap()
 
     print(f"\n{'='*60}")
     print(f"  Done.  {ok} pages built, {err} errors.")
