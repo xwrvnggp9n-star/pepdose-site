@@ -294,8 +294,8 @@
   <div class="pdc-instructions">
     <h2>How to Use This Calculator</h2>
     <ol>
-      <li><strong>Select the vial size</strong> — the total milligrams of peptide printed on your vial label.</li>
-      <li><strong>Choose your water volume</strong> — how many mL of bacteriostatic water you'll inject into the vial to reconstitute the peptide.</li>
+      <li><strong>Choose your peptide</strong> — select from the list to auto-fill vial size and water volume, or pick "Other" to enter values manually.</li>
+      <li><strong>Verify vial size &amp; water volume</strong> — auto-filled from the protocol but you can adjust if needed.</li>
       <li><strong>Enter your desired dose</strong> — type the number and pick your preferred unit (mcg, mg, or syringe units). Results update automatically.</li>
       <li><strong>Read your results</strong> — the calculator shows concentration, all dose equivalents, and how many injections are in the vial.</li>
     </ol>
@@ -309,9 +309,15 @@
 
     <!-- Peptide Name -->
     <div class="pdc-field">
-      <label for="pdc-name">Peptide Name <span class="pdc-optional">(optional)</span></label>
-      <p class="pdc-hint">For your own reference — appears on the printed summary. Does not affect calculations.</p>
-      <input type="text" id="pdc-name" placeholder="e.g. BPC-157" autocomplete="off" oninput="pdcCalc()">
+      <label for="pdc-name-select">Peptide Name <span class="pdc-optional">(optional)</span></label>
+      <p class="pdc-hint">Select a peptide to auto-fill vial size and water volume, or choose "Other" to enter manually.</p>
+      <select id="pdc-name-select" onchange="pdcSelectPeptide()">
+        <option value="">— Select a peptide —</option>
+        <optgroup label="Single Peptides"></optgroup>
+        <optgroup label="Blends"></optgroup>
+        <option value="other">Other (enter manually)</option>
+      </select>
+      <input type="text" id="pdc-name-custom" placeholder="e.g. Ipamorelin" autocomplete="off" oninput="pdcCalc()" style="display:none; margin-top:8px;">
     </div>
 
     <hr class="pdc-divider">
@@ -329,6 +335,9 @@
         <option value="20">20 mg</option>
         <option value="30">30 mg</option>
         <option value="50">50 mg</option>
+        <option value="70">70 mg</option>
+        <option value="80">80 mg</option>
+        <option value="100">100 mg</option>
       </select>
     </div>
 
@@ -342,7 +351,9 @@
         <option value="1.0">1.0 mL</option>
         <option value="1.5">1.5 mL</option>
         <option value="2.0">2.0 mL</option>
+        <option value="2.5">2.5 mL</option>
         <option value="3.0">3.0 mL</option>
+        <option value="4.0">4.0 mL</option>
         <option value="5.0">5.0 mL</option>
       </select>
     </div>
@@ -405,14 +416,96 @@
 (function () {
   'use strict';
 
+  var PDC_PROTOCOLS = [
+    { name: 'BPC-157',       vial: 5,   water: 2.0, group: 'single' },
+    { name: 'BPC-157',       vial: 10,  water: 3.0, group: 'single' },
+    { name: 'GHK-Cu',        vial: 50,  water: 5.0, group: 'single' },
+    { name: 'GHK-Cu',        vial: 100, water: 4.0, group: 'single' },
+    { name: 'MOTS-c',        vial: 10,  water: 2.0, group: 'single' },
+    { name: 'Retatrutide',   vial: 5,   water: 2.0, group: 'single' },
+    { name: 'Retatrutide',   vial: 10,  water: 2.0, group: 'single' },
+    { name: 'Retatrutide',   vial: 30,  water: 3.0, group: 'single' },
+    { name: 'Semaglutide',   vial: 5,   water: 2.0, group: 'single' },
+    { name: 'Semaglutide',   vial: 10,  water: 3.0, group: 'single' },
+    { name: 'TB-500',        vial: 5,   water: 1.0, group: 'single' },
+    { name: 'TB-500',        vial: 10,  water: 2.0, group: 'single' },
+    { name: 'Tesamorelin',   vial: 5,   water: 2.5, group: 'single' },
+    { name: 'Tesamorelin',   vial: 10,  water: 3.0, group: 'single' },
+    { name: 'Tirzepatide',   vial: 10,  water: 2.0, group: 'single' },
+    { name: 'GLOW',            vial: 70,  water: 3.0, group: 'blend' },
+    { name: 'KLOW',            vial: 80,  water: 4.0, group: 'blend' },
+    { name: 'Wolverine Stack', vial: 20,  water: 2.0, group: 'blend' },
+  ];
+
+  function pdcInitDropdown() {
+    var sel = document.getElementById('pdc-name-select');
+    if (!sel) return;
+    var singleGroup = sel.querySelector('optgroup[label="Single Peptides"]');
+    var blendGroup  = sel.querySelector('optgroup[label="Blends"]');
+    PDC_PROTOCOLS.forEach(function(p, idx) {
+      var opt = document.createElement('option');
+      opt.value = idx;
+      opt.textContent = p.name + ' \u2014 ' + p.vial + ' mg vial';
+      if (p.group === 'blend') {
+        blendGroup.appendChild(opt);
+      } else {
+        singleGroup.appendChild(opt);
+      }
+    });
+  }
+
+  function pdcSelectPeptide() {
+    var sel      = document.getElementById('pdc-name-select');
+    var customEl = document.getElementById('pdc-name-custom');
+    var vialEl   = document.getElementById('pdc-vial');
+    var waterEl  = document.getElementById('pdc-water');
+
+    if (sel.value === 'other') {
+      customEl.style.display = 'block';
+      customEl.focus();
+      pdcCalc();
+      return;
+    }
+
+    customEl.style.display = 'none';
+    customEl.value = '';
+
+    if (sel.value === '') {
+      vialEl.value  = '';
+      waterEl.value = '';
+      pdcCalc();
+      return;
+    }
+
+    var idx = parseInt(sel.value, 10);
+    var p   = PDC_PROTOCOLS[idx];
+    if (!p) { pdcCalc(); return; }
+
+    vialEl.value  = String(p.vial);
+    waterEl.value = p.water.toFixed(1);
+    pdcCalc();
+  }
+
+  function pdcGetName() {
+    var sel = document.getElementById('pdc-name-select');
+    var customEl = document.getElementById('pdc-name-custom');
+    if (sel && sel.value === 'other') {
+      return customEl ? customEl.value.trim() : '';
+    }
+    if (sel && sel.value !== '' && sel.value !== 'other') {
+      var idx = parseInt(sel.value, 10);
+      var p = PDC_PROTOCOLS[idx];
+      return p ? p.name : '';
+    }
+    return '';
+  }
+
   function fmt(n, decimals) {
     if (!isFinite(n)) return '—';
-    // Trim trailing zeros but keep at least one decimal
     return parseFloat(n.toFixed(decimals)).toString();
   }
 
   function pdcCalc() {
-    var nameEl    = document.getElementById('pdc-name');
     var vialEl    = document.getElementById('pdc-vial');
     var waterEl   = document.getElementById('pdc-water');
     var doseEl    = document.getElementById('pdc-dose');
@@ -452,21 +545,21 @@
     // Warnings
     var warnings = [];
     if (doseMg > vialMg) {
-      warnings.push('⚠ Your desired dose (' + fmt(doseMcg, 1) + ' mcg) exceeds the total amount in the vial (' + fmt(vialMg * 1000, 0) + ' mcg). Check your inputs.');
+      warnings.push('&#9888; Your desired dose (' + fmt(doseMcg, 1) + ' mcg) exceeds the total amount in the vial (' + fmt(vialMg * 1000, 0) + ' mcg). Check your inputs.');
     }
     if (doseMl < 0.005) {
-      warnings.push('⚠ Volume per dose (' + doseMl.toFixed(4) + ' mL) is extremely small and may be difficult to draw accurately with a standard syringe. Consider adding more bacteriostatic water.');
+      warnings.push('&#9888; Volume per dose (' + doseMl.toFixed(4) + ' mL) is extremely small and may be difficult to draw accurately with a standard syringe. Consider adding more bacteriostatic water.');
     }
     if (doseMl > waterMl) {
-      warnings.push('⚠ The calculated volume per dose exceeds the total reconstituted volume. Check your dose value.');
+      warnings.push('&#9888; The calculated volume per dose exceeds the total reconstituted volume. Check your dose value.');
     }
     if (warnings.length) {
       warnEl.innerHTML = warnings.map(function(w){ return '<div class="pdc-warning">' + w + '</div>'; }).join('');
     }
 
     // Peptide name header
-    var nameEl = document.getElementById('pdc-name');
-    var nameStr = nameEl && nameEl.value.trim() ? '<p style="font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif; font-size:0.9rem; color:#6b5d4f; margin:0 0 16px 0;"><strong style="color:#2b2318;">' + nameEl.value.trim() + '</strong> · ' + vialEl.value + ' mg vial · ' + waterEl.value + ' mL BW</p>' : '';
+    var peptideName = pdcGetName();
+    var nameStr = peptideName ? '<p style="font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif; font-size:0.9rem; color:#6b5d4f; margin:0 0 16px 0;"><strong style="color:#2b2318;">' + peptideName + '</strong> &middot; ' + vialEl.value + ' mg vial &middot; ' + waterEl.value + ' mL BW</p>' : '';
 
     // Build results HTML
     var html = nameStr + '<div class="pdc-results-grid">';
@@ -506,7 +599,6 @@
     // Inject print-only header with all values
     var vialEl  = document.getElementById('pdc-vial');
     var waterEl = document.getElementById('pdc-water');
-    var nameEl  = document.getElementById('pdc-name');
     var dateStr = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
     var header  = document.getElementById('pdc-print-header');
     if (!header) {
@@ -515,7 +607,7 @@
       header.style.cssText = 'display:none;';
       document.getElementById('pdc-printable').prepend(header);
     }
-    var peptideName = (nameEl && nameEl.value.trim()) ? nameEl.value.trim() : 'Peptide';
+    var peptideName = pdcGetName() || 'Peptide';
     header.innerHTML = '<div style="font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif; border-bottom:2px solid #2e2a22; padding-bottom:12px; margin-bottom:20px;">'
       + '<div style="font-size:1.3rem; font-weight:700; color:#2b2318;">' + peptideName + ' — Dosage Calculation</div>'
       + '<div style="font-size:0.85rem; color:#6b5d4f; margin-top:4px;">Vial: ' + (vialEl.value || '—') + ' mg &nbsp;·&nbsp; Bacteriostatic Water: ' + (waterEl.value || '—') + ' mL &nbsp;·&nbsp; Printed: ' + dateStr + '</div>'
@@ -540,8 +632,12 @@
   }
 
   // Expose to global scope for inline event handlers
-  window.pdcCalc  = pdcCalc;
-  window.pdcPrint = pdcPrint;
+  window.pdcCalc           = pdcCalc;
+  window.pdcPrint          = pdcPrint;
+  window.pdcSelectPeptide  = pdcSelectPeptide;
+
+  // Initialize dropdown on load
+  pdcInitDropdown();
 
 })();
 </script>
