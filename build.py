@@ -528,6 +528,7 @@ def build_footer():
 <script>
   document.getElementById('currentYear').textContent = new Date().getFullYear();
 </script>
+<script src="/theme/search.js" defer></script>
 
 </body>
 </html>'''
@@ -730,6 +731,99 @@ def copy_assets():
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Search index generator
+# ─────────────────────────────────────────────────────────────────────────────
+def extract_text_from_html(html_string):
+    """Strip HTML tags, scripts, styles and return plain text."""
+    text = re.sub(r'<script[^>]*>.*?</script>', ' ', html_string, flags=re.DOTALL)
+    text = re.sub(r'<style[^>]*>.*?</style>', ' ', html_string, flags=re.DOTALL)
+    text = re.sub(r'<[^>]+>', ' ', text)
+    text = text.replace('&amp;', '&').replace('&lt;', '<').replace('&gt;', '>')
+    text = text.replace('&#8211;', '-').replace('&#8212;', '--')
+    text = text.replace('&nbsp;', ' ').replace('&#8217;', "'")
+    text = text.replace('&middot;', ' ').replace('&#8230;', '...')
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
+
+
+def classify_page(url_path):
+    """Return a page type string based on URL path."""
+    if url_path == '/':
+        return 'home'
+    if '/single-peptide-dosages/' in url_path:
+        return 'dosage'
+    if '/peptide-blend-dosages/' in url_path:
+        return 'dosage'
+    if '/peptide-stack-dosages' in url_path:
+        return 'dosage'
+    if '/retatrutide' in url_path and 'what-is' not in url_path:
+        return 'dosage'
+    if url_path.startswith('/what-is-') or url_path.startswith('/what-are-'):
+        return 'article'
+    if '/category/' in url_path:
+        return 'category'
+    if '/blog/' in url_path:
+        return 'blog'
+    if '/dosages' in url_path:
+        return 'index'
+    if '/peptide-dosage-calculator' in url_path:
+        return 'tool'
+    if any(x in url_path for x in ['/about-us', '/contact-us']):
+        return 'info'
+    if any(x in url_path for x in ['/privacy-', '/cookie-', '/terms-', '/disclaimer']):
+        return 'legal'
+    if '/combine-peptides' in url_path or '/reconstitution' in url_path:
+        return 'guide'
+    return 'page'
+
+
+def generate_search_index():
+    """Generate search-index.json from all built HTML pages in _dist."""
+    index = []
+
+    for html_file in sorted(DIST_DIR.rglob('index.html')):
+        rel = html_file.parent.relative_to(DIST_DIR)
+        url_path = '/' if str(rel) == '.' else f'/{rel}/'
+
+        with open(html_file, 'r', encoding='utf-8', errors='replace') as f:
+            html = f.read()
+
+        title = extract(r'<title>(.*?)</title>', html)
+        title = title.replace('&#8211;', '-').replace('&amp;', '&')
+
+        meta_desc = extract(
+            r'<meta\s+name="description"\s+content="([^"]*)"', html, flags=0
+        )
+
+        main_block = extract(r'<main[^>]*>(.*?)</main>', html)
+        content_text = extract_text_from_html(main_block) if main_block else ''
+        content_snippet = content_text[:300] if content_text else ''
+
+        page_type = classify_page(url_path)
+
+        # Skip home page and pagination pages from search
+        if page_type == 'home':
+            continue
+        if '/page/' in url_path:
+            continue
+
+        entry = {
+            'url': url_path,
+            'title': title,
+            'description': meta_desc,
+            'content': content_snippet,
+            'type': page_type,
+        }
+        index.append(entry)
+
+    index_path = DIST_DIR / 'search-index.json'
+    with open(index_path, 'w', encoding='utf-8') as f:
+        json.dump(index, f, ensure_ascii=False, separators=(',', ':'))
+
+    print(f"\n  ✓  search-index.json generated with {len(index)} entries")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Sitemap generator
 # ─────────────────────────────────────────────────────────────────────────────
 def generate_sitemap():
@@ -823,6 +917,17 @@ def main():
 
     # Generate sitemap.xml
     generate_sitemap()
+
+    # Generate search index
+    generate_search_index()
+
+    # Copy search.js
+    search_js_src = THEME_DIR / 'search.js'
+    if search_js_src.exists():
+        search_js_dst = DIST_DIR / 'theme' / 'search.js'
+        search_js_dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(search_js_src, search_js_dst)
+        print(f"  ✓  theme/search.js copied")
 
     print(f"\n{'='*60}")
     print(f"  Done.  {ok} pages built, {err} errors.")
