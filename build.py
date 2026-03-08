@@ -823,51 +823,6 @@ def generate_search_index():
     print(f"\n  ✓  search-index.json generated with {len(index)} entries")
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Sitemap generator
-# ─────────────────────────────────────────────────────────────────────────────
-def generate_sitemap():
-    """Generate sitemap.xml from all built HTML pages in _dist."""
-    urls = []
-    for html_file in sorted(DIST_DIR.rglob('index.html')):
-        rel = html_file.parent.relative_to(DIST_DIR)
-        path = '/' if str(rel) == '.' else f'/{rel}/'
-
-        # Assign priority and changefreq based on content type
-        if path == '/':
-            priority, changefreq = '1.0', 'weekly'
-        elif '/what-is-' in path or '/peptide-dosage-calculator' in path:
-            priority, changefreq = '0.8', 'monthly'
-        elif '/single-peptide-dosages/' in path or '/peptide-blend-dosages/' in path:
-            priority, changefreq = '0.7', 'monthly'
-        elif '/retatrutide' in path:
-            priority, changefreq = '0.7', 'monthly'
-        elif '/dosages' in path or '/blog' in path:
-            priority, changefreq = '0.5', 'weekly'
-        elif '/category/' in path:
-            priority, changefreq = '0.4', 'weekly'
-        elif any(x in path for x in ['/privacy-', '/cookie-', '/terms-', '/disclaimer']):
-            priority, changefreq = '0.2', 'yearly'
-        else:
-            priority, changefreq = '0.6', 'monthly'
-
-        urls.append((f'{SITE_URL}{path}', priority, changefreq))
-
-    xml_lines = [
-        '<?xml version="1.0" encoding="UTF-8"?>',
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-    ]
-    for loc, priority, changefreq in urls:
-        xml_lines.append(f'  <url>')
-        xml_lines.append(f'    <loc>{loc}</loc>')
-        xml_lines.append(f'    <changefreq>{changefreq}</changefreq>')
-        xml_lines.append(f'    <priority>{priority}</priority>')
-        xml_lines.append(f'  </url>')
-    xml_lines.append('</urlset>')
-
-    sitemap_path = DIST_DIR / 'sitemap.xml'
-    sitemap_path.write_text('\n'.join(xml_lines), encoding='utf-8')
-    print(f"\n  ✓  sitemap.xml generated with {len(urls)} URLs")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -915,8 +870,12 @@ def main():
             shutil.copy2(src, DIST_DIR / standalone)
             print(f"  ✓  {standalone} copied")
 
-    # Generate sitemap.xml
-    generate_sitemap()
+    # Copy sitemap files (synced from live WordPress site)
+    for sitemap_file in ['sitemap.xml', 'sitemap-1.xml']:
+        src = BASE / sitemap_file
+        if src.exists():
+            shutil.copy2(src, DIST_DIR / sitemap_file)
+            print(f"\n  ✓  {sitemap_file} copied")
 
     # Generate search index
     generate_search_index()
