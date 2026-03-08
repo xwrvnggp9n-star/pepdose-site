@@ -456,7 +456,7 @@ nav.main-nav ul li:hover > .dropdown-menu {
   }
 }
 
-.mobile-search-overlay.active {
+.mobile-search-overlay.visible {
   display: block;
 }
 
@@ -1117,3 +1117,189 @@ ul.filebird-block-filebird-gallery.layout-masonry{column-gap:var(--space);column
 ul.filebird-block-filebird-gallery.layout-masonry li{margin-bottom:var(--space)}
 ul.filebird-block-filebird-gallery li{list-style:none}
 ul.filebird-block-filebird-gallery li figure{height:100%;margin:0;padding:0;position:relative;width:100%}
+
+/* ============================================================
+ *  SEARCH RESULTS
+ * ============================================================ */
+
+.search-results-container {
+  position: relative;
+  z-index: 997;
+  background: var(--footer-bg, #2c3e50);
+  border-bottom: 3px solid var(--header-accent, #e74c3c);
+  min-height: 200px;
+}
+
+.search-results-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 20px 40px;
+}
+
+.search-results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-results-header h2 {
+  color: var(--header-text, #ecf0f1);
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.search-query-text {
+  color: var(--header-accent, #e74c3c);
+}
+
+.search-close-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--header-text, #ecf0f1);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.search-close-btn:hover {
+  background: rgba(231, 76, 60, 0.3);
+  border-color: var(--header-accent, #e74c3c);
+  transform: scale(1.1);
+}
+
+.search-result-count {
+  color: #bdc3c7;
+  font-size: 0.9rem;
+  margin: 0 0 20px 0;
+}
+
+.search-results-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.search-result-card {
+  display: block;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px 24px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.search-result-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--header-accent, #e74c3c);
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.search-result-type {
+  display: inline-block;
+  background: rgba(231, 76, 60, 0.2);
+  color: var(--header-accent, #e74c3c);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.search-result-title {
+  color: var(--header-text, #ecf0f1);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+  line-height: 1.4;
+}
+
+.search-result-desc {
+  color: #bdc3c7;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.search-result-card mark {
+  background: rgba(231, 76, 60, 0.3);
+  color: #ffffff;
+  padding: 1px 3px;
+  border-radius: 3px;
+}
+
+.search-no-results {
+  text-align: center;
+  padding: 40px 20px;
+  color: #bdc3c7;
+}
+
+.search-no-results i {
+  font-size: 3rem;
+  color: rgba(255, 255, 255, 0.15);
+  margin-bottom: 20px;
+  display: block;
+}
+
+.search-no-results p {
+  font-size: 1.1rem;
+  margin: 0 0 10px 0;
+  color: var(--header-text, #ecf0f1);
+}
+
+.search-no-results .search-suggestions {
+  font-size: 0.9rem;
+  color: #bdc3c7;
+}
+
+.search-no-results .search-suggestions a {
+  color: var(--header-accent, #e74c3c);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.search-no-results .search-suggestions a:hover {
+  border-bottom-color: var(--header-accent, #e74c3c);
+}
+
+.search-loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--header-text, #ecf0f1);
+  font-size: 1.1rem;
+}
+
+.search-loading i {
+  margin-right: 8px;
+  color: var(--header-accent, #e74c3c);
+}
+
+@media (max-width: 768px) {
+  .search-results-inner {
+    padding: 20px 15px 30px;
+  }
+
+  .search-results-header h2 {
+    font-size: 1.15rem;
+  }
+
+  .search-result-card {
+    padding: 15px 18px;
+  }
+
+  .search-result-title {
+    font-size: 1rem;
+  }
+}
