@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <!-- Dark rounded square background -->
-  <rect width="32" height="32" rx="6" ry="6" fill="#2c3e50"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Dark warm slate background -->
+  <rect width="512" height="512" rx="96" ry="96" fill="#2e2a22"/>
   <!-- "p" in teal -->
-  <text x="3" y="23" font-family="'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="300" fill="#1abc9c">p</text>
-  <!-- "·" in red -->
-  <text x="14" y="21" font-family="'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#e74c3c">·</text>
-  <!-- "d" in white -->
-  <text x="18" y="23" font-family="'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">d</text>
+  <text x="48" y="370" font-family="'Helvetica Neue', Arial, sans-serif" font-size="310" font-weight="300" fill="#3aaa8c">p</text>
+  <!-- "·" separator dot in accent orange -->
+  <text x="220" y="345" font-family="'Helvetica Neue', Arial, sans-serif" font-size="220" font-weight="700" fill="#c85a30">·</text>
+  <!-- "d" in warm cream -->
+  <text x="288" y="370" font-family="'Helvetica Neue', Arial, sans-serif" font-size="310" font-weight="700" fill="#fdf8f0">d</text>
 </svg>
