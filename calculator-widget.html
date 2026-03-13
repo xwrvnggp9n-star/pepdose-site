@@ -284,17 +284,35 @@
 }
 
 /* ── Print Styles ────────────────────────────────────── */
+@page { margin: 1cm; }
 @media print {
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
   body * { visibility: hidden !important; }
   #pdc-printable, #pdc-printable * { visibility: visible !important; }
   #pdc-printable {
-    position: fixed !important;
+    position: absolute !important;
     top: 0; left: 0;
-    width: 100%; height: auto;
+    width: 100%;
     background: #fff;
-    padding: 30px;
+    padding: 20px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  #pdc-printable .pdc-results-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+  }
+  #pdc-printable .pdc-result-value {
+    font-size: 1.2rem !important;
   }
   .pdc-btn-print, .pdc-instructions { display: none !important; }
+  #pdc-print-row { display: none !important; }
+  .pdc-disclaimer { font-size: 0.7rem !important; margin-top: 8px !important; }
 }
 
 /* ── Responsive ──────────────────────────────────────── */
