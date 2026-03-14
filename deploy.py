@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Deploy built _dist/ content to WordPress.com via REST API.
+"""Deploy prepped content from _dist/ to WordPress.com via REST API.
+
+build.py outputs clean article-body HTML to _dist/<slug>/index.html.
+This script reads those files and pushes the content to WP pages/posts.
 
 Usage:
     python3 deploy.py              # deploy all pages & posts
@@ -7,7 +10,7 @@ Usage:
     python3 deploy.py --dry-run    # show what would be deployed
 """
 
-import json, os, re, sys, urllib.request, urllib.error, base64
+import json, os, sys, urllib.request, urllib.error, base64
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -71,17 +74,10 @@ def fetch_all_wp_items(endpoint):
     return items
 
 
-def extract_article_content(html_path):
-    """Extract content from between <article> tags in a built HTML file."""
-    html = html_path.read_text(encoding='utf-8')
-    m = re.search(r'<article[^>]*>(.*?)</article>', html, re.DOTALL)
-    if m:
-        return m.group(1).strip()
-    # Fallback: try <main> content minus wrapping divs
-    m = re.search(r'<main[^>]*>(.*?)</main>', html, re.DOTALL)
-    if m:
-        return m.group(1).strip()
-    return None
+def read_content(html_path):
+    """Read prepped content file. build.py already outputs clean article body."""
+    content = html_path.read_text(encoding='utf-8').strip()
+    return content if content else None
 
 
 def find_dist_file(slug):
@@ -152,9 +148,9 @@ def deploy(slug_filter=None, dry_run=False):
                 skipped += 1
             continue
 
-        content = extract_article_content(dist_file)
+        content = read_content(dist_file)
         if not content:
-            print(f'  ✗ Could not extract article content from {dist_file}')
+            print(f'  ✗ Empty content file: {dist_file}')
             errors += 1
             continue
 

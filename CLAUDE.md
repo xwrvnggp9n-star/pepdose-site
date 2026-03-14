@@ -1,30 +1,32 @@
 # pep-dose.com
 
-Peptide dosage educational site. Static build deployed to WordPress.com.
+Peptide dosage educational site deployed to WordPress.com.
 
 ## Build & Deploy
-- `python3 build.py` — rebuilds static site from templates and config
-- `python3 deploy.py` — deploys built content to WordPress.com via REST API
+- `python3 build.py` — extracts and cleans article content from WP export HTML files → `_dist/`
+- `python3 deploy.py` — pushes cleaned content from `_dist/` to WordPress.com via REST API
 - `python3 deploy.py --dry-run` — preview what would be deployed
 - `python3 deploy.py <slug>` — deploy a single page/post by slug
-- Config: `_theme/config.json` — all site settings, colors, nav, WP identifiers
+- Config: `_theme/config.json` — colors, sponsor links, WP identifiers
 - Credentials: `.env` file (gitignored) with WP_SITE, WP_USER, WP_APP_PASSWORD
 - "Deploy to production" means: `git push` to GitHub AND `python3 deploy.py` to WordPress.com
-- Local preview: `python3 _theme/serve.py` — serves `_dist/` with clean URL support
 - Always rebuild (`python3 build.py`) before deploying — deploy.py reads from `_dist/`
 
 ## Architecture
-- WordPress.com (blog_id: 253153078, theme: pub/blank-canvas-3)
-- GitHub Pages hosts calculator widget (WP Personal plan strips <script>/<input>)
-- Calculator gateway page on WP links to: https://xwrvnggp9n-star.github.io/pepdose-site/calculator-widget.html
+- WordPress.com handles ALL rendering: header, footer, nav, CSS, fonts (via template parts)
+- `build.py` only extracts article body content from source HTML exports and cleans it
+- `_dist/` files contain raw article HTML — no `<head>`, header, or footer wrapping
+- `deploy.py` reads `_dist/` files directly and pushes content to WP REST API
+- GitHub Pages hosts calculator widget (WP Personal plan strips `<script>`/`<input>`)
+- Calculator gateway page on WP links to GitHub Pages hosted widget
+- WP blog_id: 253153078, theme: pub/blank-canvas-3
 
-## Build Pipeline Gotchas
-- Source HTML files are full WP exports; `build.py` extracts `<head>` and `<main>` independently
+## Build Pipeline
+- Source HTML files are full WP exports; `build.py` extracts article content from `<main>`/`<article>`
 - Many source files lack `</main>` — build.py grabs to EOF then strips embedded old footers/JS
-- Schema JSON-LD is processed separately from main_html — transformations must apply to both
-- `deploy.py` extracts `<article>` content from `_dist/` files (WP stores article body only)
+- Content transforms: color replacement, URL fixing, PureLab removal, sponsor injection, lazy loading
 - `deploy.py` has SLUG_ALIASES for WP slugs that differ from source dir names (e.g. `-2` suffixes)
-- `calculator-widget.html` is copied directly, not processed through build pipeline
+- `calculator-widget.html` is copied directly, not processed through the pipeline
 
 ## Sponsorship
 - Current sponsor: White Market Peptides (WMP) — whitemarketpeptides.com
@@ -40,8 +42,9 @@ Peptide dosage educational site. Static build deployed to WordPress.com.
 - Fonts: Poppins (headings), Lora (body)
 
 ## Conventions
-- Colors injected via <style> in WP header template part (overrides CDN global styles)
+- Colors/fonts managed via WP header template part `<style>` block (not local CSS files)
 - Author displays as "Pep-Dose Staff" with mailto:info@pep-dose.com
 - Always create content as draft unless explicitly asked to publish
 - Use `&` not "and" in nav/footer titles (e.g. "Dosages & Protocols")
 - Sponsor CTA blocks use `font-family: inherit` (not system sans-serif)
+- No local preview server — preview changes on the live WP site after deploying
