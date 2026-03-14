@@ -356,10 +356,7 @@ def build_header():
     <div class="header-search">
       <form role="search" method="get" action="/" class="header-search-form">
         <div class="header-search-wrapper">
-          <input type="search" class="header-search-input" placeholder="Search protocols..." name="s" required>
-          <button type="submit" class="header-search-btn">
-            <i class="fas fa-search"></i><span>Search</span>
-          </button>
+          <input type="search" class="header-search-input" placeholder="Search" name="s" required>
         </div>
       </form>
     </div>

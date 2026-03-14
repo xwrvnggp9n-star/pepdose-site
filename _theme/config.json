@@ -80,7 +80,7 @@
       "children": []
     },
     {
-      "title": "Articles",
+      "title": "Education & Articles",
       "url": "/articles",
       "children": []
     },
@@ -106,7 +106,7 @@
     "disclaimer": "© 2026 pep-dose.com · For research and educational purposes only. Not medical advice.",
     "explore_links": [
       { "title": "Dosages and Protocols", "url": "/dosages-and-protocols" },
-      { "title": "Articles",              "url": "/articles" },
+      { "title": "Education & Articles",   "url": "/articles" },
       { "title": "Dosage Calculator",     "url": "/peptide-dosage-calculator/" },
       { "title": "About Us",              "url": "/about-us" },
       { "title": "Contact Us",            "url": "/contact-us" }
