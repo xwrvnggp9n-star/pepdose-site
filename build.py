@@ -390,7 +390,7 @@ def process_file(src_path, dst_path):
 # ─────────────────────────────────────────────────────────────────────────────
 SKIP_DIRS = {'_dist', '_theme', 'wp-json', '.claude', '.git', '__pycache__',
              'wp-content', 'wp-includes', 'pepdose-favicon-plugin',
-             '_dist 2', '_dist 3'}
+             '_dist 2', '_dist 3', 'category'}
 
 # Files without .html extension that are actually HTML pages
 BARE_HTML_FILES = [

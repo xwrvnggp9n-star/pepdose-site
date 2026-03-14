@@ -299,6 +299,64 @@ def test_build_no_personal_email():
           f'Found in: {", ".join(offending[:5])}' if offending else '')
 
 
+def test_build_content_quality():
+    section('Build: Content quality (no broken/placeholder content)')
+    # Check for "Content unavailable" placeholder
+    broken = []
+    for f in DIST.rglob('*.html'):
+        if f.name == 'calculator-widget.html':
+            continue
+        content = f.read_text(encoding='utf-8', errors='replace')
+        if 'Content unavailable' in content:
+            broken.append(str(f.relative_to(DIST)))
+    check(len(broken) == 0, 'No pages with "Content unavailable" placeholder',
+          f'Found in: {", ".join(broken)}' if broken else '')
+
+    # Check all dosage protocol pages have real protocol content
+    protocol_missing = []
+    for parent in ['single-peptide-dosages', 'peptide-blend-dosages']:
+        parent_dir = DIST / parent
+        if not parent_dir.exists():
+            continue
+        for d in parent_dir.iterdir():
+            if not d.is_dir():
+                continue
+            idx = d / 'index.html'
+            if idx.exists():
+                content = idx.read_text(encoding='utf-8', errors='replace')
+                if 'Protocol Overview' not in content and 'Dosing Protocol' not in content:
+                    protocol_missing.append(f'{parent}/{d.name}')
+    check(len(protocol_missing) == 0,
+          'All dosage protocols have real content (Protocol Overview or Dosing Protocol)',
+          f'Missing: {", ".join(protocol_missing)}' if protocol_missing else '')
+
+    # Check no stale pagination pages in _dist
+    pagination = list(DIST.glob('**/page/*/index.html'))
+    check(len(pagination) == 0, 'No stale pagination pages in _dist/',
+          f'Found: {[str(p.relative_to(DIST)) for p in pagination]}' if pagination else '')
+
+
+def test_build_live_page_content():
+    section('Build: All deployed pages have substantial content')
+    # Every dist page should have at least an <h1> or <h2> or <h3> and some text
+    thin_pages = []
+    for f in DIST.rglob('index.html'):
+        rel = str(f.relative_to(DIST))
+        # Skip category index pages and known small pages
+        if '/category/' in rel:
+            continue
+        content = f.read_text(encoding='utf-8', errors='replace')
+        # Must have at least one heading
+        if not re.search(r'<h[1-3][\s>]', content):
+            thin_pages.append(f'{rel} (no heading)')
+        # Must have at least 100 chars of actual text (strips tags)
+        text_only = re.sub(r'<[^>]+>', '', content).strip()
+        if len(text_only) < 100:
+            thin_pages.append(f'{rel} (text too short: {len(text_only)} chars)')
+    check(len(thin_pages) == 0, 'All pages have headings and substantial text',
+          f'Issues: {", ".join(thin_pages[:5])}' if thin_pages else '')
+
+
 def test_build_calculator_gateway():
     section('Build: Calculator gateway page')
     content = read_dist('peptide-dosage-calculator')
@@ -472,6 +530,38 @@ def test_live_contact_form():
               'Contact page has form elements')
 
 
+def test_live_all_dosage_protocols():
+    section('Live: All dosage protocol pages have real content')
+    protocols = [
+        '/peptide-blend-dosages/glow-70-mg-vial-dosage-protocol/',
+        '/peptide-blend-dosages/klow-80mg-vial-dosage-protocol/',
+        '/peptide-blend-dosages/wolverine-stack-20mg-vial-dosage-protocol/',
+        '/single-peptide-dosages/bpc-157-5mg-vial-dosage-protocol/',
+        '/single-peptide-dosages/bpc-157-10mg-vial-dosage-protocol/',
+        '/single-peptide-dosages/tb-500-5mg-vial-dosage-protocol/',
+        '/single-peptide-dosages/tb-500-10mg-vial-dosage-protocol/',
+        '/single-peptide-dosages/ghk-cu-50mg-vial-dosage-protocol/',
+        '/single-peptide-dosages/ghk-cu-100mg-vial-dosage-protocol/',
+        '/single-peptide-dosages/tesamorelin-5mg-vial-dosage-protocol/',
+        '/single-peptide-dosages/tesamorelin-10mg-vial-dosage-protocol/',
+        '/single-peptide-dosages/mots-c-10mg-vial-dosage-protocol/',
+        '/single-peptide-dosages/sema-5mg-vial-dosage-protocol/',
+        '/single-peptide-dosages/sema-10mg-vial-dosage-protocol/',
+        '/single-peptide-dosages/tirzepatide-10mg-vial-dosage-protocol/',
+    ]
+    for path in protocols:
+        status, body = fetch_live(path)
+        slug = path.strip('/').split('/')[-1]
+        check(status == 200, f'{slug} returns 200',
+              f'Got {status}' if status != 200 else '')
+        if status == 200:
+            check('Content unavailable' not in body,
+                  f'{slug} has real content (not placeholder)')
+            check('Protocol Overview' in body or 'Dosing Protocol' in body
+                  or 'protocol' in body.lower(),
+                  f'{slug} has protocol information')
+
+
 # ═════════════════════════════════════════════════════════════════════════════
 # CONFIG VALIDATION TESTS
 # ═════════════════════════════════════════════════════════════════════════════
@@ -523,6 +613,8 @@ BUILD_TESTS = [
     test_build_colors,
     test_build_internal_links,
     test_build_no_personal_email,
+    test_build_content_quality,
+    test_build_live_page_content,
     test_build_calculator_gateway,
     test_config_validation,
 ]
@@ -542,6 +634,7 @@ LIVE_TESTS = [
     test_live_legal_dates,
     test_live_calculator,
     test_live_contact_form,
+    test_live_all_dosage_protocols,
 ]
 
 
