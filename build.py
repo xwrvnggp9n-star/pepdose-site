@@ -1056,6 +1056,18 @@ def main():
         shutil.copy2(search_js_src, search_js_dst)
         print(f"  ✓  theme/search.js copied")
 
+    # URL aliases: map nav/WP slugs to built directory names
+    URL_ALIASES = {
+        'dosages-and-protocols': 'dosages',
+        'articles':              'blog',
+    }
+    for alias, target in URL_ALIASES.items():
+        src_dir = DIST_DIR / target
+        dst_dir = DIST_DIR / alias
+        if src_dir.exists() and not dst_dir.exists():
+            shutil.copytree(src_dir, dst_dir)
+            print(f"  ✓  URL alias: /{alias}/ → /{target}/")
+
     print(f"\n{'='*60}")
     print(f"  Done.  {ok} pages built, {err} errors.")
     print(f"  Deploy the _dist/ folder to any static host.")
