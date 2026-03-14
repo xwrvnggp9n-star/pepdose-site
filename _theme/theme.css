@@ -45,12 +45,31 @@
 }
 
 body {
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Lora', Georgia, 'Times New Roman', serif;
   background: #f9f9f9;
   color: #333333;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding-top: 0;
+}
+
+h1, h2, h3, h4, h5, h6,
+header.site-header,
+.site-footer,
+nav.main-nav,
+.mobile-nav-panel,
+.wp-block-button__link {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* WP block buttons — ensure centered in containers */
+.wp-block-buttons.is-content-justification-center {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+.wp-block-buttons .wp-block-button {
+  display: inline-block;
 }
 
 /************************************************************
