@@ -108,6 +108,8 @@ SLUG_ALIASES = {
     'retatrutide-5mg-vial-dosage-protocol':  'retatrutide-5mg',
     'retatrutide-10mg-vial-dosage-protocol': 'retatrutide-10mg',
     'retatrutide-30mg-vial-dosage-protocol': 'retatrutide-30mg',
+    'dosages-and-protocols': 'dosages',
+    'articles':              'blog',
 }
 
 
