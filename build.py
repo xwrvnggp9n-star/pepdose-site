@@ -764,6 +764,27 @@ def process_file(src_path, dst_path):
         else:
             main_html = '<main id="main-content"><p>Content unavailable.</p></main>'
 
+    # Strip old embedded footer and trailing junk from WP exports.
+    # Many source files include an old site footer (with CSS/JS/back-to-top)
+    # inside <main> because the closing </main> tag was missing in the export.
+    # Truncate at the first <footer> tag inside <main>, keeping article content.
+    main_html = re.sub(
+        r'<footer class="site-footer"[^>]*>.*',
+        '</main>', main_html, count=1, flags=re.DOTALL)
+    # Strip old back-to-top buttons
+    main_html = re.sub(
+        r'<div class="back-to-top"[^>]*>.*?</div>',
+        '', main_html, flags=re.DOTALL)
+    # Strip old embedded <style> blocks for footer/dark-mode CSS
+    main_html = re.sub(
+        r'<style>\s*/\*[^<]*?(?:Footer|Dark Mode)[^<]*?\*/[^<]*?</style>',
+        '', main_html, flags=re.DOTALL)
+    # Strip old <script> blocks between </article> and what was the footer
+    # (TOC generators, smooth scrolling, dark-mode toggles, newsletter, etc.)
+    main_html = re.sub(
+        r'(</article>\s*</div>)\s*(?:<!--[^>]*-->\s*)*(?:<script\b[^>]*>.*?</script>\s*)*',
+        r'\1\n', main_html, flags=re.DOTALL)
+
     # ── Apply transformations ─────────────────────────────────────────────────
     main_html  = apply_colors(main_html)
     main_html  = fix_urls(main_html)
