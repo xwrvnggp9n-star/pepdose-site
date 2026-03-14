@@ -563,6 +563,78 @@ def strip_sponsor_sections(text):
     return text
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Sponsor backlink injection
+# ─────────────────────────────────────────────────────────────────────────────
+SPONSOR       = C.get('sponsor', {})
+SPONSOR_LINKS = C.get('sponsor_links', {})
+SPONSOR_NAME  = SPONSOR.get('name', 'White Market Peptides')
+SPONSOR_URL   = SPONSOR.get('url', 'https://whitemarketpeptides.com')
+SPONSOR_CODE  = SPONSOR.get('discount_code', 'PEPDOSE')
+SPONSOR_DEAL  = SPONSOR.get('discount_text', '10% off + free 2-day shipping over $200')
+
+_SLUG_TO_NAME = {
+    'what-is-bpc-157':             'BPC-157',
+    'what-is-ghk-cu-2':           'GHK-Cu',
+    'what-is-tb-500':             'TB-500',
+    'what-is-tesamorelin':        'Tesamorelin',
+    'what-is-mots-c':            'MOTS-c',
+    'what-is-glow-peptide-blend': 'GLOW',
+    'what-is-klow-peptide-blend': 'KLOW',
+    'what-is-the-wolverine-stack':'Wolverine Stack',
+}
+
+
+def derive_peptide_name(slug):
+    """Convert a page slug like 'what-is-bpc-157' to a display name."""
+    return _SLUG_TO_NAME.get(slug, slug.replace('what-is-', '').replace('-', ' ').title())
+
+
+def inject_inline_sponsor_link(html, product_url, peptide_name):
+    """Insert a contextual sponsor paragraph before the references section."""
+    link = (
+        f'<a href="{product_url}" rel="sponsored nofollow noopener" '
+        f'target="_blank">{SPONSOR_NAME}</a>'
+    )
+    paragraph = (
+        f'<p style="max-width:750px">Looking for research-grade {peptide_name}? '
+        f'Our sponsor {link} carries {peptide_name} with third-party purity testing. '
+        f'Use code <strong>{SPONSOR_CODE}</strong> for {SPONSOR_DEAL}.</p>'
+    )
+    # Insert before the auto-references section, or before </article> as fallback
+    marker = '<section class="auto-references-section"'
+    if marker in html:
+        html = html.replace(marker, paragraph + '\n' + marker, 1)
+    elif '</article>' in html:
+        html = html.replace('</article>', paragraph + '\n</article>', 1)
+    return html
+
+
+def inject_sponsor_cta(html, product_url, peptide_name):
+    """Insert a styled CTA block between references and post navigation."""
+    cta = f'''<div class="sponsor-cta">
+  <div class="sponsor-cta-badge">Sponsored</div>
+  <div class="sponsor-cta-body">
+    <div class="sponsor-cta-text">
+      <strong>Get {peptide_name} from {SPONSOR_NAME}</strong>
+      <span>Third-party tested &middot; Use code <strong>{SPONSOR_CODE}</strong> for {SPONSOR_DEAL}</span>
+    </div>
+    <a href="{product_url}" class="sponsor-cta-btn" rel="sponsored nofollow noopener" target="_blank">
+      View Product &rarr;
+    </a>
+  </div>
+</div>'''
+    # Insert before post-navigation, or before </article> as fallback
+    marker = '<div class="post-navigation">'
+    if marker not in html:
+        marker = '<div class="post-navigation"'
+    if marker in html:
+        html = html.replace(marker, cta + '\n' + marker, 1)
+    elif '</article>' in html:
+        html = html.replace('</article>', cta + '\n</article>', 1)
+    return html
+
+
 def sanitize_old_branding(text):
     """Replace old domain references that may linger in Yoast JSON-LD schema."""
     # Domain-level references only (safe — these are always the old brand)
@@ -628,7 +700,12 @@ def process_file(src_path, dst_path):
     # Get the <main> block (contains all page-specific content + inline CSS)
     main_html = extract(r'(<main[^>]*>.*?</main>)', body_html)
     if not main_html:
-        main_html = '<main id="main-content"><p>Content unavailable.</p></main>'
+        # Some WP exports omit </main>; grab from <main> to end of body
+        main_html = extract(r'(<main[^>]*>.*)', body_html)
+        if main_html:
+            main_html += '</main>'
+        else:
+            main_html = '<main id="main-content"><p>Content unavailable.</p></main>'
 
     # ── Apply transformations ─────────────────────────────────────────────────
     main_html  = apply_colors(main_html)
@@ -636,6 +713,15 @@ def process_file(src_path, dst_path):
     main_html  = fix_logo_urls(main_html)
     main_html  = sanitize_old_branding(main_html)
     main_html  = strip_sponsor_sections(main_html)
+
+    # Inject sponsor backlinks for pages with matching WMP products
+    slug = src_path.parent.name
+    product_url = SPONSOR_LINKS.get(slug)
+    if product_url:
+        peptide_name = derive_peptide_name(slug)
+        main_html = inject_inline_sponsor_link(main_html, product_url, peptide_name)
+        main_html = inject_sponsor_cta(main_html, product_url, peptide_name)
+
     main_html  = add_lazy_loading(main_html)
     custom_css = apply_colors(custom_css)
 

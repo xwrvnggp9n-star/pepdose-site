@@ -1303,3 +1303,100 @@ ul.filebird-block-filebird-gallery li figure{height:100%;margin:0;padding:0;posi
     font-size: 1rem;
   }
 }
+
+
+/* ============================================================
+ *  SPONSOR CTA BLOCK
+ * ============================================================ */
+.sponsor-cta {
+  margin: 40px 0;
+  background: linear-gradient(135deg, #faf7f2 0%, #fff 100%);
+  border: 1px solid var(--post-border, #e0d8ca);
+  border-left: 4px solid var(--post-accent, #c85a30);
+  border-radius: 10px;
+  padding: 24px 28px;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(43, 35, 24, 0.06);
+}
+
+.sponsor-cta-badge {
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  background: var(--post-accent, #c85a30);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.sponsor-cta-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.sponsor-cta-text {
+  flex: 1;
+  min-width: 200px;
+}
+
+.sponsor-cta-text strong {
+  display: block;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 1.05rem;
+  color: var(--post-secondary, #2e2a22);
+  margin-bottom: 4px;
+}
+
+.sponsor-cta-text span {
+  font-size: 0.88rem;
+  color: var(--post-text, #6b5d4f);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.sponsor-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--post-accent, #c85a30);
+  color: #fff !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: 6px;
+  text-decoration: none !important;
+  border: none !important;
+  transition: background 0.2s, transform 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.sponsor-cta-btn:hover {
+  background: #b44e28;
+  transform: translateY(-1px);
+  color: #fff !important;
+}
+
+@media (max-width: 600px) {
+  .sponsor-cta {
+    padding: 20px 18px;
+  }
+
+  .sponsor-cta-body {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sponsor-cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

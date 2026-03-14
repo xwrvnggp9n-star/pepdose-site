@@ -118,5 +118,23 @@
       { "title": "Terms & Conditions", "url": "/terms-conditions" },
       { "title": "Contact",            "url": "/contact-us" }
     ]
+  },
+
+  "_sponsor_comment": "Maps page directory slugs to White Market Peptides product URLs for backlink injection.",
+  "sponsor": {
+    "name": "White Market Peptides",
+    "url": "https://whitemarketpeptides.com",
+    "discount_code": "PEPDOSE",
+    "discount_text": "10% off + free 2-day shipping over $200"
+  },
+  "sponsor_links": {
+    "what-is-bpc-157":             "https://whitemarketpeptides.com/product/bpc-157-10-mg/",
+    "what-is-ghk-cu-2":           "https://whitemarketpeptides.com/product/ghk-cu-100-mg/",
+    "what-is-tb-500":             "https://whitemarketpeptides.com/product/tb-500-10-mg/",
+    "what-is-tesamorelin":        "https://whitemarketpeptides.com/product/tesamorelin-10-mg/",
+    "what-is-mots-c":            "https://whitemarketpeptides.com/product/mots-c-10-mg/",
+    "what-is-glow-peptide-blend": "https://whitemarketpeptides.com/product/glow-70-mg/",
+    "what-is-klow-peptide-blend": "https://whitemarketpeptides.com/product/klow-80-mg/",
+    "what-is-the-wolverine-stack":"https://whitemarketpeptides.com/product/wolverine-stack-20-mg/"
   }
 }
