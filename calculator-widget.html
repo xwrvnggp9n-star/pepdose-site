@@ -356,8 +356,8 @@
       <p class="pdc-hint">Select a peptide to auto-fill vial size and water volume, or choose "Other" to enter manually.</p>
       <select id="pdc-name-select" onchange="pdcSelectPeptide()">
         <option value="">— Select a peptide —</option>
+        <optgroup label="Blends &amp; Stacks"></optgroup>
         <optgroup label="Single Peptides"></optgroup>
-        <optgroup label="Blends"></optgroup>
         <option value="other">Other (enter manually)</option>
       </select>
       <input type="text" id="pdc-name-custom" placeholder="e.g. Ipamorelin" autocomplete="off" oninput="pdcCalc()" style="display:none; margin-top:8px;">
@@ -484,7 +484,7 @@
     var sel = document.getElementById('pdc-name-select');
     if (!sel) return;
     var singleGroup = sel.querySelector('optgroup[label="Single Peptides"]');
-    var blendGroup  = sel.querySelector('optgroup[label="Blends"]');
+    var blendGroup  = sel.querySelector('optgroup[label="Blends & Stacks"]');
     PDC_PROTOCOLS.forEach(function(p, idx) {
       var opt = document.createElement('option');
       opt.value = idx;
