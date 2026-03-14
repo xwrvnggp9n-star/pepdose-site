@@ -137,6 +137,20 @@ h1, h2, h3, h4, h5, h6,
   .contact-form-card { padding: 40px 38px; }
 }
 
+/* ── Sponsor CTA Block ── */
+.sponsor-cta { max-width: 750px; margin: 2rem auto; background: linear-gradient(135deg, #faf5ec 0%, #fff 100%); border: 2px solid #c85a30; border-radius: 12px; padding: 24px; position: relative; overflow: hidden; }
+.sponsor-cta-badge { position: absolute; top: 0; right: 0; background: #c85a30; color: #fff; font-size: .7rem; font-weight: 600; padding: 4px 12px; border-radius: 0 0 0 8px; text-transform: uppercase; letter-spacing: .05em; }
+.sponsor-cta-body { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.sponsor-cta-text { flex: 1; min-width: 200px; }
+.sponsor-cta-text strong { display: block; font-size: 1.05rem; color: #2e2a22; margin-bottom: 4px; }
+.sponsor-cta-text span { font-size: .9rem; color: #6b7280; }
+.sponsor-cta-btn { display: inline-block; padding: 12px 28px; background: #c85a30; color: #fff !important; text-decoration: none !important; border-radius: 8px; font-weight: 600; font-size: .95rem; white-space: nowrap; transition: background .2s, transform .2s; }
+.sponsor-cta-btn:hover { background: #a84520; transform: translateY(-1px); }
+@media (max-width: 600px) {
+  .sponsor-cta-body { flex-direction: column; text-align: center; }
+  .sponsor-cta-btn { width: 100%; text-align: center; }
+}
+
 /* Responsive footer */
 @media (max-width: 600px) {
   .pd-footer-inner { grid-template-columns: 1fr; }

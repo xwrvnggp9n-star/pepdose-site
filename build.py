@@ -174,7 +174,7 @@ def rewrite_existing_sponsor_links(html, sponsor_url):
 
 
 def inject_inline_sponsor_link(html, product_url, peptide_name):
-    """Insert a contextual sponsor paragraph before the references section."""
+    """Insert a contextual sponsor paragraph before references or post-nav."""
     link = (
         f'<a href="{product_url}" rel="sponsored nofollow noopener" '
         f'target="_blank">{SPONSOR_NAME}</a>'
@@ -184,16 +184,18 @@ def inject_inline_sponsor_link(html, product_url, peptide_name):
         f'Our sponsor {link} carries {peptide_name} with third-party purity testing. '
         f'Use code <strong>{SPONSOR_CODE}</strong> for {SPONSOR_DEAL}.</p>'
     )
-    marker = '<section class="auto-references-section"'
-    if marker in html:
-        html = html.replace(marker, paragraph + '\n' + marker, 1)
-    elif '</article>' in html:
-        html = html.replace('</article>', paragraph + '\n</article>', 1)
-    return html
+    # Try to insert before references, then post-nav, then append to end
+    for marker in ['<section class="auto-references-section"',
+                   '<div class="post-navigation"',
+                   '<div class="post-navigation">']:
+        if marker in html:
+            return html.replace(marker, paragraph + '\n' + marker, 1)
+    # Append to end of content
+    return html + '\n' + paragraph
 
 
 def inject_sponsor_cta(html, product_url, peptide_name):
-    """Insert a styled CTA block between references and post navigation."""
+    """Insert a styled CTA block before post navigation or at end of content."""
     cta = f'''<div class="sponsor-cta">
   <div class="sponsor-cta-badge">Sponsored</div>
   <div class="sponsor-cta-body">
@@ -206,14 +208,13 @@ def inject_sponsor_cta(html, product_url, peptide_name):
     </a>
   </div>
 </div>'''
-    marker = '<div class="post-navigation">'
-    if marker not in html:
-        marker = '<div class="post-navigation"'
-    if marker in html:
-        html = html.replace(marker, cta + '\n' + marker, 1)
-    elif '</article>' in html:
-        html = html.replace('</article>', cta + '\n</article>', 1)
-    return html
+    # Try to insert before post-nav, then append to end
+    for marker in ['<div class="post-navigation">',
+                   '<div class="post-navigation"']:
+        if marker in html:
+            return html.replace(marker, cta + '\n' + marker, 1)
+    # Append to end of content
+    return html + '\n' + cta
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Branding / author cleanup
@@ -356,12 +357,16 @@ def process_file(src_path, dst_path):
             '<strong>Last updated:</strong> February 20, 2026',
             content)
 
-    # Inject/rewrite sponsor backlinks for pages with matching WMP products
+    # Inject/rewrite sponsor backlinks
     sponsor_url = sponsor_url_for_slug(slug)
     content = rewrite_existing_sponsor_links(content, sponsor_url)
 
-    product_path = SPONSOR_LINKS.get(slug)
-    if product_path and slug.startswith('what-is'):
+    # Inject sponsor CTA + inline link for article and dosage protocol pages
+    is_article = slug.startswith('what-is') or slug.startswith('what-are')
+    is_dosage = 'dosage-protocol' in slug or 'vial-dosage' in slug
+    is_educational = slug in ('combine-peptides-same-syringe', 'retatrutide-vs-tirzepatide',
+                              'tesamorelin-reconstitution-storage')
+    if is_article or is_dosage or is_educational:
         peptide_name = derive_peptide_name(slug)
         content = inject_inline_sponsor_link(content, sponsor_url, peptide_name)
         content = inject_sponsor_cta(content, sponsor_url, peptide_name)
@@ -510,6 +515,84 @@ instructions, recommended dosing schedules, and syringe measurements.
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Static blog/articles listing page
+# ─────────────────────────────────────────────────────────────────────────────
+# Slugs to exclude from the articles listing (non-article pages)
+_BLOG_EXCLUDE = {'about-us', 'contact-us', 'cookie-policy', 'disclaimer',
+                 'privacy-policy', 'terms-conditions', 'dosages', 'blog',
+                 'home', 'peptide-dosage-calculator', 'category',
+                 'peptide-stack-dosages', 'retatrutide'}
+# Parent directories for dosage protocols (listed on dosages page, not articles)
+_DOSAGE_PARENT_DIRS = {'single-peptide-dosages', 'peptide-blend-dosages',
+                       'peptide-stack-dosages'}
+
+
+def build_blog_page():
+    """Generate a static articles listing page with ALL articles."""
+    articles = []
+
+    # Scan source directories for article pages
+    for d in sorted(BASE.iterdir()):
+        if not d.is_dir():
+            continue
+        slug = d.name
+        if slug in _BLOG_EXCLUDE or slug in SKIP_DIRS:
+            continue
+        if slug in _DOSAGE_PARENT_DIRS:
+            continue
+        # Skip dosage protocol sub-pages and retatrutide dosage variants
+        if 'dosage-protocol' in slug or re.match(r'retatrutide-\d+mg$', slug):
+            continue
+        src = d / 'index.html'
+        if not src.exists():
+            continue
+        raw = src.read_text(errors='replace')
+        title = extract_title(raw) or slug.replace('-', ' ').title()
+        title = html_mod.unescape(title)
+        # Determine URL — use WP slug (strip -2 suffix for display but keep for URL)
+        url = f'/{slug}/'
+        articles.append((title, url, slug))
+
+    # Also pick up bare HTML educational articles
+    for name in ['combine-peptides-same-syringe', 'retatrutide-vs-tirzepatide',
+                 'tesamorelin-reconstitution-storage']:
+        src = BASE / name
+        if src.exists() and src.is_file():
+            raw = src.read_text(errors='replace')
+            title = extract_title(raw) or name.replace('-', ' ').title()
+            title = html_mod.unescape(title)
+            url = f'/{name}/'
+            if (title, url, name) not in articles:
+                articles.append((title, url, name))
+
+    # Sort alphabetically by title
+    articles.sort(key=lambda x: x[0].lower())
+
+    # Build card HTML
+    card_html = ''
+    for title, url, slug in articles:
+        card_html += f'''<div style="background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden;border:1px solid #e5e7eb">
+  <div style="padding:20px 24px">
+    <h3 style="margin:0 0 8px;font-size:1.05rem"><a href="{url}" style="color:#2e2a22;text-decoration:none">{html_mod.escape(title)}</a></h3>
+    <a href="{url}" style="color:#c85a30;font-size:.9rem;font-weight:600;text-decoration:none">Read Article &rarr;</a>
+  </div>
+</div>\n'''
+
+    content = f'''<h1>Education &amp; Articles</h1>
+<p style="max-width:700px;margin:0 auto 2rem;text-align:center;color:#6b7280;font-size:1.05rem">
+Explore our complete library of {len(articles)} peptide education articles. Each article provides
+evidence-based information about mechanisms, benefits, dosing, and safety.
+</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-bottom:2rem">
+{card_html}</div>'''
+
+    dst = DIST_DIR / 'blog' / 'index.html'
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    dst.write_text(content, encoding='utf-8')
+    return True
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Calculator gateway page (WP strips <script>, so link to GitHub Pages)
 # ─────────────────────────────────────────────────────────────────────────────
 CALC_URL = 'https://xwrvnggp9n-star.github.io/pepdose-site/calculator-widget.html'
@@ -571,7 +654,7 @@ def main():
     DIST_DIR.mkdir()
 
     # Pages that are generated statically (skip the source HTML extraction)
-    GENERATED_SLUGS = {'dosages', 'peptide-dosage-calculator'}
+    GENERATED_SLUGS = {'dosages', 'peptide-dosage-calculator', 'blog'}
 
     # Process HTML files
     print("Extracting and cleaning article content…")
@@ -594,6 +677,11 @@ def main():
     # Generate static dosages catalog page
     if build_dosages_page():
         print(f"  ✓  dosages/index.html (generated static catalog)")
+        ok += 1
+
+    # Generate blog/articles listing page
+    if build_blog_page():
+        print(f"  ✓  blog/index.html (generated articles listing)")
         ok += 1
 
     # Generate calculator gateway page
