@@ -419,6 +419,160 @@ def sanitize_author(text):
     return text
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Structured data (Schema.org Microdata)
+# ─────────────────────────────────────────────────────────────────────────────
+# WP.com strips <script> tags, so we use Microdata (HTML attributes) instead
+# of JSON-LD.  Google supports both formats equally.
+
+def inject_faq_schema(html):
+    """Wrap FAQ sections in FAQPage microdata for rich snippet eligibility.
+
+    Detects the pattern:  <strong>Q\d+: question?</strong><br/> answer...
+    and wraps each Q/A pair in schema.org/Question + Answer microdata.
+    """
+    # Find the FAQ heading
+    faq_match = re.search(
+        r'(<h2[^>]*>.*?FAQ.*?</h2>)',
+        html, re.IGNORECASE | re.DOTALL
+    )
+    if not faq_match:
+        return html
+
+    faq_start = faq_match.end()
+
+    # Find the end of the FAQ section (next <h2> or section-ending marker)
+    next_section = re.search(
+        r'<h2[\s>]|<section[\s>]|<div class="post-navigation|<div class="sponsor-cta',
+        html[faq_start:]
+    )
+    faq_end = faq_start + next_section.start() if next_section else len(html)
+    faq_block = html[faq_start:faq_end]
+
+    # Parse individual Q&A pairs, supporting multiple formats:
+    #   Format A: <p><strong>Q1: question?</strong><br/> answer</p>
+    #   Format B: <p><strong>1) question?</strong><br/> answer</p>
+    #   Format C: <h3>question?</h3><p>answer</p>
+    qa_pairs = []
+
+    # Try Format A/B first: numbered Q&A inside <p> tags
+    qa_pattern_ab = re.compile(
+        r'<p>\s*<strong>\s*(?:Q?\d+[:\)]\s*)(.+?)\??\s*</strong>'
+        r'\s*(?:<br\s*/?>)?\s*'
+        r'(.*?)</p>',
+        re.DOTALL
+    )
+    qa_pairs = qa_pattern_ab.findall(faq_block)
+
+    # Try Format C: <h3>question?</h3> followed by <p>answer</p>
+    if not qa_pairs:
+        qa_pattern_c = re.compile(
+            r'<h3>(.+?\??)</h3>\s*<p>(.*?)</p>',
+            re.DOTALL
+        )
+        qa_pairs = qa_pattern_c.findall(faq_block)
+
+    if not qa_pairs:
+        return html
+
+    # Build microdata-enhanced FAQ block
+    new_faq = '<div itemscope itemtype="https://schema.org/FAQPage">\n'
+    new_faq += faq_match.group(0) + '\n'  # keep the <h2>FAQ</h2> heading
+
+    for question, answer in qa_pairs:
+        # Clean up question text (strip inner HTML tags for the itemprop name)
+        q_clean = re.sub(r'<[^>]+>', '', question).strip().rstrip('?') + '?'
+        # Keep the answer HTML as-is for display, but also provide a plain-text version
+        a_text = re.sub(r'<[^>]+>', '', answer).strip()
+        new_faq += (
+            '<div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">\n'
+            f'<p><strong itemprop="name">{q_clean}</strong><br />\n'
+            f'<span itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">'
+            f'<span itemprop="text">{answer.strip()}</span></span></p>\n'
+            '</div>\n'
+        )
+
+    new_faq += '</div>'
+
+    # Replace the original FAQ heading + Q&A block with the microdata version
+    return html[:faq_match.start()] + new_faq + html[faq_end:]
+
+
+def inject_howto_schema(html, slug):
+    """Wrap dosage protocol pages in HowTo microdata for rich snippet eligibility.
+
+    Targets the reconstitution steps (<ol>) and wraps the page content with
+    schema.org/HowTo markup.
+    """
+    # Extract the page title for the HowTo name
+    title_match = re.search(r'<h1[^>]*>(.*?)</h1>', html)
+    if not title_match:
+        return html
+    title = re.sub(r'<[^>]+>', '', title_match.group(1)).strip()
+
+    # Extract the intro description (first <p> in intro-card or first <p> overall)
+    desc_match = re.search(
+        r'<div[^>]*class="intro-content"[^>]*>.*?<p>(.*?)</p>',
+        html, re.DOTALL
+    )
+    if not desc_match:
+        desc_match = re.search(r'<p>(.*?)</p>', html, re.DOTALL)
+    description = ''
+    if desc_match:
+        description = re.sub(r'<[^>]+>', '', desc_match.group(1)).strip()[:200]
+
+    # Find the reconstitution steps <ol>
+    ol_match = re.search(r'<h3>Reconstitution Steps</h3>\s*(<ol>.*?</ol>)', html, re.DOTALL)
+    if not ol_match:
+        return html
+
+    ol_html = ol_match.group(1)
+    # Parse <li> items
+    steps = re.findall(r'<li>(.*?)</li>', ol_html, re.DOTALL)
+    if not steps:
+        return html
+
+    # Build microdata-enhanced <ol>
+    new_ol = '<ol>\n'
+    for i, step_text in enumerate(steps, 1):
+        step_clean = step_text.strip()
+        new_ol += (
+            f'<li itemprop="step" itemscope itemtype="https://schema.org/HowToStep">'
+            f'<meta itemprop="position" content="{i}" />'
+            f'<span itemprop="text">{step_clean}</span>'
+            f'</li>\n'
+        )
+    new_ol += '</ol>'
+
+    # Replace original <ol> with microdata version
+    html = html.replace(ol_html, new_ol)
+
+    # Wrap the entire content in a HowTo itemscope
+    # Add the wrapper right after <h1>
+    howto_meta = (
+        f'<div itemscope itemtype="https://schema.org/HowTo">'
+        f'<meta itemprop="name" content="{html_mod.escape(title)}" />'
+        f'<meta itemprop="description" content="{html_mod.escape(description)}" />\n'
+    )
+    # Insert after <h1> tag
+    html = re.sub(
+        r'(</h1>)',
+        r'\1\n' + howto_meta,
+        html, count=1
+    )
+    # Close the div before the sponsor CTA or at the end
+    for marker in ['<section id="recommended-source"',
+                   '<div class="sponsor-cta">',
+                   '<section id="important-note"']:
+        if marker in html:
+            html = html.replace(marker, '</div>\n' + marker, 1)
+            break
+    else:
+        html += '\n</div>'
+
+    return html
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Lazy loading
 # ─────────────────────────────────────────────────────────────────────────────
 def add_lazy_loading(html):
@@ -555,6 +709,12 @@ def process_file(src_path, dst_path):
     # Inject Related Reading cross-links for dosage protocol and article pages
     if is_dosage or is_article or is_educational:
         content = inject_related_reading(content, slug, is_dosage)
+
+    # Inject structured data (Schema.org Microdata) for rich snippets
+    if is_dosage:
+        content = inject_howto_schema(content, slug)
+    elif is_article or is_educational:
+        content = inject_faq_schema(content)
 
     # Strip inline <style> from contact page (styles are in WP global CSS)
     if slug == 'contact-us':
