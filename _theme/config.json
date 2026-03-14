@@ -54,7 +54,7 @@
     "blog_id":           253153078,
     "theme":             "pub/blank-canvas-3",
     "page_on_front":     55,
-    "page_for_posts":    101,
+    "page_for_posts":    0,
     "nav_id":            5,
     "footer_template":   "pub/blank-canvas-3//footer",
     "calculator_page_id": 200

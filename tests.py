@@ -229,8 +229,8 @@ def test_build_blog_listing():
     content = read_dist('blog')
     check(content is not None, 'Blog listing page exists')
     if content:
-        # Count article cards
-        links = re.findall(r'<a href="/[^"]+/"[^>]*>Read Article', content)
+        # Count article links (list items with links to article pages)
+        links = re.findall(r'<li[^>]*><a href="/[^"]+/"', content)
         check(len(links) >= 25, f'Blog lists ≥25 articles (found {len(links)})')
         check('Education &amp; Articles' in content, 'Blog page has correct heading')
         # No pagination

@@ -195,10 +195,10 @@ def inject_inline_sponsor_link(html, product_url, peptide_name):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Related Reading cross-links (dosage pages → education articles)
+# Related Reading cross-links (dosage pages ↔ education articles)
 # ─────────────────────────────────────────────────────────────────────────────
-_RELATED_READING = {
-    # Single peptide dosages
+# Dosage protocol pages → education articles (matched by keyword in slug)
+_DOSAGE_RELATED = {
     'bpc-157':     [('/what-is-bpc-157/', 'What Is BPC-157?'),
                     ('/what-is-the-wolverine-stack/', 'What Is the Wolverine Stack?'),
                     ('/combine-peptides-same-syringe/', 'Can You Combine Peptides in the Same Syringe?')],
@@ -216,7 +216,6 @@ _RELATED_READING = {
     'tirzepatide': [('/what-is-tirzepatide-2/', 'What Is Tirzepatide?'),
                     ('/what-is-glp-1/', 'What Is GLP-1?'),
                     ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide')],
-    # Blends
     'glow':        [('/what-is-glow-peptide-blend/', 'What Is the GLOW Peptide Blend?'),
                     ('/what-is-ghk-cu-2/', 'What Is GHK-Cu?'),
                     ('/what-is-bpc-157/', 'What Is BPC-157?'),
@@ -226,28 +225,123 @@ _RELATED_READING = {
                     ('/what-is-ghk-cu-2/', 'What Is GHK-Cu?'),
                     ('/what-is-bpc-157/', 'What Is BPC-157?'),
                     ('/what-is-tb-500/', 'What Is TB-500?')],
-    # Stacks
     'wolverine':   [('/what-is-the-wolverine-stack/', 'What Is the Wolverine Stack?'),
                     ('/what-is-bpc-157/', 'What Is BPC-157?'),
                     ('/what-is-tb-500/', 'What Is TB-500?'),
                     ('/combine-peptides-same-syringe/', 'Can You Combine Peptides in the Same Syringe?')],
 }
 
+# Education article pages → related articles + dosage protocols (matched by exact slug)
+_ARTICLE_RELATED = {
+    'what-is-bpc-157':             [('/what-is-tb-500/', 'What Is TB-500?'),
+                                    ('/what-is-the-wolverine-stack/', 'What Is the Wolverine Stack?'),
+                                    ('/what-is-glow-peptide-blend/', 'What Is the GLOW Peptide Blend?'),
+                                    ('/combine-peptides-same-syringe/', 'Combining Peptides in One Syringe'),
+                                    ('/single-peptide-dosages/bpc-157-5mg-vial-dosage-protocol/', 'BPC-157 Dosage Protocol')],
+    'what-is-tb-500':              [('/what-is-bpc-157/', 'What Is BPC-157?'),
+                                    ('/what-is-the-wolverine-stack/', 'What Is the Wolverine Stack?'),
+                                    ('/what-is-glow-peptide-blend/', 'What Is the GLOW Peptide Blend?'),
+                                    ('/combine-peptides-same-syringe/', 'Combining Peptides in One Syringe'),
+                                    ('/single-peptide-dosages/tb-500-5mg-vial-dosage-protocol/', 'TB-500 Dosage Protocol')],
+    'what-is-ghk-cu-2':           [('/what-is-glow-peptide-blend/', 'What Is the GLOW Peptide Blend?'),
+                                    ('/what-is-klow-peptide-blend/', 'What Is the KLOW Peptide Blend?'),
+                                    ('/what-is-bpc-157/', 'What Is BPC-157?'),
+                                    ('/single-peptide-dosages/ghk-cu-50mg-vial-dosage-protocol/', 'GHK-Cu Dosage Protocol')],
+    'what-is-semaglutide':        [('/what-is-glp-1/', 'What Is GLP-1?'),
+                                    ('/what-is-tirzepatide-2/', 'What Is Tirzepatide?'),
+                                    ('/what-is-retatrutide-2/', 'What Is Retatrutide?'),
+                                    ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide'),
+                                    ('/single-peptide-dosages/sema-5mg-vial-dosage-protocol/', 'Semaglutide Dosage Protocol')],
+    'what-is-tirzepatide-2':      [('/what-is-semaglutide/', 'What Is Semaglutide?'),
+                                    ('/what-is-glp-1/', 'What Is GLP-1?'),
+                                    ('/what-is-retatrutide-2/', 'What Is Retatrutide?'),
+                                    ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide'),
+                                    ('/single-peptide-dosages/tirzepatide-10mg-vial-dosage-protocol/', 'Tirzepatide Dosage Protocol')],
+    'what-is-glp-1':              [('/what-is-semaglutide/', 'What Is Semaglutide?'),
+                                    ('/what-is-tirzepatide-2/', 'What Is Tirzepatide?'),
+                                    ('/what-is-retatrutide-2/', 'What Is Retatrutide?'),
+                                    ('/what-is-mazdutide/', 'What Is Mazdutide?')],
+    'what-is-retatrutide-2':      [('/what-is-semaglutide/', 'What Is Semaglutide?'),
+                                    ('/what-is-tirzepatide-2/', 'What Is Tirzepatide?'),
+                                    ('/what-is-glp-1/', 'What Is GLP-1?'),
+                                    ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide')],
+    'what-is-mazdutide':          [('/what-is-semaglutide/', 'What Is Semaglutide?'),
+                                    ('/what-is-glp-1/', 'What Is GLP-1?'),
+                                    ('/what-is-tirzepatide-2/', 'What Is Tirzepatide?')],
+    'what-is-mots-c':            [('/what-is-5-amino-1mq/', 'What Is 5-Amino-1MQ?'),
+                                    ('/single-peptide-dosages/mots-c-10mg-vial-dosage-protocol/', 'MOTS-c Dosage Protocol')],
+    'what-is-5-amino-1mq':       [('/what-is-mots-c/', 'What Is MOTS-c?'),
+                                    ('/what-is-semaglutide/', 'What Is Semaglutide?')],
+    'what-is-ipamorelin':        [('/what-is-tesamorelin/', 'What Is Tesamorelin?'),
+                                    ('/what-are-peptides/', 'What Are Peptides?')],
+    'what-is-tesamorelin':        [('/what-is-ipamorelin/', 'What Is Ipamorelin?'),
+                                    ('/tesamorelin-reconstitution-storage/', 'Tesamorelin Storage Guide'),
+                                    ('/single-peptide-dosages/tesamorelin-5mg-vial-dosage-protocol/', 'Tesamorelin Dosage Protocol')],
+    'what-is-glow-peptide-blend': [('/what-is-ghk-cu-2/', 'What Is GHK-Cu?'),
+                                    ('/what-is-bpc-157/', 'What Is BPC-157?'),
+                                    ('/what-is-tb-500/', 'What Is TB-500?'),
+                                    ('/what-is-klow-peptide-blend/', 'What Is the KLOW Blend?'),
+                                    ('/peptide-blend-dosages/glow-70-mg-vial-dosage-protocol/', 'GLOW Dosage Protocol')],
+    'what-is-klow-peptide-blend': [('/what-is-glow-peptide-blend/', 'What Is the GLOW Blend?'),
+                                    ('/what-is-kpv-peptide/', 'What Is KPV?'),
+                                    ('/what-is-ghk-cu-2/', 'What Is GHK-Cu?'),
+                                    ('/what-is-bpc-157/', 'What Is BPC-157?'),
+                                    ('/peptide-blend-dosages/klow-80mg-vial-dosage-protocol/', 'KLOW Dosage Protocol')],
+    'what-is-the-wolverine-stack':[('/what-is-bpc-157/', 'What Is BPC-157?'),
+                                    ('/what-is-tb-500/', 'What Is TB-500?'),
+                                    ('/combine-peptides-same-syringe/', 'Combining Peptides in One Syringe'),
+                                    ('/peptide-blend-dosages/wolverine-stack-20mg-vial-dosage-protocol/', 'Wolverine Stack Dosage Protocol')],
+    'what-is-kpv-peptide':        [('/what-is-klow-peptide-blend/', 'What Is the KLOW Blend?'),
+                                    ('/what-is-bpc-157/', 'What Is BPC-157?'),
+                                    ('/what-are-peptides/', 'What Are Peptides?')],
+    'what-is-mgf':               [('/what-is-bpc-157/', 'What Is BPC-157?'),
+                                    ('/what-is-tb-500/', 'What Is TB-500?'),
+                                    ('/what-are-peptides/', 'What Are Peptides?')],
+    'what-is-selank-2':          [('/what-are-peptides/', 'What Are Peptides?')],
+    'what-is-pnc-27':            [('/what-are-peptides/', 'What Are Peptides?')],
+    'what-is-livagen':            [('/what-is-ovagen/', 'What Is Ovagen?'),
+                                    ('/what-is-vesugen/', 'What Is Vesugen?'),
+                                    ('/what-is-vilon-2/', 'What Is Vilon?')],
+    'what-is-ovagen':             [('/what-is-livagen/', 'What Is Livagen?'),
+                                    ('/what-is-vesugen/', 'What Is Vesugen?'),
+                                    ('/what-is-vilon-2/', 'What Is Vilon?')],
+    'what-is-vesugen':            [('/what-is-livagen/', 'What Is Livagen?'),
+                                    ('/what-is-ovagen/', 'What Is Ovagen?'),
+                                    ('/what-is-vilon-2/', 'What Is Vilon?')],
+    'what-is-vilon-2':            [('/what-is-livagen/', 'What Is Livagen?'),
+                                    ('/what-is-ovagen/', 'What Is Ovagen?'),
+                                    ('/what-is-vesugen/', 'What Is Vesugen?')],
+    'what-is-prostamax':          [('/what-are-peptides/', 'What Are Peptides?')],
+    'what-are-peptides':          [('/what-is-bpc-157/', 'What Is BPC-157?'),
+                                    ('/what-is-semaglutide/', 'What Is Semaglutide?'),
+                                    ('/what-is-glp-1/', 'What Is GLP-1?'),
+                                    ('/what-is-ghk-cu-2/', 'What Is GHK-Cu?')],
+    'combine-peptides-same-syringe': [('/what-is-the-wolverine-stack/', 'What Is the Wolverine Stack?'),
+                                    ('/what-is-bpc-157/', 'What Is BPC-157?'),
+                                    ('/what-is-tb-500/', 'What Is TB-500?')],
+    'retatrutide-vs-tirzepatide': [('/what-is-retatrutide-2/', 'What Is Retatrutide?'),
+                                    ('/what-is-tirzepatide-2/', 'What Is Tirzepatide?'),
+                                    ('/what-is-semaglutide/', 'What Is Semaglutide?'),
+                                    ('/what-is-glp-1/', 'What Is GLP-1?')],
+    'tesamorelin-reconstitution-storage': [('/what-is-tesamorelin/', 'What Is Tesamorelin?'),
+                                    ('/single-peptide-dosages/tesamorelin-5mg-vial-dosage-protocol/', 'Tesamorelin Dosage Protocol')],
+}
 
-def _match_related_key(slug):
-    """Find the _RELATED_READING key that matches a dosage protocol slug."""
-    for key in _RELATED_READING:
-        if key in slug:
-            return key
-    return None
+
+def _get_related_links(slug, is_dosage):
+    """Return list of (url, title) related reading links for a page slug."""
+    if is_dosage:
+        for key in _DOSAGE_RELATED:
+            if key in slug:
+                return _DOSAGE_RELATED[key]
+        return []
+    else:
+        return _ARTICLE_RELATED.get(slug, [])
 
 
-def inject_related_reading(html, slug):
-    """Insert a 'Related Reading' section before the sponsor/references area."""
-    key = _match_related_key(slug)
-    if not key:
-        return html
-    links = _RELATED_READING[key]
+def inject_related_reading(html, slug, is_dosage):
+    """Insert a 'Related Reading' section with cross-links and calculator recommendation."""
+    links = _get_related_links(slug, is_dosage)
     if not links:
         return html
 
@@ -255,9 +349,13 @@ def inject_related_reading(html, slug):
         f'<li><a href="{url}" style="color:#c85a30;text-decoration:none;font-weight:600">{title}</a></li>\n'
         for url, title in links
     )
+    # Always add calculator link
+    items += '<li><a href="/peptide-dosage-calculator/" style="color:#c85a30;text-decoration:none;font-weight:600">Peptide Dosage Calculator</a></li>\n'
+
+    subtitle = 'Learn more about the peptides in this protocol:' if is_dosage else 'Continue reading about related topics:'
     section = f'''<section id="related-reading" class="section-block fade-in delay-3" style="background:#faf5ec;border:1px solid #e5e0d5;border-radius:12px;padding:1.5rem 2rem;margin:2rem 0;">
 <h2 style="margin-top:0;font-size:1.25rem;color:#2e2a22"><i class="fas fa-book-reader"></i> Related Reading</h2>
-<p style="color:#6b7280;margin-bottom:1rem">Learn more about the peptides in this protocol:</p>
+<p style="color:#6b7280;margin-bottom:1rem">{subtitle}</p>
 <ul style="list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px 24px">
 {items}</ul>
 </section>'''
@@ -454,9 +552,9 @@ def process_file(src_path, dst_path):
         content = inject_inline_sponsor_link(content, sponsor_url, peptide_name)
         content = inject_sponsor_cta(content, sponsor_url, peptide_name)
 
-    # Inject Related Reading cross-links for dosage protocol pages
-    if is_dosage:
-        content = inject_related_reading(content, slug)
+    # Inject Related Reading cross-links for dosage protocol and article pages
+    if is_dosage or is_article or is_educational:
+        content = inject_related_reading(content, slug, is_dosage)
 
     # Strip inline <style> from contact page (styles are in WP global CSS)
     if slug == 'contact-us':
@@ -590,8 +688,7 @@ def build_dosages_page():
     total = sum(len(v) for v in cards_by_cat.values())
     content = f'''<h1>Dosages &amp; Protocols</h1>
 <p style="max-width:700px;margin:0 auto 2rem;text-align:center;color:#6b7280;font-size:1.05rem">
-Browse our complete library of {total} peptide dosage protocols. Each protocol includes reconstitution
-instructions, recommended dosing schedules, and syringe measurements.
+Browse our complete library of {total} peptide dosage protocols. Each protocol includes reconstitution instructions, recommended dosing schedules, and syringe measurements.
 </p>
 {''.join(all_cards)}'''
 
@@ -602,7 +699,7 @@ instructions, recommended dosing schedules, and syringe measurements.
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Static blog/articles listing page
+# Static blog/articles listing page (categorised list format)
 # ─────────────────────────────────────────────────────────────────────────────
 # Slugs to exclude from the articles listing (non-article pages)
 _BLOG_EXCLUDE = {'about-us', 'contact-us', 'cookie-policy', 'disclaimer',
@@ -613,9 +710,48 @@ _BLOG_EXCLUDE = {'about-us', 'contact-us', 'cookie-policy', 'disclaimer',
 _DOSAGE_PARENT_DIRS = {'single-peptide-dosages', 'peptide-blend-dosages',
                        'peptide-stack-dosages'}
 
+# Article categories — slug patterns mapped to display category
+_ARTICLE_CATEGORIES = [
+    ('Tissue Repair &amp; Recovery', [
+        'what-is-bpc-157', 'what-is-tb-500', 'what-is-ghk-cu',
+        'what-is-the-wolverine-stack', 'what-is-glow-peptide-blend',
+        'what-is-klow-peptide-blend', 'what-is-mgf',
+        'combine-peptides-same-syringe',
+    ]),
+    ('Weight Loss &amp; Metabolic', [
+        'what-is-semaglutide', 'what-is-tirzepatide', 'what-is-glp-1',
+        'what-is-retatrutide', 'what-is-mazdutide', 'what-is-5-amino-1mq',
+        'what-is-mots-c', 'retatrutide-vs-tirzepatide',
+    ]),
+    ('Growth Hormone &amp; Anti-Aging', [
+        'what-is-ipamorelin', 'what-is-tesamorelin',
+        'tesamorelin-reconstitution-storage',
+    ]),
+    ('Immune &amp; Organ Health', [
+        'what-is-kpv-peptide', 'what-is-livagen', 'what-is-ovagen',
+        'what-is-vesugen', 'what-is-vilon', 'what-is-prostamax',
+        'what-is-pnc-27',
+    ]),
+    ('Cognitive &amp; Neurological', [
+        'what-is-selank',
+    ]),
+    ('Peptide Fundamentals', [
+        'what-are-peptides',
+    ]),
+]
+
+
+def _match_article_to_category(slug):
+    """Return category name for a slug, or None if uncategorised."""
+    for cat_name, slug_prefixes in _ARTICLE_CATEGORIES:
+        for prefix in slug_prefixes:
+            if slug.startswith(prefix):
+                return cat_name
+    return None
+
 
 def build_blog_page():
-    """Generate a static articles listing page with ALL articles."""
+    """Generate a static articles listing page with ALL articles, organised by category."""
     articles = []
 
     # Scan source directories for article pages
@@ -636,7 +772,6 @@ def build_blog_page():
         raw = src.read_text(errors='replace')
         title = extract_title(raw) or slug.replace('-', ' ').title()
         title = html_mod.unescape(title)
-        # Determine URL — use WP slug (strip -2 suffix for display but keep for URL)
         url = f'/{slug}/'
         articles.append((title, url, slug))
 
@@ -652,26 +787,53 @@ def build_blog_page():
             if (title, url, name) not in articles:
                 articles.append((title, url, name))
 
-    # Sort alphabetically by title
-    articles.sort(key=lambda x: x[0].lower())
-
-    # Build card HTML
-    card_html = ''
+    # Group into categories
+    categorised = {}  # cat_name → [(title, url, slug)]
+    uncategorised = []
     for title, url, slug in articles:
-        card_html += f'''<div style="background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden;border:1px solid #e5e7eb">
-  <div style="padding:20px 24px">
-    <h3 style="margin:0 0 8px;font-size:1.05rem"><a href="{url}" style="color:#2e2a22;text-decoration:none">{html_mod.escape(title)}</a></h3>
-    <a href="{url}" style="color:#c85a30;font-size:.9rem;font-weight:600;text-decoration:none">Read Article &rarr;</a>
-  </div>
+        cat = _match_article_to_category(slug)
+        if cat:
+            categorised.setdefault(cat, []).append((title, url, slug))
+        else:
+            uncategorised.append((title, url, slug))
+
+    # Sort articles within each category alphabetically
+    for cat in categorised:
+        categorised[cat].sort(key=lambda x: x[0].lower())
+    uncategorised.sort(key=lambda x: x[0].lower())
+
+    # Build HTML — organised lists by category
+    sections_html = ''
+    for cat_name, _ in _ARTICLE_CATEGORIES:
+        items = categorised.get(cat_name, [])
+        if not items:
+            continue
+        list_items = ''
+        for title, url, slug in items:
+            list_items += f'<li style="padding:8px 0;border-bottom:1px solid #eee"><a href="{url}" style="color:#2e2a22;text-decoration:none;font-size:1rem">{html_mod.escape(title)}</a></li>\n'
+        sections_html += f'''<div style="margin-bottom:2rem">
+<h2 style="font-size:1.15rem;color:#2e2a22;margin:0 0 .75rem;padding-bottom:.5rem;border-bottom:2px solid #c85a30">{cat_name} <span style="font-weight:400;color:#6b7280;font-size:.9rem">({len(items)})</span></h2>
+<ul style="list-style:none;padding:0;margin:0">
+{list_items}</ul>
 </div>\n'''
 
+    # Add uncategorised if any
+    if uncategorised:
+        list_items = ''
+        for title, url, slug in uncategorised:
+            list_items += f'<li style="padding:8px 0;border-bottom:1px solid #eee"><a href="{url}" style="color:#2e2a22;text-decoration:none;font-size:1rem">{html_mod.escape(title)}</a></li>\n'
+        sections_html += f'''<div style="margin-bottom:2rem">
+<h2 style="font-size:1.15rem;color:#2e2a22;margin:0 0 .75rem;padding-bottom:.5rem;border-bottom:2px solid #c85a30">Other Articles <span style="font-weight:400;color:#6b7280;font-size:.9rem">({len(uncategorised)})</span></h2>
+<ul style="list-style:none;padding:0;margin:0">
+{list_items}</ul>
+</div>\n'''
+
+    total = len(articles)
     content = f'''<h1>Education &amp; Articles</h1>
 <p style="max-width:700px;margin:0 auto 2rem;text-align:center;color:#6b7280;font-size:1.05rem">
-Explore our complete library of {len(articles)} peptide education articles. Each article provides
-evidence-based information about mechanisms, benefits, dosing, and safety.
+Explore our complete library of {total} peptide education articles, organised by topic. Each article provides evidence-based information about mechanisms, benefits, dosing, and safety.
 </p>
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-bottom:2rem">
-{card_html}</div>'''
+{sections_html}'''
 
     dst = DIST_DIR / 'blog' / 'index.html'
     dst.parent.mkdir(parents=True, exist_ok=True)

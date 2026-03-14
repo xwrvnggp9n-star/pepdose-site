@@ -107,9 +107,9 @@ h1, h2, h3, h4, h5, h6,
 .wp-block-buttons.is-content-justification-center { display: flex; justify-content: center; width: 100%; }
 
 /* ── Contact Page Styles (in global CSS so WP doesn't strip from content) ── */
-.contact-page { max-width: 680px; margin: 0 auto; padding: 60px 20px 80px; }
-.contact-heading { font-size: 2.2rem; color: #2e2a22; margin: 0 0 20px 0; font-weight: 700; text-align: center; }
-.contact-intro { color: #4a5568; font-size: 1.05rem; line-height: 1.7; text-align: center; margin: 0 0 40px 0; }
+.contact-page { max-width: 680px; margin: 0 auto; padding: 20px 20px 40px; }
+.contact-heading { font-size: 2.2rem; color: #2e2a22; margin: 0 0 12px 0; font-weight: 700; text-align: center; }
+.contact-intro { color: #4a5568; font-size: 1.05rem; line-height: 1.7; text-align: center; margin: 0 0 24px 0; }
 .contact-intro a { color: #c85a30; text-decoration: none; font-weight: 600; }
 .contact-intro a:hover { text-decoration: underline; }
 .contact-form-card { background: #ffffff; border-radius: 12px; padding: 35px 30px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }
@@ -132,10 +132,18 @@ h1, h2, h3, h4, h5, h6,
 .form-message.error-msg { background: #fde8e8; border: 2px solid #c85a30; color: #742a2a; }
 .form-message.show { display: block; }
 @media (min-width: 768px) {
-  .contact-page { padding: 80px 20px 100px; }
-  .contact-heading { font-size: 2.6rem; }
+  .contact-page { padding: 30px 20px 50px; }
+  .contact-heading { font-size: 2.4rem; }
   .contact-form-card { padding: 40px 38px; }
 }
+
+/* ── Search Results ── */
+.search-results-list { list-style: none; padding: 0; margin: 0; }
+.search-results-list li { padding: 12px 0; border-bottom: 1px solid #e5e0d5; }
+.search-results-list li a { color: #2e2a22; text-decoration: none; font-size: 1.05rem; font-weight: 600; }
+.search-results-list li a:hover { color: #c85a30; }
+.search-results-list li .search-excerpt { display: block; color: #6b7280; font-size: .9rem; margin-top: 4px; }
+.search-results-list li .search-date { display: block; color: #9ca3af; font-size: .8rem; margin-top: 2px; }
 
 /* ── Sponsor CTA Block ── */
 .sponsor-cta { max-width: 750px; margin: 2rem auto; background: linear-gradient(135deg, #faf5ec 0%, #fff 100%); border: 2px solid #c85a30; border-radius: 12px; padding: 24px; position: relative; overflow: hidden; }
@@ -180,3 +188,58 @@ if result:
     print('  ✓ Header updated')
 else:
     print('  ✗ Header update failed')
+
+
+# ── Search results template (list-based, no blocks/images) ─────────────────
+SEARCH_TEMPLATE = r'''<!-- wp:template-part {"slug":"header","tagName":"header","theme":"blank-canvas-3"} /-->
+
+<!-- wp:group {"tagName":"main","style":{"spacing":{"padding":{"top":"2rem","bottom":"3rem","left":"1.5rem","right":"1.5rem"}}},"layout":{"type":"constrained","contentSize":"800px"}} -->
+<main class="wp-block-group" style="padding-top:2rem;padding-right:1.5rem;padding-bottom:3rem;padding-left:1.5rem">
+
+<!-- wp:query-title {"type":"search","style":{"typography":{"fontSize":"1.8rem"},"color":{"text":"#2e2a22"}}} /-->
+
+<!-- wp:query {"query":{"perPage":50,"pages":0,"offset":0,"postType":"any","order":"desc","orderBy":"relevance","author":"","search":"","exclude":[],"sticky":"","inherit":true},"layout":{"type":"default"}} -->
+<div class="wp-block-query">
+<!-- wp:post-template {"layout":{"type":"default"}} -->
+
+<!-- wp:group {"style":{"spacing":{"padding":{"top":"12px","bottom":"12px"}},"border":{"bottom":{"color":"#e5e0d5","width":"1px"}}},"layout":{"type":"default"}} -->
+<div class="wp-block-group" style="border-bottom-color:#e5e0d5;border-bottom-width:1px;padding-top:12px;padding-bottom:12px">
+<!-- wp:post-title {"level":3,"isLink":true,"style":{"typography":{"fontSize":"1.05rem","fontWeight":"600"},"color":{"text":"#2e2a22"},"spacing":{"margin":{"top":"0","bottom":"4px"}}}} /-->
+<!-- wp:post-excerpt {"moreText":"","excerptLength":30,"style":{"typography":{"fontSize":".9rem"},"color":{"text":"#6b7280"},"spacing":{"margin":{"top":"0","bottom":"0"}}}} /-->
+</div>
+<!-- /wp:group -->
+
+<!-- /wp:post-template -->
+
+<!-- wp:query-no-results -->
+<!-- wp:paragraph {"style":{"color":{"text":"#6b7280"}}} -->
+<p class="has-text-color" style="color:#6b7280">No results found. Try a different search term, or browse our <a href="/articles/">Education &amp; Articles</a> or <a href="/dosages-and-protocols/">Dosages &amp; Protocols</a> pages.</p>
+<!-- /wp:paragraph -->
+<!-- /wp:query-no-results -->
+
+</div>
+<!-- /wp:query -->
+
+</main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","tagName":"footer","theme":"blank-canvas-3"} /-->'''
+
+print('\nCreating/updating search template...')
+# Try to update existing search template first, then create if it doesn't exist
+result = wp_request('templates/blank-canvas-3%2F%2Fsearch', method='POST',
+                    data={'content': SEARCH_TEMPLATE})
+if result:
+    print('  ✓ Search template updated')
+else:
+    print('  Trying to create search template...')
+    result = wp_request('templates', method='POST',
+                        data={'slug': 'search',
+                              'theme': 'blank-canvas-3',
+                              'content': SEARCH_TEMPLATE,
+                              'title': 'Search Results',
+                              'status': 'publish'})
+    if result:
+        print('  ✓ Search template created')
+    else:
+        print('  ✗ Search template creation failed')
