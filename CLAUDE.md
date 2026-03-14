@@ -24,7 +24,7 @@ Peptide dosage educational site deployed to WordPress.com.
 ## Build Pipeline
 - Source HTML files are full WP exports; `build.py` extracts article content from `<main>`/`<article>`
 - Many source files lack `</main>` — build.py grabs to EOF then strips embedded old footers/JS
-- Content transforms: color replacement, URL fixing, PureLab removal, sponsor injection, lazy loading
+- Content transforms: color replacement, URL fixing, PureLab removal, sponsor injection, lazy loading, structured data
 - `deploy.py` has SLUG_ALIASES for WP slugs that differ from source dir names (e.g. `-2` suffixes)
 - `calculator-widget.html` is copied directly, not processed through the pipeline
 
@@ -38,6 +38,21 @@ Peptide dosage educational site deployed to WordPress.com.
 - `PDC_PROTOCOLS` array defines peptide dropdown entries (name, vial, water, group)
 - Blends & Stacks optgroup listed FIRST in dropdown — macOS native `<select>` cuts off long lists
 - Dropdown selector: `optgroup[label="Blends & Stacks"]` and `optgroup[label="Single Peptides"]`
+
+## Structured Data (Schema.org)
+- Uses Microdata format (HTML attributes: itemscope/itemtype/itemprop) — NOT JSON-LD (WP.com strips `<script>`)
+- HowTo schema on dosage protocol pages (reconstitution steps in `<ol>`)
+- FAQPage schema on education articles (Q&A sections — supports `Q1:` and `<h3>question</h3>` formats)
+- Injected by `build.py` during content transforms (`inject_howto_schema()`, `inject_faq_schema()`)
+
+## SEO
+- Google Search Console: property verified as `sc-domain:pep-dose.com` (logged in as sandy@whitemarketpeptides.com)
+- Sitemaps auto-managed by WordPress.com (`sitemap.xml` → `sitemap-1.xml`)
+- `deploy.py` pushes SEO meta descriptions via `excerpt` + `advanced_seo_description` fields
+- Custom descriptions in `_SEO_DESCRIPTIONS` dict; fallback: auto-generated from content
+- WP.com REST API does NOT expose `permalink_structure` — cannot change via API
+- WP.com wp-admin `/options-permalink.php` returns "permission denied" — permalink changes may require WP.com support
+- Posts use date-based URLs (`/%year%/%monthnum%/%day%/%postname%/`); pages use clean slugs
 
 ## Sponsorship
 - Current sponsor: White Market Peptides (WMP) — whitemarketpeptides.com
@@ -98,6 +113,8 @@ When adding a new peptide or protocol to the site, ALL of the following must be 
 - `python3 tests.py` passes all tests
 - Every protocol page has: sponsor CTA block, Related Reading section, calculator link
 - Every article page has: sponsor CTA block, Related Reading section, calculator link
+- Dosage pages have HowTo schema (verify `itemtype="https://schema.org/HowTo"` in `_dist/` output)
+- Article pages with FAQ sections have FAQPage schema (verify `itemtype="https://schema.org/FAQPage"`)
 - Calculator dropdown includes all protocol vial sizes
 - Dosages & Protocols catalog page lists the new protocol
 - Education & Articles catalog page lists the new article in correct category
