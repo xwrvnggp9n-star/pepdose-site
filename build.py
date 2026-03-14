@@ -194,6 +194,84 @@ def inject_inline_sponsor_link(html, product_url, peptide_name):
     return html + '\n' + paragraph
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Related Reading cross-links (dosage pages → education articles)
+# ─────────────────────────────────────────────────────────────────────────────
+_RELATED_READING = {
+    # Single peptide dosages
+    'bpc-157':     [('/what-is-bpc-157/', 'What Is BPC-157?'),
+                    ('/what-is-the-wolverine-stack/', 'What Is the Wolverine Stack?'),
+                    ('/combine-peptides-same-syringe/', 'Can You Combine Peptides in the Same Syringe?')],
+    'tb-500':      [('/what-is-tb-500/', 'What Is TB-500?'),
+                    ('/what-is-the-wolverine-stack/', 'What Is the Wolverine Stack?'),
+                    ('/combine-peptides-same-syringe/', 'Can You Combine Peptides in the Same Syringe?')],
+    'ghk-cu':      [('/what-is-ghk-cu-2/', 'What Is GHK-Cu?'),
+                    ('/what-is-glow-peptide-blend/', 'What Is the GLOW Peptide Blend?')],
+    'tesamorelin': [('/what-is-tesamorelin/', 'What Is Tesamorelin?'),
+                    ('/tesamorelin-reconstitution-storage/', 'Tesamorelin Reconstitution &amp; Storage')],
+    'mots-c':      [('/what-is-mots-c/', 'What Is MOTS-c?')],
+    'sema':        [('/what-is-semaglutide/', 'What Is Semaglutide?'),
+                    ('/what-is-glp-1/', 'What Is GLP-1?'),
+                    ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide')],
+    'tirzepatide': [('/what-is-tirzepatide-2/', 'What Is Tirzepatide?'),
+                    ('/what-is-glp-1/', 'What Is GLP-1?'),
+                    ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide')],
+    # Blends
+    'glow':        [('/what-is-glow-peptide-blend/', 'What Is the GLOW Peptide Blend?'),
+                    ('/what-is-ghk-cu-2/', 'What Is GHK-Cu?'),
+                    ('/what-is-bpc-157/', 'What Is BPC-157?'),
+                    ('/what-is-tb-500/', 'What Is TB-500?')],
+    'klow':        [('/what-is-klow-peptide-blend/', 'What Is the KLOW Peptide Blend?'),
+                    ('/what-is-kpv-peptide/', 'What Is KPV?'),
+                    ('/what-is-ghk-cu-2/', 'What Is GHK-Cu?'),
+                    ('/what-is-bpc-157/', 'What Is BPC-157?'),
+                    ('/what-is-tb-500/', 'What Is TB-500?')],
+    # Stacks
+    'wolverine':   [('/what-is-the-wolverine-stack/', 'What Is the Wolverine Stack?'),
+                    ('/what-is-bpc-157/', 'What Is BPC-157?'),
+                    ('/what-is-tb-500/', 'What Is TB-500?'),
+                    ('/combine-peptides-same-syringe/', 'Can You Combine Peptides in the Same Syringe?')],
+}
+
+
+def _match_related_key(slug):
+    """Find the _RELATED_READING key that matches a dosage protocol slug."""
+    for key in _RELATED_READING:
+        if key in slug:
+            return key
+    return None
+
+
+def inject_related_reading(html, slug):
+    """Insert a 'Related Reading' section before the sponsor/references area."""
+    key = _match_related_key(slug)
+    if not key:
+        return html
+    links = _RELATED_READING[key]
+    if not links:
+        return html
+
+    items = ''.join(
+        f'<li><a href="{url}" style="color:#c85a30;text-decoration:none;font-weight:600">{title}</a></li>\n'
+        for url, title in links
+    )
+    section = f'''<section id="related-reading" class="section-block fade-in delay-3" style="background:#faf5ec;border:1px solid #e5e0d5;border-radius:12px;padding:1.5rem 2rem;margin:2rem 0;">
+<h2 style="margin-top:0;font-size:1.25rem;color:#2e2a22"><i class="fas fa-book-reader"></i> Related Reading</h2>
+<p style="color:#6b7280;margin-bottom:1rem">Learn more about the peptides in this protocol:</p>
+<ul style="list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px 24px">
+{items}</ul>
+</section>'''
+
+    # Insert before the sponsored partner section, important-note, or references
+    for marker in ['<section id="recommended-source"',
+                   '<section id="important-note"',
+                   '<div class="dosing-recon-wrapper"><div class="dr-container">\n<section class="references-section"']:
+        if marker in html:
+            return html.replace(marker, section + '\n' + marker, 1)
+    # Fallback: append before sponsor injection point
+    return html + '\n' + section
+
+
 def inject_sponsor_cta(html, product_url, peptide_name):
     """Insert a styled CTA block before post navigation or at end of content."""
     cta = f'''<div class="sponsor-cta">
@@ -315,12 +393,17 @@ def extract_article_content(raw):
         r'<script\b[^>]*>.*?</script>',
         '', main_html, flags=re.DOTALL)
 
-    # Extract just the article content (strip the <main> wrapper)
-    article = extract(r'<article[^>]*>(.*?)</article>', main_html)
-    if article:
-        return article.strip()
+    # Count <article> elements — if multiple, use full <main> content
+    # (dosage protocol pages use multiple <article> cards inside <main>)
+    article_count = len(re.findall(r'<article[\s>]', main_html))
 
-    # Fallback: content inside <main> tags
+    if article_count == 1:
+        # Single article page (e.g. what-is-* articles) — extract article content
+        article = extract(r'<article[^>]*>(.*?)</article>', main_html)
+        if article:
+            return article.strip()
+
+    # Multiple articles or no articles: use full <main> inner content
     inner = extract(r'<main[^>]*>(.*?)</main>', main_html)
     return inner.strip() if inner else main_html.strip()
 
@@ -370,6 +453,10 @@ def process_file(src_path, dst_path):
         peptide_name = derive_peptide_name(slug)
         content = inject_inline_sponsor_link(content, sponsor_url, peptide_name)
         content = inject_sponsor_cta(content, sponsor_url, peptide_name)
+
+    # Inject Related Reading cross-links for dosage protocol pages
+    if is_dosage:
+        content = inject_related_reading(content, slug)
 
     # Strip inline <style> from contact page (styles are in WP global CSS)
     if slug == 'contact-us':
