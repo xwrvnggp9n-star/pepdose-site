@@ -2,9 +2,14 @@
 
 Peptide dosage educational site. Static build deployed to WordPress.com.
 
-## Build
+## Build & Deploy
 - `python3 build.py` — rebuilds static site from templates and config
+- `python3 deploy.py` — deploys built content to WordPress.com via REST API
+- `python3 deploy.py --dry-run` — preview what would be deployed
+- `python3 deploy.py <slug>` — deploy a single page/post by slug
 - Config: `_theme/config.json` — all site settings, colors, nav, WP identifiers
+- Credentials: `.env` file (gitignored) with WP_SITE, WP_USER, WP_APP_PASSWORD
+- "Deploy to production" means: `git push` to GitHub AND `python3 deploy.py` to WordPress.com
 
 ## Architecture
 - WordPress.com (blog_id: 253153078, theme: pub/blank-canvas-3)
