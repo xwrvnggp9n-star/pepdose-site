@@ -549,14 +549,49 @@ def add_lazy_loading(html):
 
 
 def strip_sponsor_sections(text):
-    """Remove White Market Peptides sponsor ad sections and external images."""
+    """Remove old PureLab references and external images. Keep WMP sponsor sections."""
+    # Note: WMP images are kept (current sponsor). Only PureLab images are removed.
     text = re.sub(
-        r'<section\s+id="recommended-source"[^>]*>.*?</section>',
-        '', text, flags=re.DOTALL)
-    # Remove product images hosted on the old sponsor's domain
-    text = re.sub(
-        r'<img[^>]*src="https?://whitemarketpeptides\.com/[^"]*"[^>]*/?>',
+        r'<img[^>]*src="https?://purelabpeptides\.com/[^"]*"[^>]*/?>',
         '', text)
+    # Remove "Pure Lab Peptides" from image alt text, Yoast schema captions, etc.
+    text = re.sub(r'from Pure Lab Peptides[^"]*?(?=["<])', '', text)
+    text = re.sub(r'by Pure Lab Peptides', '', text)
+    text = re.sub(r'labeled[^"]*?Pure Lab Peptides', 'labeled', text)
+    # Handle captions in JSON-LD schema
+    text = re.sub(r'A labeled vial of Pure Lab Peptides ', 'A labeled vial of ', text)
+    # Remove entire <li> items that are just PureLab affiliate links
+    text = re.sub(
+        r'<li>[^<]*<strong>[^<]*</strong>[^<]*<a\s+href="https?://purelabpeptides\.com/[^"]*"[^>]*>[^<]*</a>[^<]*</li>\s*',
+        '', text)
+    # Remove product-card divs linking to purelabpeptides
+    text = re.sub(
+        r'<div class="product-card">\s*<img[^>]*src="https?://purelabpeptides\.com/[^"]*"[^>]*/?>.*?</div>',
+        '', text, flags=re.DOTALL)
+    text = re.sub(
+        r'<div class="product-card">\s*<img[^>]*>[^<]*<a\s+[^>]*href="https?://purelabpeptides\.com/[^"]*"[^>]*>[^<]*</a>\s*</div>',
+        '', text, flags=re.DOTALL)
+    # Remove ref-line entries for PureLab
+    text = re.sub(
+        r'<div class="ref-line">\s*<i[^>]*></i><br\s*/?>\s*<strong>\s*Pure Lab Peptides\s*</strong>.*?</li>',
+        '</li>', text, flags=re.DOTALL)
+    # Remove inline PureLab affiliate links (whole anchor tags)
+    text = re.sub(
+        r'<a\s+[^>]*href="https?://purelabpeptides\.com/[^"]*"[^>]*>[^<]*</a>',
+        '', text)
+    # Strip PureLab from heading links (keep heading text)
+    text = re.sub(
+        r'<a\s+href="https?://purelabpeptides\.com/[^"]*"[^>]*>([^<]*)</a>',
+        r'\1', text)
+    # Remove standalone PureLab URLs
+    text = re.sub(r'https?://purelabpeptides\.com/[^\s"\'<>]*', '', text)
+    # Remove PureLab domain mapping in JS  ("purelabpeptides.com":"Pure Lab Peptides")
+    text = re.sub(r',?"purelabpeptides\.com":"Pure Lab Peptides"', '', text)
+    # Remove text mentions of the brand name
+    text = re.sub(r'\b(?:PureLabPeptides|Pure\s*Lab\s*Peptides)\b', '', text)
+    # Clean up orphaned parenthetical references like "(e.g., )" or "(research use only)."
+    text = re.sub(r'\(e\.g\.,\s*\)', '', text)
+    text = re.sub(r'\(Available for reaseach\s*\)', '(Research compound)', text)
     return text
 
 
@@ -584,7 +619,28 @@ _SLUG_TO_NAME = {
 
 def derive_peptide_name(slug):
     """Convert a page slug like 'what-is-bpc-157' to a display name."""
-    return _SLUG_TO_NAME.get(slug, slug.replace('what-is-', '').replace('-', ' ').title())
+    return _SLUG_TO_NAME.get(slug, slug.replace('what-is-', '').replace('-vial-dosage-protocol', '').replace('-', ' ').title())
+
+
+def sponsor_url_for_slug(slug):
+    """Return the full WMP product URL with UTM tags for a given page slug."""
+    product_path = SPONSOR_LINKS.get(slug, '')
+    if product_path:
+        base = SPONSOR_URL + product_path
+    else:
+        base = SPONSOR_URL
+    utm = f'utm_source=pepdose&utm_medium=referral&utm_campaign=sponsor&utm_content={slug}'
+    sep = '&' if '?' in base else '?'
+    return base + sep + utm
+
+
+def rewrite_existing_sponsor_links(html, sponsor_url):
+    """Replace any existing WMP homepage links with the correct product URL + UTM tags."""
+    html = re.sub(
+        r'href="https?://whitemarketpeptides\.com/?(?:#[^"]*)?(?:\?[^"]*)?"',
+        f'href="{sponsor_url}"',
+        html)
+    return html
 
 
 def inject_inline_sponsor_link(html, product_url, peptide_name):
@@ -690,6 +746,10 @@ def process_file(src_path, dst_path):
     # ── Sanitize author email + old branding ──────────────────────────────────
     schema = sanitize_author(schema)
     schema = sanitize_old_branding(schema)
+    # Strip PureLab references from schema captions/alt text
+    schema = re.sub(r'(?:by |from |of )?Pure Lab Peptides[, ]*', '', schema)
+    schema = re.sub(r'PureLab Peptides', '', schema)
+    schema = re.sub(r'purelabpeptides\.com', '', schema)
 
     # ── Extract body ──────────────────────────────────────────────────────────
     body_html = extract(r'<body[^>]*>(.*?)</body>', raw)
@@ -711,13 +771,17 @@ def process_file(src_path, dst_path):
     main_html  = sanitize_old_branding(main_html)
     main_html  = strip_sponsor_sections(main_html)
 
-    # Inject sponsor backlinks for pages with matching WMP products
+    # Inject/rewrite sponsor backlinks for pages with matching WMP products
     slug = src_path.parent.name
-    product_url = SPONSOR_LINKS.get(slug)
-    if product_url:
+    sponsor_url = sponsor_url_for_slug(slug)
+    # Rewrite any existing WMP homepage links to correct product + UTM
+    main_html = rewrite_existing_sponsor_links(main_html, sponsor_url)
+    # Inject new sponsor backlinks only for article pages with product mappings
+    product_path = SPONSOR_LINKS.get(slug)
+    if product_path and slug.startswith('what-is'):
         peptide_name = derive_peptide_name(slug)
-        main_html = inject_inline_sponsor_link(main_html, product_url, peptide_name)
-        main_html = inject_sponsor_cta(main_html, product_url, peptide_name)
+        main_html = inject_inline_sponsor_link(main_html, sponsor_url, peptide_name)
+        main_html = inject_sponsor_cta(main_html, sponsor_url, peptide_name)
 
     main_html  = add_lazy_loading(main_html)
     custom_css = apply_colors(custom_css)
