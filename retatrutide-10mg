@@ -2982,9 +2982,9 @@ body {
 <h2><i class="fas fa-atom"></i> Quickstart Highlights</h2>
 <p>Retatrutide is a novel triple agonist targeting GLP-1, GIP, and glucagon receptors<sup><a href="#ref-1">[1]</a></sup>, studied for substantial weight loss and metabolic improvement in obesity and type 2 diabetes<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup>. With an extended half-life of approximately 6 days, this peptide enables convenient <strong>once-weekly subcutaneous</strong> dosing with a gradual titration protocol to optimize tolerability<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-4">[4]</a></sup>.</p>
 <ul>
-<li><strong>Reconstitute:</strong> Add <strong>2.0 mL</strong> bacteriostatic water → <strong>5.0 mg/mL</strong> concentration for convenient weekly doses.</li>
-<li><strong>Typical weekly range:</strong> <strong>2–12 mg</strong> once weekly (gradual escalation over 12+ weeks).</li>
-<li><strong>Easy measuring:</strong> At 5.0 mg/mL, <strong>1 unit = 0.01 mL ≈ 50 mcg</strong> on a U-100 insulin syringe.</li>
+<li><strong>Reconstitute:</strong> Add <strong>1.0 mL</strong> bacteriostatic water → <strong>10.0 mg/mL</strong> concentration for convenient weekly doses.</li>
+<li><strong>Typical weekly range:</strong> <strong>2–8 mg</strong> once weekly (gradual escalation over 13+ weeks).</li>
+<li><strong>Easy measuring:</strong> At 10.0 mg/mL, <strong>1 unit = 0.01 mL ≈ 100 mcg</strong> on a U-100 insulin syringe.</li>
 <li><strong>Storage:</strong> Lyophilized: freeze at <strong>−20 °C (−4 °F)</strong>; after reconstitution, refrigerate at <strong>2–8 °C (35.6–46.4 °F)</strong> and use within 2–4 weeks.</li>
 </ul></div>
 <div class="intro-image">
@@ -3002,7 +3002,7 @@ body {
 </header>
 <p>    <!-- Standard / Gradual Approach --></p>
 <section style="margin-top:0;">
-<h2>Standard / Gradual Titration Approach (2 mL = 5.0 mg/mL)</h2>
+<h2>Standard / Gradual Titration Approach (1 mL = 10.0 mg/mL)</h2>
 <div class="table-responsive">
 <table>
 <thead>
@@ -3016,34 +3016,29 @@ body {
 <tr>
 <td>Weeks 1–4</td>
 <td>2,000 mcg (2 mg)</td>
-<td>40 units (0.40 mL)</td>
+<td>20 units (0.20 mL)</td>
 </tr>
 <tr>
 <td>Weeks 5–8</td>
 <td>4,000 mcg (4 mg)</td>
-<td>80 units (0.80 mL)</td>
+<td>40 units (0.40 mL)</td>
 </tr>
 <tr>
 <td>Weeks 9–12</td>
 <td>8,000 mcg (8 mg)</td>
-<td>160 units (1.60 mL) — <em>use 2 vials or split injection</em></td>
-</tr>
-<tr>
-<td>Weeks 13+</td>
-<td>12,000 mcg (12 mg)</td>
-<td>240 units (2.40 mL) — <em>use 2 vials or split injection</em></td>
+<td>80 units (0.80 mL)</td>
 </tr>
 </tbody>
 </table></div>
-<p><strong>Frequency:</strong> Inject <strong>once weekly</strong> subcutaneously. This schedule follows clinical trial protocols that demonstrated significant weight loss (up to 24% at 48 weeks with 12 mg weekly)<sup><a href="#ref-2">[2]</a></sup> while minimizing gastrointestinal adverse events through gradual escalation<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-4">[4]</a></sup>. Starting at 2 mg weekly (versus 4 mg) significantly reduces initial GI side effects. For doses exceeding 1.0 mL, either reconstitute a second vial or split the dose into multiple injection sites.</p>
+<p><strong>Frequency:</strong> Inject <strong>once weekly</strong> subcutaneously. This schedule follows clinical trial protocols that demonstrated significant weight loss<sup><a href="#ref-2">[2]</a></sup> while minimizing gastrointestinal adverse events through gradual escalation<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-4">[4]</a></sup>. Starting at 2 mg weekly significantly reduces initial GI side effects. At 10.0 mg/mL, all doses from 2&ndash;8 mg fit comfortably within a single 1 mL syringe.</p>
 <h3>Reconstitution Steps</h3>
 <ol>
-<li>Draw <strong>2.0 mL</strong> bacteriostatic water with a sterile syringe.</li>
+<li>Draw <strong>1.0 mL</strong> bacteriostatic water with a sterile syringe.</li>
 <li>Inject slowly down the vial wall; avoid foaming.</li>
 <li>Gently swirl/roll until dissolved (do not shake vigorously).</li>
 <li>Label with reconstitution date and refrigerate at <strong>2–8 °C (35.6–46.4 °F)</strong>, protected from light.</li>
 </ol>
-<p><em><strong>Note:</strong> The 10 mg vial size with 2.0 mL reconstitution provides excellent concentration (5.0 mg/mL) for convenient dosing. Lower weekly doses (2–4 mg) fit comfortably in a single syringe, while higher maintenance doses (8–12 mg) require multiple vials or split injections across different sites.</em></p>
+<p><em><strong>Note:</strong> The 10 mg vial size with 1.0 mL reconstitution provides a high concentration (10.0 mg/mL), keeping all doses from 2&ndash;8 mg within a single syringe. One vial lasts approximately 1&ndash;5 weeks depending on dose.</em></p>
 </section>
 <footer>
 <p><em>Important: This guide is for <strong>educational purposes only</strong> and is not medical advice. For research use only. Not for human consumption.</em></p>
@@ -3058,8 +3053,8 @@ body {
       <strong>Peptide Vials (Retatrutide, 10 mg each):</strong> <em>Requirements increase with dose escalation</em></p>
 <ul>
 <li>12 weeks (2→4→8 mg titration): <strong>~6 vials</strong></li>
-<li>24 weeks (up to 12 mg): <strong>~20 vials</strong></li>
-<li>48 weeks (maintenance at 12 mg): <strong>~49 vials</strong></li>
+<li>24 weeks (up to 8 mg): <strong>~13 vials</strong></li>
+<li>48 weeks (maintenance at 8 mg): <strong>~36 vials</strong></li>
 </ul>
 </li>
 <li>
@@ -3072,11 +3067,11 @@ body {
 </ul>
 </li>
 <li>
-      <strong>Bacteriostatic Water (10 mL bottles):</strong> <em>Use 2.0 mL per vial for reconstitution.</em></p>
+      <strong>Bacteriostatic Water (10 mL bottles):</strong> <em>Use 1.0 mL per vial for reconstitution.</em></p>
 <ul>
-<li>12 weeks (6 vials): <strong>12 mL</strong> → <strong>2 × 10 mL</strong> bottles</li>
-<li>24 weeks (20 vials): <strong>40 mL</strong> → <strong>4 × 10 mL</strong> bottles</li>
-<li>48 weeks (49 vials): <strong>98 mL</strong> → <strong>10 × 10 mL</strong> bottles</li>
+<li>13 weeks (6 vials): <strong>6 mL</strong> → <strong>1 × 10 mL</strong> bottle</li>
+<li>24 weeks (13 vials): <strong>13 mL</strong> → <strong>2 × 10 mL</strong> bottles</li>
+<li>48 weeks (36 vials): <strong>36 mL</strong> → <strong>4 × 10 mL</strong> bottles</li>
 </ul>
 </li>
 <li>
@@ -3116,8 +3111,8 @@ body {
 <ul>
 <li><strong>Goal:</strong> Achieve substantial weight loss (up to 24% of body weight) and improved metabolic parameters through triple receptor agonism<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-5">[5]</a></sup>.</li>
 <li><strong>Schedule:</strong> Weekly subcutaneous injections for 12+ weeks with gradual dose escalation.</li>
-<li><strong>Dose Range:</strong> 2–12 mg once weekly; clinical trials tested up to 12 mg as the maximum maintenance dose<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-3">[3]</a></sup>.</li>
-<li><strong>Reconstitution:</strong> 2.0 mL per 10 mg vial (5.0 mg/mL) provides excellent concentration for convenient weekly dosing.</li>
+<li><strong>Dose Range:</strong> 2–8 mg once weekly; escalating gradually over 13+ weeks<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-3">[3]</a></sup>.</li>
+<li><strong>Reconstitution:</strong> 1.0 mL per 10 mg vial (10.0 mg/mL) provides high concentration for convenient weekly dosing.</li>
 <li><strong>Storage:</strong> Lyophilized frozen at −20 °C (−4 °F); reconstituted solution refrigerated at 2–8 °C (35.6–46.4 °F); use within 2–4 weeks.</li>
 </ul>
 </article>
@@ -3127,7 +3122,7 @@ body {
 <ul>
 <li><strong>Start:</strong> 2 mg once weekly for first 4 weeks to establish tolerability<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-4">[4]</a></sup>.</li>
 <li><strong>Escalation:</strong> Increase to 4 mg weekly (Weeks 5–8), then 8 mg weekly (Weeks 9–12)<sup><a href="#ref-1">[1]</a></sup>.</li>
-<li><strong>Maintenance:</strong> 12 mg weekly (Week 13 onward) for maximum efficacy; 8 mg weekly is an alternative maintenance dose<sup><a href="#ref-2">[2]</a></sup>.</li>
+<li><strong>Maintenance:</strong> 8 mg weekly (Week 13 onward) as the target maintenance dose<sup><a href="#ref-2">[2]</a></sup>.</li>
 <li><strong>Frequency:</strong> Once per week (subcutaneous); consistent day/time recommended.</li>
 <li><strong>Cycle Length:</strong> Minimum 12 weeks for titration; clinical trials extended to 48 weeks showing sustained weight loss<sup><a href="#ref-2">[2]</a></sup>.</li>
 <li><strong>Timing:</strong> Any consistent weekly schedule; rotate injection sites each week.</li>
@@ -3225,7 +3220,7 @@ body {
 <p><!-- Recommended Source --></p>
 <section id="recommended-source" style="background:#f0f4f8;border:1px solid #d1d9e0;border-left:4px solid #1400CC;border-radius:8px;padding:1.5rem;margin:2rem 0;">
 <p style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#718096;margin:0 0 .75rem;">Sponsored Partner</p>
-<img src="https://xwrvnggp9n-star.github.io/pepdose-site/wmp-logo.svg" alt="White Market Peptides" style="height:60px;display:block;margin-bottom:1rem;" />
+<img src="https://whitemarketpeptides.com/wp-content/uploads/2026/02/wmp_logo.png" alt="White Market Peptides" style="height:60px;display:block;margin-bottom:1rem;" />
 <p>We source our protocol recommendations from <strong>White Market Peptides</strong> &mdash; batch-tested peptides with COA verification, lyophilised powder, and &ge;99% purity.</p>
 <div style="background:#fff;border:1px dashed #1400CC;border-radius:6px;padding:.85rem 1rem;margin:.75rem 0;font-size:.9rem;">
 <strong>Exclusive offer for pep-dose.com readers:</strong><br>
