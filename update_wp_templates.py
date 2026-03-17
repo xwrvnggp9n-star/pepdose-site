@@ -160,12 +160,13 @@ h1, h2, h3, h4, h5, h6,
   padding: 1.5rem;
   margin-bottom: 1.5rem;
   box-shadow: 0 2px 8px rgba(0,0,0,.06);
-  display: flex;
-  gap: 1.5rem;
-  align-items: flex-start;
+  overflow: hidden;
 }
-.intro-content { flex: 1; }
-.intro-image { flex-shrink: 0; }
+.intro-content { }
+.intro-card .intro-image {
+  float: right;
+  margin: 0 0 .75rem 1.25rem;
+}
 .intro-image img { width: 160px; height: auto; border-radius: 8px; }
 
 /* Dosing & reconstitution wrapper */
@@ -239,10 +240,9 @@ h1, h2, h3, h4, h5, h6,
 /* Important note — amber accent */
 .important-note { border-left-color: #e2b93b; }
 
-/* Responsive: intro card stacks on mobile */
+/* Responsive: intro image shrinks on mobile */
 @media (max-width: 600px) {
-  .intro-card { flex-direction: column; }
-  .intro-image { order: -1; text-align: center; width: 100%; }
+  .intro-card .intro-image { float: none; text-align: center; margin: 0 0 .75rem 0; width: 100%; }
   .intro-image img { width: 120px; }
 }
 
