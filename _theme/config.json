@@ -149,6 +149,11 @@
     "mots-c-10mg-vial-dosage-protocol":  "/product/mots-c-10-mg/",
     "glow-70-mg-vial-dosage-protocol":   "/product/glow-70-mg/",
     "klow-80mg-vial-dosage-protocol":    "/product/klow-80-mg/",
-    "wolverine-stack-20mg-vial-dosage-protocol": "/product/wolverine-stack-20-mg/"
+    "wolverine-stack-20mg-vial-dosage-protocol": "/product/wolverine-stack-20-mg/",
+    "sema-5mg-vial-dosage-protocol":   "/product/sema-10-mg/",
+    "sema-10mg-vial-dosage-protocol":  "/product/sema-10-mg/",
+    "tirzepatide-10mg-vial-dosage-protocol": "/product/tirz-10-mg/",
+    "what-is-semaglutide":            "/product/sema-10-mg/",
+    "what-is-tirzepatide-2":          "/product/tirz-10-mg/"
   }
 }
