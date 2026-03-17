@@ -793,19 +793,21 @@ DOSAGE_CATEGORIES = {
 def _protocol_display_name(dirname):
     """Convert a protocol directory name to a display-friendly title."""
     name = dirname.replace('-vial-dosage-protocol', '').replace('-dosage-protocol', '')
-    # Handle known patterns: "bpc-157-5mg" → "BPC-157 — 5mg Vial"
-    m = re.match(r'^(.+?)-(\d+(?:\.\d+)?m?g)$', name)
+    # Handle known patterns: "bpc-157-5mg" → "BPC-157 — 5 mg Vial"
+    # Match dose with optional hyphen before mg: "70-mg" or "5mg" or "100mg"
+    m = re.match(r'^(.+?)-(\d+(?:\.\d+)?)-?(m?g)$', name)
     if m:
         peptide = m.group(1).replace('-', ' ').title()
-        dose = m.group(2)
+        dose = m.group(2) + ' ' + m.group(3)
         # Fix common peptide names
-        peptide = re.sub(r'\bBpc\b', 'BPC', peptide)
+        peptide = re.sub(r'\bBpc 157\b', 'BPC-157', peptide)
         peptide = re.sub(r'\bGhk Cu\b', 'GHK-Cu', peptide)
         peptide = re.sub(r'\bTb 500\b', 'TB-500', peptide)
         peptide = re.sub(r'\bMots C\b', 'MOTS-c', peptide)
         peptide = re.sub(r'\bSema\b', 'Semaglutide', peptide)
         peptide = re.sub(r'\bGlow\b', 'GLOW', peptide)
         peptide = re.sub(r'\bKlow\b', 'KLOW', peptide)
+        peptide = re.sub(r'\bWolverine Stack\b', 'Wolverine Stack', peptide)
         return f'{peptide} — {dose} Vial'
     # Fallback
     return name.replace('-', ' ').title()
