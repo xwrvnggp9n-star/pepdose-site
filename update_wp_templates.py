@@ -106,9 +106,10 @@ h1, h2, h3, h4, h5, h6,
 /* WP block buttons centered */
 .wp-block-buttons.is-content-justification-center { display: flex; justify-content: center; width: 100%; }
 
-/* ── Protocol Page Cards & Bullet Boxes ── */
+/* ── Protocol Page: Consistent Card Styling ── */
 .protocol-card,
-.section-block {
+.section-block,
+.important-note {
   background: #fff;
   border: 1px solid #e5e0d5;
   border-left: 3px solid #3aaa8c;
@@ -117,20 +118,29 @@ h1, h2, h3, h4, h5, h6,
   margin-bottom: 1.25rem;
   box-shadow: 0 2px 8px rgba(0,0,0,.06);
 }
-.protocol-card ul,
-.protocol-card ol,
-.section-block ul,
-.section-block ol {
+.protocol-card ul, .protocol-card ol,
+.section-block ul, .section-block ol,
+.important-note ul, .important-note ol,
+.intro-card ul, .intro-card ol,
+.dr-container ul, .dr-container ol,
+.references-section ul {
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: .93rem;
   line-height: 1.7;
   padding-left: 1.25rem;
   margin: .5rem 0;
 }
-.protocol-card li,
-.section-block li {
+.protocol-card li, .section-block li,
+.important-note li, .intro-card li,
+.dr-container li {
   margin-bottom: .4rem;
   color: #2b2318;
+}
+.protocol-card p, .section-block p,
+.important-note p, .dr-container p {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: .93rem;
+  line-height: 1.7;
 }
 .protocol-summary {
   display: grid;
@@ -138,10 +148,102 @@ h1, h2, h3, h4, h5, h6,
   gap: 0;
 }
 @media (min-width: 768px) {
-  .protocol-summary {
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
+  .protocol-summary { grid-template-columns: 1fr 1fr; gap: 1rem; }
+}
+
+/* Intro card (At a Glance) */
+.intro-card {
+  background: #fff;
+  border: 1px solid #e5e0d5;
+  border-left: 3px solid #3aaa8c;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+.intro-content { flex: 1; }
+.intro-image { flex-shrink: 0; }
+.intro-image img { width: 160px; height: auto; border-radius: 8px; }
+
+/* Dosing & reconstitution wrapper */
+.dosing-recon-wrapper {
+  background: #fff;
+  border: 1px solid #e5e0d5;
+  border-left: 3px solid #c85a30;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.dr-container { padding: 0; }
+
+/* Dosing table */
+.table-responsive { overflow-x: auto; }
+.dosing-recon-wrapper table, .dr-container table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: .88rem;
+  margin: .75rem 0;
+}
+.dosing-recon-wrapper th, .dr-container th {
+  background: #2e2a22;
+  color: #fdf8f0;
+  padding: .6rem .75rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: .82rem;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+.dosing-recon-wrapper td, .dr-container td {
+  padding: .55rem .75rem;
+  border-bottom: 1px solid #e5e0d5;
+  color: #2b2318;
+}
+.dosing-recon-wrapper tr:nth-child(even) td, .dr-container tr:nth-child(even) td {
+  background: #faf5ec;
+}
+
+/* References section */
+.references-section {
+  background: #fff;
+  border: 1px solid #e5e0d5;
+  border-left: 3px solid #3aaa8c;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.reference-list { list-style: none !important; padding-left: 0 !important; }
+.reference-list li { padding: .6rem 0; border-bottom: 1px solid #eee; font-size: .85rem; }
+.reference-list li:last-child { border-bottom: none; }
+.ref-line { margin-bottom: .35rem; }
+.ref-line strong { color: #2e2a22; }
+.ref-line span { color: #6b7280; }
+.ref-button-line { margin-top: .25rem; }
+.view-source {
+  display: inline-block;
+  font-family: 'Poppins', sans-serif;
+  font-size: .78rem; font-weight: 600;
+  color: #c85a30; text-decoration: none;
+  padding: .2rem .6rem;
+  border: 1px solid #c85a30; border-radius: 4px;
+  transition: background .2s, color .2s;
+}
+.view-source:hover { background: #c85a30; color: #fff; }
+
+/* Important note — amber accent */
+.important-note { border-left-color: #e2b93b; }
+
+/* Responsive: intro card stacks on mobile */
+@media (max-width: 600px) {
+  .intro-card { flex-direction: column; }
+  .intro-image { order: -1; text-align: center; width: 100%; }
+  .intro-image img { width: 120px; }
 }
 
 /* ── Contact Page Styles (in global CSS so WP doesn't strip from content) ── */

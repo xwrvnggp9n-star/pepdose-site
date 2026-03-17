@@ -361,9 +361,8 @@ def inject_related_reading(html, slug, is_dosage):
 </section>'''
 
     # Insert before the sponsored partner section, important-note, or references
-    for marker in ['<section id="recommended-source"',
-                   '<section id="important-note"',
-                   '<div class="dosing-recon-wrapper"><div class="dr-container">\n<section class="references-section"']:
+    for marker in ['<section id="important-note"',
+                   '<section class="references-section"']:
         if marker in html:
             return html.replace(marker, section + '\n' + marker, 1)
     # Fallback: append before sponsor injection point
@@ -560,9 +559,9 @@ def inject_howto_schema(html, slug):
         html, count=1
     )
     # Close the div before the sponsor CTA or at the end
-    for marker in ['<section id="recommended-source"',
-                   '<div class="sponsor-cta">',
-                   '<section id="important-note"']:
+    for marker in ['<div class="sponsor-cta">',
+                   '<section id="important-note"',
+                   '<section class="references-section"']:
         if marker in html:
             html = html.replace(marker, '</div>\n' + marker, 1)
             break
