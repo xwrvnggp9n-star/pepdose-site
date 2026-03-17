@@ -324,10 +324,11 @@ def test_build_content_quality():
             idx = d / 'index.html'
             if idx.exists():
                 content = idx.read_text(encoding='utf-8', errors='replace')
-                if 'Protocol Overview' not in content and 'Dosing Protocol' not in content:
+                if ('Protocol Overview' not in content and 'Dosing Protocol' not in content
+                        and 'Overview' not in content and 'Dosing Details' not in content):
                     protocol_missing.append(f'{parent}/{d.name}')
     check(len(protocol_missing) == 0,
-          'All dosage protocols have real content (Protocol Overview or Dosing Protocol)',
+          'All dosage protocols have real content (Overview or Dosing Details)',
           f'Missing: {", ".join(protocol_missing)}' if protocol_missing else '')
 
     # Check no stale pagination pages in _dist
@@ -558,6 +559,7 @@ def test_live_all_dosage_protocols():
             check('Content unavailable' not in body,
                   f'{slug} has real content (not placeholder)')
             check('Protocol Overview' in body or 'Dosing Protocol' in body
+                  or 'Overview' in body or 'Dosing Details' in body
                   or 'protocol' in body.lower(),
                   f'{slug} has protocol information')
 

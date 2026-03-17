@@ -2979,7 +2979,7 @@ body {
 <p><!-- Intro Card --></p>
 <div id="intro-card" class="intro-card fade-in delay-1">
 <div class="intro-content">
-<h2><i class="fas fa-atom"></i> Quickstart Highlights</h2>
+<h2><i class="fas fa-atom"></i> At a Glance</h2>
 <p>Retatrutide is a novel triple agonist targeting GLP-1, GIP, and glucagon receptors<sup><a href="#ref-1">[1]</a></sup>, studied for substantial weight loss and metabolic improvement in obesity and type 2 diabetes<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup>. With an extended half-life of approximately 6 days, this peptide enables convenient <strong>once-weekly subcutaneous</strong> dosing with a gradual titration protocol to optimize tolerability<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-4">[4]</a></sup>.</p>
 <ul>
 <li><strong>Reconstitute:</strong> Add <strong>1.0 mL</strong> bacteriostatic water → <strong>10.0 mg/mL</strong> concentration for convenient weekly doses.</li>
@@ -2996,13 +2996,13 @@ body {
 <div class="dr-container">
 <header style="margin-bottom:0;">
 <div>
-<h2 style="border-bottom:0; text-decoration:none; margin-bottom:0;"><i class="fas fa-book-open"></i> Dosing &amp; Reconstitution Guide</h2>
-<p style="margin:0;">Educational guide for reconstitution and weekly dosing</p>
+<h2 style="border-bottom:0; text-decoration:none; margin-bottom:0;"><i class="fas fa-book-open"></i> How to Mix &amp; Dose</h2>
+<p style="margin:0;">Everything you need to reconstitute and dose Retatrutide from a 10 mg vial</p>
 </p></div>
 </header>
 <p>    <!-- Standard / Gradual Approach --></p>
 <section style="margin-top:0;">
-<h2>Standard / Gradual Titration Approach (1 mL = 10.0 mg/mL)</h2>
+<h2>Dosing Schedule (1 mL = 10.0 mg/mL)</h2>
 <div class="table-responsive">
 <table>
 <thead>
@@ -3031,7 +3031,7 @@ body {
 </tbody>
 </table></div>
 <p><strong>Frequency:</strong> Inject <strong>once weekly</strong> subcutaneously. This schedule follows clinical trial protocols that demonstrated significant weight loss<sup><a href="#ref-2">[2]</a></sup> while minimizing gastrointestinal adverse events through gradual escalation<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-4">[4]</a></sup>. Starting at 2 mg weekly significantly reduces initial GI side effects. At 10.0 mg/mL, all doses from 2&ndash;8 mg fit comfortably within a single 1 mL syringe.</p>
-<h3>Reconstitution Steps</h3>
+<h3>How to Reconstitute</h3>
 <ol>
 <li>Draw <strong>1.0 mL</strong> bacteriostatic water with a sterile syringe.</li>
 <li>Inject slowly down the vial wall; avoid foaming.</li>
@@ -3046,7 +3046,7 @@ body {
 </div>
 <p><!-- Supplies Needed --></p>
 <section id="supplies-needed" class="section-block fade-in delay-3">
-<h2><i class="fas fa-shopping-cart"></i> Supplies Needed</h2>
+<h2><i class="fas fa-shopping-cart"></i> What You&rsquo;ll Need</h2>
 <p>Plan based on a 12–48 week weekly protocol with gradual titration to maintenance dose.</p>
 <ul>
 <li>
@@ -3106,7 +3106,7 @@ body {
 <p><!-- Protocol Overview & Dosing --></p>
 <section class="protocol-summary">
 <article id="protocol-overview" class="protocol-card fade-in delay-1">
-<h3><i class="fas fa-clipboard-list"></i> Protocol Overview</h3>
+<h3><i class="fas fa-clipboard-list"></i> Overview</h3>
 <p>Concise summary of the once-weekly regimen based on clinical trial protocols.</p>
 <ul>
 <li><strong>Goal:</strong> Achieve substantial weight loss (up to 24% of body weight) and improved metabolic parameters through triple receptor agonism<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-5">[5]</a></sup>.</li>
@@ -3117,7 +3117,7 @@ body {
 </ul>
 </article>
 <article id="dosing-protocol" class="protocol-card fade-in delay-2">
-<h3><i class="fas fa-syringe"></i> Dosing Protocol</h3>
+<h3><i class="fas fa-syringe"></i> Dosing Details</h3>
 <p>Evidence-based weekly titration approach from clinical trials.</p>
 <ul>
 <li><strong>Start:</strong> 2 mg once weekly for first 4 weeks to establish tolerability<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-4">[4]</a></sup>.</li>
@@ -3129,7 +3129,7 @@ body {
 </ul>
 </article>
 <article id="storage-instructions" class="protocol-card fade-in delay-4">
-<h3><i class="fas fa-snowflake"></i> Storage Instructions</h3>
+<h3><i class="fas fa-snowflake"></i> Storage</h3>
 <p>Proper storage maintains peptide stability and potency.</p>
 <ul>
 <li><strong>Lyophilized:</strong> Store at −20 °C (−4 °F) or colder for long-term preservation; protect from moisture and light<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-12">[12]</a></sup>.</li>
@@ -3141,7 +3141,7 @@ body {
 </section>
 <p><!-- Important Notes --></p>
 <section id="important-notes" class="section-block fade-in delay-2">
-<h2><i class="fas fa-lightbulb"></i> Important Notes</h2>
+<h2><i class="fas fa-lightbulb"></i> Good to Know</h2>
 <p>Practical considerations for safe and effective weekly administration.</p>
 <ul>
 <li><strong>Weekly consistency:</strong> Choose a specific day/time for your weekly injection and maintain this schedule throughout the protocol.</li>
@@ -3154,14 +3154,14 @@ body {
 </section>
 <p><!-- How This Works --></p>
 <section id="how-this-works" class="section-block fade-in delay-3">
-<h2><i class="fas fa-flask"></i> How This Works</h2>
+<h2><i class="fas fa-flask"></i> How Retatrutide Works</h2>
 <p>Retatrutide is a first-in-class triple agonist that simultaneously activates three key metabolic hormone receptors: GLP-1 (glucagon-like peptide-1), GIP (glucose-dependent insulinotropic polypeptide), and glucagon<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-5">[5]</a></sup>. This triple mechanism produces synergistic effects on appetite suppression, energy expenditure, and glucose metabolism that exceed single or dual agonists.</p>
 <p>The GLP-1 component reduces appetite and slows gastric emptying; GIP enhances insulin secretion and may support fat metabolism; glucagon receptor activation increases energy expenditure and promotes fat oxidation<sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-8">[8]</a></sup>. With an extended half-life of approximately 6 days, retatrutide enables convenient once-weekly dosing while maintaining therapeutic levels<sup><a href="#ref-1">[1]</a></sup>.</p>
 <p>In clinical trials, participants receiving 12 mg weekly retatrutide lost an average of 24% of their body weight over 48 weeks<sup><a href="#ref-2">[2]</a></sup>. In adults with type 2 diabetes, retatrutide (up to 12 mg weekly) achieved approximately 17% weight loss at 36 weeks alongside HbA1c reductions of approximately 2.0% compared to placebo<sup><a href="#ref-3">[3]</a></sup>. A 2025 meta-analysis of three trials (878 participants) confirmed retatrutide achieved significantly greater weight reduction than placebo (mean difference approximately 14% of body weight) with no significant increase in overall adverse events<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-7">[7]</a></sup>.</p>
 </section>
 <p><!-- Benefits & Side Effects --></p>
 <section id="benefits-side-effects" class="section-block fade-in delay-4">
-<h2><i class="fas fa-balance-scale"></i> Potential Benefits &amp; Side Effects</h2>
+<h2><i class="fas fa-balance-scale"></i> Benefits &amp; What to Watch For</h2>
 <p>Observations from phase 2 and phase 3 clinical trials in humans.</p>
 <h3>Potential Benefits</h3>
 <ul>
@@ -3180,7 +3180,7 @@ body {
 </section>
 <p><!-- Lifestyle Factors --></p>
 <section id="lifestyle-factors" class="section-block fade-in delay-1">
-<h2><i class="fas fa-dumbbell"></i> Lifestyle Factors</h2>
+<h2><i class="fas fa-dumbbell"></i> Tips for Best Results</h2>
 <p>Complementary strategies to optimize outcomes during retatrutide protocols.</p>
 <ul>
 <li><strong>Nutrition:</strong> Adopt a balanced, protein-forward diet (1.0–1.2 g/kg body weight) to preserve lean mass during weight loss<sup><a href="#ref-10">[10]</a></sup>.</li>
@@ -3192,7 +3192,7 @@ body {
 </section>
 <p><!-- Injection Technique --></p>
 <section id="injection-tech-tips" class="section-block fade-in delay-2">
-<h2><i class="fas fa-syringe"></i> Injection Technique</h2>
+<h2><i class="fas fa-syringe"></i> Injection Tips</h2>
 <p>Subcutaneous injection guidelines based on clinical best practices and CDC recommendations<sup><a href="#ref-13">[13]</a></sup><sup><a href="#ref-14">[14]</a></sup>.</p>
 <h3>Pre-Injection Preparation</h3>
 <ul>
