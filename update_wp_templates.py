@@ -106,6 +106,44 @@ h1, h2, h3, h4, h5, h6,
 /* WP block buttons centered */
 .wp-block-buttons.is-content-justification-center { display: flex; justify-content: center; width: 100%; }
 
+/* ── Protocol Page Cards & Bullet Boxes ── */
+.protocol-card,
+.section-block {
+  background: #fff;
+  border: 1px solid #e5e0d5;
+  border-left: 3px solid #3aaa8c;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.protocol-card ul,
+.protocol-card ol,
+.section-block ul,
+.section-block ol {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: .93rem;
+  line-height: 1.7;
+  padding-left: 1.25rem;
+  margin: .5rem 0;
+}
+.protocol-card li,
+.section-block li {
+  margin-bottom: .4rem;
+  color: #2b2318;
+}
+.protocol-summary {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+@media (min-width: 768px) {
+  .protocol-summary {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+}
+
 /* ── Contact Page Styles (in global CSS so WP doesn't strip from content) ── */
 .contact-page { max-width: 680px; margin: 0 auto; padding: 20px 20px 40px; }
 .contact-heading { font-size: 2.2rem; color: #2e2a22; margin: 0 0 12px 0; font-weight: 700; text-align: center; }
