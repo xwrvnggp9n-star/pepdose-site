@@ -144,12 +144,49 @@ _SLUG_TO_NAME = {
     'what-is-glow-peptide-blend': 'GLOW',
     'what-is-klow-peptide-blend': 'KLOW',
     'what-is-the-wolverine-stack':'Wolverine Stack',
+    'what-is-tirzepatide-2':      'Tirzepatide',
+    'what-is-retatrutide-2':      'Retatrutide',
+    'what-is-selank-2':           'Selank',
+    'what-is-vilon-2':            'Vilon',
+    'what-is-semaglutide':        'Semaglutide',
+    'what-is-ipamorelin':         'Ipamorelin',
+    'what-is-glp-1':              'GLP-1',
+    'what-is-5-amino-1mq':        '5-Amino-1MQ',
+    'what-is-kpv-peptide':        'KPV',
+    'what-is-mazdutide':          'Mazdutide',
+    'what-is-mgf':                'MGF',
+    'what-is-pnc-27':             'PNC-27',
+    'what-is-livagen':            'Livagen',
+    'what-is-ovagen':             'Ovagen',
+    'what-is-prostamax':          'Prostamax',
+    'what-is-vesugen':            'Vesugen',
 }
 
 
 def derive_peptide_name(slug):
     """Convert a page slug like 'what-is-bpc-157' to a display name."""
-    return _SLUG_TO_NAME.get(slug, slug.replace('what-is-', '').replace('-vial-dosage-protocol', '').replace('-', ' ').title())
+    if slug in _SLUG_TO_NAME:
+        return _SLUG_TO_NAME[slug]
+    # Strip common suffixes to get the raw peptide part
+    name = slug
+    for suffix in ('what-is-', ):
+        name = name.replace(suffix, '')
+    for suffix in ('-vial-dosage-protocol', '-dosage-protocol'):
+        name = name.replace(suffix, '')
+    # Convert to title case, then fix known peptide names
+    name = name.replace('-', ' ').title()
+    name = re.sub(r'\bBpc 157\b', 'BPC-157', name)
+    name = re.sub(r'\bGhk Cu\b', 'GHK-Cu', name)
+    name = re.sub(r'\bTb 500\b', 'TB-500', name)
+    name = re.sub(r'\bMots C\b', 'MOTS-c', name)
+    name = re.sub(r'\bSema\b', 'Semaglutide', name)
+    name = re.sub(r'\bGlow\b', 'GLOW', name)
+    name = re.sub(r'\bKlow\b', 'KLOW', name)
+    name = re.sub(r'\bWolverine Stack\b', 'Wolverine Stack', name)
+    name = re.sub(r'\bRetatrutide\b', 'Retatrutide', name)
+    # Fix "100Mg" → "100 mg" etc.
+    name = re.sub(r'(\d+)\s*Mg\b', r'\1 mg', name)
+    return name
 
 
 def sponsor_url_for_slug(slug):
@@ -229,6 +266,10 @@ _DOSAGE_RELATED = {
                     ('/what-is-bpc-157/', 'What Is BPC-157?'),
                     ('/what-is-tb-500/', 'What Is TB-500?'),
                     ('/combine-peptides-same-syringe/', 'Can You Combine Peptides in the Same Syringe?')],
+    'retatrutide': [('/what-is-retatrutide-2/', 'What Is Retatrutide?'),
+                    ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide'),
+                    ('/what-is-semaglutide/', 'What Is Semaglutide?'),
+                    ('/what-is-tirzepatide-2/', 'What Is Tirzepatide?')],
 }
 
 # Education article pages → related articles + dosage protocols (matched by exact slug)
@@ -429,10 +470,10 @@ def inject_faq_schema(html):
     Detects the pattern:  <strong>Q\d+: question?</strong><br/> answer...
     and wraps each Q/A pair in schema.org/Question + Answer microdata.
     """
-    # Find the FAQ heading
+    # Find the FAQ heading (use [^<]* instead of .*? to avoid spanning across tags)
     faq_match = re.search(
-        r'(<h2[^>]*>.*?FAQ.*?</h2>)',
-        html, re.IGNORECASE | re.DOTALL
+        r'(<h2[^>]*>[^<]*FAQ[^<]*</h2>)',
+        html, re.IGNORECASE
     )
     if not faq_match:
         return html
@@ -451,11 +492,13 @@ def inject_faq_schema(html):
     #   Format A: <p><strong>Q1: question?</strong><br/> answer</p>
     #   Format B: <p><strong>1) question?</strong><br/> answer</p>
     #   Format C: <h3>question?</h3><p>answer</p>
+    #   Format D: <p><strong>Question?</strong> answer...</p>  (bold question inline)
     qa_pairs = []
 
     # Try Format A/B first: numbered Q&A inside <p> tags
+    # Matches: Q1: question, 1) question, Q: question (with or without number)
     qa_pattern_ab = re.compile(
-        r'<p>\s*<strong>\s*(?:Q?\d+[:\)]\s*)(.+?)\??\s*</strong>'
+        r'<p>\s*<strong>\s*(?:Q\d*[:\)]\s*|\d+[:\)]\s*)(.+?)\??\s*</strong>'
         r'\s*(?:<br\s*/?>)?\s*'
         r'(.*?)</p>',
         re.DOTALL
@@ -469,6 +512,15 @@ def inject_faq_schema(html):
             re.DOTALL
         )
         qa_pairs = qa_pattern_c.findall(faq_block)
+
+    # Try Format D: <p><strong>Question?</strong> answer text...</p>
+    if not qa_pairs:
+        qa_pattern_d = re.compile(
+            r'<p>\s*<strong>([^<]*?\?)</strong>\s*'
+            r'(.*?)</p>',
+            re.DOTALL
+        )
+        qa_pairs = qa_pattern_d.findall(faq_block)
 
     if not qa_pairs:
         return html
@@ -520,7 +572,7 @@ def inject_howto_schema(html, slug):
         description = re.sub(r'<[^>]+>', '', desc_match.group(1)).strip()[:200]
 
     # Find the reconstitution steps <ol>
-    ol_match = re.search(r'<h3>Reconstitution Steps</h3>\s*(<ol>.*?</ol>)', html, re.DOTALL)
+    ol_match = re.search(r'<h3>(?:Reconstitution Steps|How to Reconstitute)</h3>\s*(<ol>.*?</ol>)', html, re.DOTALL)
     if not ol_match:
         return html
 
@@ -697,7 +749,8 @@ def process_file(src_path, dst_path):
 
     # Inject sponsor CTA + inline link for article and dosage protocol pages
     is_article = slug.startswith('what-is') or slug.startswith('what-are')
-    is_dosage = 'dosage-protocol' in slug or 'vial-dosage' in slug
+    is_dosage = ('dosage-protocol' in slug or 'vial-dosage' in slug
+                 or re.match(r'retatrutide-\d+mg$', slug))
     is_educational = slug in ('combine-peptides-same-syringe', 'retatrutide-vs-tirzepatide',
                               'tesamorelin-reconstitution-storage')
     if is_article or is_dosage or is_educational:

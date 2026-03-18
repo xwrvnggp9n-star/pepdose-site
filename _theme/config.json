@@ -154,6 +154,10 @@
     "sema-10mg-vial-dosage-protocol":  "/product/sema-10-mg/",
     "tirzepatide-10mg-vial-dosage-protocol": "/product/tirz-10-mg/",
     "what-is-semaglutide":            "/product/sema-10-mg/",
-    "what-is-tirzepatide-2":          "/product/tirz-10-mg/"
+    "what-is-tirzepatide-2":          "/product/tirz-10-mg/",
+    "retatrutide-5mg":                "/product/reta-10-mg/",
+    "retatrutide-10mg":               "/product/reta-10-mg/",
+    "retatrutide-30mg":               "/product/reta-10-mg/",
+    "what-is-retatrutide-2":          "/product/reta-10-mg/"
   }
 }
