@@ -99,15 +99,6 @@ def find_dist_file(slug):
 # ── Slug mapping for WP slugs that differ from source dir names ──────────────
 # Some WP posts/pages use slightly different slugs than the source directories.
 # This maps WP slug → source directory name when they differ.
-# ── Orphan pages to skip during deploy (set to draft 2026-03-17) ──────────────
-# These are old/duplicate WP pages with no inbound links. Scheduled for deletion 2026-03-24.
-SKIP_SLUGS = {
-    'single-peptide-dosages',   # WP page ID 12
-    'peptide-stack-dosages',    # WP page ID 13
-    'dosages',                  # WP page ID 17 (old catalog — real one is dosages-and-protocols ID 144)
-    'peptide-blend-dosages',    # WP page ID 161
-}
-
 SLUG_ALIASES = {
     'what-is-tirzepatide':  'what-is-tirzepatide-2',
     'what-is-ghk-cu':      'what-is-ghk-cu-2',
@@ -232,12 +223,6 @@ def deploy(slug_filter=None, dry_run=False):
         title = item['title']['rendered']
 
         if slug_filter and slug != slug_filter:
-            continue
-
-        if slug in SKIP_SLUGS:
-            if slug_filter:
-                print(f'  ⊘ Skipping orphan page "{slug}" (ID: {wp_id}) — scheduled for deletion')
-            skipped += 1
             continue
 
         resolved = resolve_slug(slug)
