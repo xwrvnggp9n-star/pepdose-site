@@ -160,8 +160,16 @@ _SLUG_TO_NAME = {
     'what-is-ovagen':             'Ovagen',
     'what-is-prostamax':          'Prostamax',
     'what-is-vesugen':            'Vesugen',
-    'what-is-dsip':                       'DSIP',
-    'dsip-5mg-vial-dosage-protocol':      'DSIP 5 mg',
+    'what-is-dsip':                            'DSIP',
+    'dsip-5mg-vial-dosage-protocol':          'DSIP 5 mg',
+    'what-is-pt-141':                         'PT-141',
+    'pt-141-10mg-vial-dosage-protocol':       'PT-141 10 mg',
+    'what-is-melanotan-ii':                   'Melanotan II',
+    'melanotan-ii-10mg-vial-dosage-protocol': 'Melanotan II 10 mg',
+    'what-is-oxytocin':                       'Oxytocin',
+    'oxytocin-5mg-vial-dosage-protocol':      'Oxytocin 5 mg',
+    'kpv-10mg-vial-dosage-protocol':          'KPV 10 mg',
+    'tirzepatide-30mg-vial-dosage-protocol':  'Tirzepatide 30 mg',
 }
 
 
@@ -275,6 +283,15 @@ _DOSAGE_RELATED = {
                     ('/what-is-tirzepatide-2/', 'What Is Tirzepatide?')],
     'dsip':        [('/what-is-dsip/', 'What Is DSIP?'),
                     ('/what-is-selank/', 'What Is Selank?')],
+    'kpv':         [('/what-is-kpv-peptide/', 'What Is KPV?'),
+                    ('/what-is-klow-peptide-blend/', 'What Is the KLOW Blend?'),
+                    ('/what-is-bpc-157/', 'What Is BPC-157?')],
+    'pt-141':      [('/what-is-pt-141/', 'What Is PT-141?'),
+                    ('/what-is-melanotan-ii/', 'What Is Melanotan II?')],
+    'melanotan':   [('/what-is-melanotan-ii/', 'What Is Melanotan II?'),
+                    ('/what-is-pt-141/', 'What Is PT-141?')],
+    'oxytocin':    [('/what-is-oxytocin/', 'What Is Oxytocin?'),
+                    ('/what-is-dsip/', 'What Is DSIP?')],
 }
 
 # Education article pages → related articles + dosage protocols (matched by exact slug)
@@ -302,7 +319,8 @@ _ARTICLE_RELATED = {
                                     ('/what-is-glp-1/', 'What Is GLP-1?'),
                                     ('/what-is-retatrutide-2/', 'What Is Retatrutide?'),
                                     ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide'),
-                                    ('/single-peptide-dosages/tirzepatide-10mg-vial-dosage-protocol/', 'Tirzepatide Dosage Protocol')],
+                                    ('/single-peptide-dosages/tirzepatide-10mg-vial-dosage-protocol/', 'Tirzepatide 10 mg Protocol'),
+                                    ('/single-peptide-dosages/tirzepatide-30mg-vial-dosage-protocol/', 'Tirzepatide 30 mg Protocol')],
     'what-is-glp-1':              [('/what-is-semaglutide/', 'What Is Semaglutide?'),
                                     ('/what-is-tirzepatide-2/', 'What Is Tirzepatide?'),
                                     ('/what-is-retatrutide-2/', 'What Is Retatrutide?'),
@@ -339,7 +357,8 @@ _ARTICLE_RELATED = {
                                     ('/peptide-blend-dosages/wolverine-stack-20mg-vial-dosage-protocol/', 'Wolverine Stack Dosage Protocol')],
     'what-is-kpv-peptide':        [('/what-is-klow-peptide-blend/', 'What Is the KLOW Blend?'),
                                     ('/what-is-bpc-157/', 'What Is BPC-157?'),
-                                    ('/what-are-peptides/', 'What Are Peptides?')],
+                                    ('/what-are-peptides/', 'What Are Peptides?'),
+                                    ('/single-peptide-dosages/kpv-10mg-vial-dosage-protocol/', 'KPV Dosage Protocol')],
     'what-is-mgf':               [('/what-is-bpc-157/', 'What Is BPC-157?'),
                                     ('/what-is-tb-500/', 'What Is TB-500?'),
                                     ('/what-are-peptides/', 'What Are Peptides?')],
@@ -348,6 +367,15 @@ _ARTICLE_RELATED = {
     'what-is-dsip':              [('/what-is-selank/', 'What Is Selank?'),
                                    ('/what-are-peptides/', 'What Are Peptides?'),
                                    ('/single-peptide-dosages/dsip-5mg-vial-dosage-protocol/', 'DSIP Dosage Protocol')],
+    'what-is-pt-141':            [('/what-is-melanotan-ii/', 'What Is Melanotan II?'),
+                                    ('/what-are-peptides/', 'What Are Peptides?'),
+                                    ('/single-peptide-dosages/pt-141-10mg-vial-dosage-protocol/', 'PT-141 Dosage Protocol')],
+    'what-is-melanotan-ii':      [('/what-is-pt-141/', 'What Is PT-141?'),
+                                    ('/what-are-peptides/', 'What Are Peptides?'),
+                                    ('/single-peptide-dosages/melanotan-ii-10mg-vial-dosage-protocol/', 'Melanotan II Dosage Protocol')],
+    'what-is-oxytocin':          [('/what-is-dsip/', 'What Is DSIP?'),
+                                    ('/what-are-peptides/', 'What Are Peptides?'),
+                                    ('/single-peptide-dosages/oxytocin-5mg-vial-dosage-protocol/', 'Oxytocin Dosage Protocol')],
     'what-is-pnc-27':            [('/what-are-peptides/', 'What Are Peptides?')],
     'what-is-livagen':            [('/what-is-ovagen/', 'What Is Ovagen?'),
                                     ('/what-is-vesugen/', 'What Is Vesugen?'),
@@ -822,12 +850,14 @@ def extract_article_content(raw):
     stores as the post/page body. No <head>, header, footer, or nav included.
     """
     body_html = extract(r'<body[^>]*>(.*?)</body>', raw)
+    # Fall back to raw if file is just a <main> block (no <body> wrapper)
+    search_in = body_html if body_html else raw
 
     # Try to get <main> content
-    main_html = extract(r'(<main[^>]*>.*?</main>)', body_html)
+    main_html = extract(r'(<main[^>]*>.*?</main>)', search_in)
     if not main_html:
         # Some WP exports omit </main>; grab from <main> to end of body
-        main_html = extract(r'(<main[^>]*>.*)', body_html)
+        main_html = extract(r'(<main[^>]*>.*)', search_in)
         if main_html:
             main_html += '</main>'
         else:
@@ -1116,6 +1146,11 @@ _ARTICLE_CATEGORIES = [
     ('Cognitive &amp; Neurological', [
         'what-is-selank',
         'what-is-dsip',
+        'what-is-oxytocin',
+    ]),
+    ('Sexual Health &amp; Tanning', [
+        'what-is-pt-141',
+        'what-is-melanotan-ii',
     ]),
     ('Peptide Fundamentals', [
         'what-are-peptides',

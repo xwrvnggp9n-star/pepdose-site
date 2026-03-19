@@ -158,6 +158,15 @@
     "retatrutide-5mg":                "/product/reta-10-mg/",
     "retatrutide-10mg":               "/product/reta-10-mg/",
     "retatrutide-30mg":               "/product/reta-10-mg/",
-    "what-is-retatrutide-2":          "/product/reta-10-mg/"
+    "what-is-retatrutide-2":          "/product/reta-10-mg/",
+    "what-is-pt-141":                 "/product/pt-141-10-mg/",
+    "pt-141-10mg-vial-dosage-protocol": "/product/pt-141-10-mg/",
+    "what-is-melanotan-ii":           "/product/melanotan-ii-10-mg/",
+    "melanotan-ii-10mg-vial-dosage-protocol": "/product/melanotan-ii-10-mg/",
+    "what-is-oxytocin":               "/product/oxytocin-5-mg/",
+    "oxytocin-5mg-vial-dosage-protocol": "/product/oxytocin-5-mg/",
+    "what-is-kpv-peptide":            "/product/kpv-10-mg/",
+    "kpv-10mg-vial-dosage-protocol":  "/product/kpv-10-mg/",
+    "tirzepatide-30mg-vial-dosage-protocol": "/product/tirz-30-mg/"
   }
 }

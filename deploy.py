@@ -177,7 +177,15 @@ _SEO_DESCRIPTIONS = {
     'glow-70-mg-vial-dosage-protocol':       'GLOW 70mg peptide blend dosage protocol. GHK-Cu + TB-500 + BPC-157 reconstitution, injection schedule, and syringe guide.',
     'klow-80mg-vial-dosage-protocol':        'KLOW 80mg peptide blend dosage protocol. GHK-Cu + TB-500 + BPC-157 + KPV reconstitution, dosing, and syringe guide.',
     'wolverine-stack-20mg-vial-dosage-protocol': 'Wolverine Stack 20mg dosage protocol. BPC-157 + TB-500 reconstitution, injection schedule, and syringe measurements.',
-    'dsip-5mg-vial-dosage-protocol':         'DSIP 5mg vial dosage protocol. Reconstitute with 2.0 mL bacteriostatic water for 2.5 mg/mL. Starting: 100 mcg; standard: 200 mcg. Inject 30–60 min before sleep.',
+    'dsip-5mg-vial-dosage-protocol':              'DSIP 5mg vial dosage protocol. Reconstitute with 2.0 mL bacteriostatic water for 2.5 mg/mL. Starting: 100 mcg; standard: 200 mcg. Inject 30–60 min before sleep.',
+    'what-is-pt-141':                             'What is PT-141 (Bremelanotide)? FDA-approved melanocortin peptide for sexual desire. Mechanism, clinical evidence, dosing, and safety.',
+    'pt-141-10mg-vial-dosage-protocol':           'PT-141 10mg vial dosage protocol. Reconstitute with 3.0 mL BAC water for 3.33 mg/mL. Research dosing 500–1,750 mcg SC 30–45 min before activity.',
+    'what-is-melanotan-ii':                       'What is Melanotan II? Non-selective melanocortin agonist for tanning and sexual function research. Mechanism, evidence, dosing, and safety risks.',
+    'melanotan-ii-10mg-vial-dosage-protocol':     'Melanotan II 10mg vial dosage protocol. Reconstitute with 3.0 mL BAC water for 3.33 mg/mL. Loading: 250–1,000 mcg/day SC. Safety ceiling: 2 mg/day.',
+    'what-is-oxytocin':                           'What is Oxytocin? The bonding neuropeptide — social trust, anxiety, and neurological research. Mechanism, evidence, dosing, and safety.',
+    'oxytocin-5mg-vial-dosage-protocol':          'Oxytocin 5mg vial dosage protocol. Reconstitute with 3.0 mL BAC water for 1.67 mg/mL. Research dosing 100–500 mcg SC, titrated over 12 weeks.',
+    'kpv-10mg-vial-dosage-protocol':              'KPV 10mg vial dosage protocol. Reconstitute with 3.0 mL BAC water for 3.33 mg/mL. Titrate 200–500 mcg/day SC. 20 doses per vial at maintenance.',
+    'tirzepatide-30mg-vial-dosage-protocol':      'Tirzepatide 30mg vial dosage protocol. Reconstitute with 3.0 mL BAC water for 10.0 mg/mL. Weekly SC injection, 2.5–15 mg titration over 20+ weeks.',
 }
 
 
