@@ -476,6 +476,45 @@ def inject_article_image(content, slug):
     return content.replace('</p>', f'</p>\n{img_html}', 1)
 
 
+def strip_hero_image(content):
+    """Remove broken featured-image divs (old WP export media not present on the live site)."""
+    # Remove <div class="featured-image">...<img .../></div>
+    content = re.sub(
+        r'<div class="featured-image">\s*<img[^>]*/?>[\s\S]*?</div>\s*',
+        '', content)
+    # Catch any remaining standalone wp-post-image tags
+    content = re.sub(
+        r'<img[^>]*class="[^"]*wp-post-image[^"]*"[^>]*/?>[\s\n]*',
+        '', content)
+    return content
+
+
+def wrap_tables(content):
+    """Wrap bare <table> elements in a responsive overflow container with basic styling."""
+    def _wrap(m):
+        # Skip tables already inside a responsive wrapper
+        context = content[max(0, m.start() - 150): m.start()]
+        if 'table-responsive' in context or 'overflow-x' in context:
+            return m.group(0)
+        inner = m.group(0)
+        inner = inner.replace(
+            '<table>',
+            '<table style="width:100%;border-collapse:collapse;font-size:.88rem;line-height:1.5">',
+            1)
+        inner = re.sub(
+            r'<th([^>]*)>',
+            r'<th\1 style="padding:.5rem .75rem;background:#2e2a22;color:#fdf8f0;'
+            r'text-align:left;font-weight:600;white-space:nowrap;border:1px solid #c8bfb0">',
+            inner)
+        inner = re.sub(
+            r'<td([^>]*)>',
+            r'<td\1 style="padding:.5rem .75rem;border:1px solid #e5e0d5;vertical-align:top">',
+            inner)
+        return ('<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1.5rem 0">'
+                + inner + '</div>')
+    return re.sub(r'<table>[\s\S]*?</table>', _wrap, content)
+
+
 def _get_related_links(slug, is_dosage):
     """Return list of (url, title) related reading links for a page slug."""
     if is_dosage:
@@ -841,6 +880,7 @@ def process_file(src_path, dst_path):
     content = fix_urls(content)
     content = sanitize_old_branding(content)
     content = strip_sponsor_sections(content)
+    content = strip_hero_image(content)
 
     # ── Clean AI-generated jargon from headers ───────────────────────────────
     slug = src_path.parent.name if src_path.name == 'index.html' else src_path.stem
@@ -889,6 +929,7 @@ def process_file(src_path, dst_path):
         content = re.sub(r'<style>.*?</style>\s*', '', content, flags=re.DOTALL)
 
     content = add_lazy_loading(content)
+    content = wrap_tables(content)
     content = sanitize_author(content)
 
     # ── Write output ─────────────────────────────────────────────────────────
