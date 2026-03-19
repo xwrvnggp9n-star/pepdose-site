@@ -435,6 +435,28 @@ def test_live_dosages_catalog_completeness():
           f'Missing from live catalog: {missing}' if missing else '')
 
 
+def test_live_articles_catalog_completeness():
+    section('Live: Articles catalog lists every article source page')
+    status, body = fetch_live('/articles/')
+    if status != 200:
+        check(False, f'Articles catalog returned HTTP {status}')
+        return
+    # Every what-is-* / what-are-* source dir should appear on the articles page
+    missing = []
+    for child in sorted(BASE.iterdir()):
+        if not child.is_dir():
+            continue
+        if not (child.name.startswith('what-is-') or child.name.startswith('what-are-')):
+            continue
+        if not (child / 'index.html').exists():
+            continue
+        if child.name not in body:
+            missing.append(child.name)
+    check(len(missing) == 0,
+          f'All what-is-*/what-are-* source dirs appear in live articles catalog',
+          f'Missing from live catalog: {missing}' if missing else '')
+
+
 def test_live_articles_listing():
     section('Live: Articles listing page')
     status, body = fetch_live('/articles/')
@@ -640,6 +662,7 @@ LIVE_TESTS = [
     test_live_legal_pages,
     test_live_dosages_content,
     test_live_dosages_catalog_completeness,
+    test_live_articles_catalog_completeness,
     test_live_articles_listing,
     test_live_articles_api_content,
     test_live_sample_articles,
