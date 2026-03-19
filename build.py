@@ -78,8 +78,46 @@ def apply_colors(text):
 DOMAIN = 'https://pep-dose.com'
 
 def fix_urls(text):
-    """Make internal absolute URLs relative."""
-    return text.replace(DOMAIN + '/', '/').replace(DOMAIN, '/')
+    """Make internal absolute URLs relative, and fix known -2 suffix slugs."""
+    text = text.replace(DOMAIN + '/', '/').replace(DOMAIN, '/')
+    # Fix -2 suffix slugs that exist in source HTML bodies but don't match live WP URLs
+    for dir_slug, live_slug in _DIR_TO_LIVE_SLUG.items():
+        text = text.replace(f'/{dir_slug}/', f'/{live_slug}/')
+    # Fix GHK-Cu 100mg URL typo in some source files (100-mg vs 100mg)
+    text = text.replace('ghk-cu-100-mg-vial-dosage-protocol', 'ghk-cu-100mg-vial-dosage-protocol')
+    return text
+
+
+# Paths that don't exist on the live site — links to these are stripped.
+# Add entries here whenever a source article references a page not yet created.
+_BROKEN_INTERNAL_PATHS = {
+    '/single-peptide-dosages/ipamorelin-5mg-vial-dosage-protocol/',
+    '/single-peptide-dosages/ipamorelin-10mg-vial-dosage-protocol/',
+    '/single-peptide-dosages/5-amino-1mq-10-mg-vial-dosage-protocol/',
+    '/single-peptide-dosages/mazdutide-5mg-vial-dosage-protocol/',
+    '/single-peptide-dosages/mazdutide-10mg-vial-dosage-protocol/',
+    '/single-peptide-dosages/ovagen-20mg-vial-dosage-protocol/',
+    '/single-peptide-dosages/pnc-27-30-mg-vial-dosage-protocol/',
+    '/single-peptide-dosages/prostamax-20mg-vial-dosage-protocol/',
+    '/single-peptide-dosages/selank-5mg-vial-dosage-protocol/',
+    '/single-peptide-dosages/selank-10mg-vial-dosage-protocol/',
+    '/single-peptide-dosages/tesamorelin-20mg-vial-dosage-protocol/',
+    '/single-peptide-dosages/vesugen-20mg-vial-dosage-protocol/',
+    '/single-peptide-dosages/kpv-5mg-vial-dosage-protocol/',
+    '/single-peptide-dosages/tirzepatide-5mg-vial-dosage-protocol/',
+    '/single-peptide-dosages/tirzepatide-15mg-vial-dosage-protocol/',
+    '/single-peptide-dosages/vilon-20mg-vial-dosage-protocol/',
+}
+
+def strip_broken_links(text):
+    """Strip <a> tags whose href points to a known-404 internal path.
+    Keeps the anchor text so surrounding sentences still read naturally."""
+    for path in _BROKEN_INTERNAL_PATHS:
+        # Remove the anchor tag but keep its text content
+        text = re.sub(
+            r'<a\s+[^>]*href=["\']' + re.escape(path) + r'["\'][^>]*>(.*?)</a>',
+            r'\1', text, flags=re.DOTALL)
+    return text
 
 # ─────────────────────────────────────────────────────────────────────────────
 # HTML helpers
@@ -243,6 +281,18 @@ def inject_inline_sponsor_link(html, product_url, peptide_name):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Source dir name → live WP slug (for dirs with -2 suffix that WP doesn't use)
+# Mirrors SLUG_ALIASES in deploy.py (but reversed: dir → live)
+# ─────────────────────────────────────────────────────────────────────────────
+_DIR_TO_LIVE_SLUG = {
+    'what-is-ghk-cu-2':      'what-is-ghk-cu',
+    'what-is-tirzepatide-2':  'what-is-tirzepatide',
+    'what-is-retatrutide-2':  'what-is-retatrutide',
+    'what-is-selank-2':       'what-is-selank',
+    'what-is-vilon-2':        'what-is-vilon',
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Related Reading cross-links (dosage pages ↔ education articles)
 # ─────────────────────────────────────────────────────────────────────────────
 # Dosage protocol pages → education articles (matched by keyword in slug)
@@ -253,7 +303,7 @@ _DOSAGE_RELATED = {
     'tb-500':      [('/what-is-tb-500/', 'What Is TB-500?'),
                     ('/what-is-the-wolverine-stack/', 'What Is the Wolverine Stack?'),
                     ('/combine-peptides-same-syringe/', 'Can You Combine Peptides in the Same Syringe?')],
-    'ghk-cu':      [('/what-is-ghk-cu-2/', 'What Is GHK-Cu?'),
+    'ghk-cu':      [('/what-is-ghk-cu/', 'What Is GHK-Cu?'),
                     ('/what-is-glow-peptide-blend/', 'What Is the GLOW Peptide Blend?')],
     'tesamorelin': [('/what-is-tesamorelin/', 'What Is Tesamorelin?'),
                     ('/tesamorelin-reconstitution-storage/', 'Tesamorelin Reconstitution &amp; Storage')],
@@ -261,26 +311,26 @@ _DOSAGE_RELATED = {
     'sema':        [('/what-is-semaglutide/', 'What Is Semaglutide?'),
                     ('/what-is-glp-1/', 'What Is GLP-1?'),
                     ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide')],
-    'tirzepatide': [('/what-is-tirzepatide-2/', 'What Is Tirzepatide?'),
+    'tirzepatide': [('/what-is-tirzepatide/', 'What Is Tirzepatide?'),
                     ('/what-is-glp-1/', 'What Is GLP-1?'),
                     ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide')],
     'glow':        [('/what-is-glow-peptide-blend/', 'What Is the GLOW Peptide Blend?'),
-                    ('/what-is-ghk-cu-2/', 'What Is GHK-Cu?'),
+                    ('/what-is-ghk-cu/', 'What Is GHK-Cu?'),
                     ('/what-is-bpc-157/', 'What Is BPC-157?'),
                     ('/what-is-tb-500/', 'What Is TB-500?')],
     'klow':        [('/what-is-klow-peptide-blend/', 'What Is the KLOW Peptide Blend?'),
                     ('/what-is-kpv-peptide/', 'What Is KPV?'),
-                    ('/what-is-ghk-cu-2/', 'What Is GHK-Cu?'),
+                    ('/what-is-ghk-cu/', 'What Is GHK-Cu?'),
                     ('/what-is-bpc-157/', 'What Is BPC-157?'),
                     ('/what-is-tb-500/', 'What Is TB-500?')],
     'wolverine':   [('/what-is-the-wolverine-stack/', 'What Is the Wolverine Stack?'),
                     ('/what-is-bpc-157/', 'What Is BPC-157?'),
                     ('/what-is-tb-500/', 'What Is TB-500?'),
                     ('/combine-peptides-same-syringe/', 'Can You Combine Peptides in the Same Syringe?')],
-    'retatrutide': [('/what-is-retatrutide-2/', 'What Is Retatrutide?'),
+    'retatrutide': [('/what-is-retatrutide/', 'What Is Retatrutide?'),
                     ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide'),
                     ('/what-is-semaglutide/', 'What Is Semaglutide?'),
-                    ('/what-is-tirzepatide-2/', 'What Is Tirzepatide?')],
+                    ('/what-is-tirzepatide/', 'What Is Tirzepatide?')],
     'dsip':        [('/what-is-dsip/', 'What Is DSIP?'),
                     ('/what-is-selank/', 'What Is Selank?')],
     'kpv':         [('/what-is-kpv-peptide/', 'What Is KPV?'),
@@ -311,27 +361,27 @@ _ARTICLE_RELATED = {
                                     ('/what-is-bpc-157/', 'What Is BPC-157?'),
                                     ('/single-peptide-dosages/ghk-cu-50mg-vial-dosage-protocol/', 'GHK-Cu Dosage Protocol')],
     'what-is-semaglutide':        [('/what-is-glp-1/', 'What Is GLP-1?'),
-                                    ('/what-is-tirzepatide-2/', 'What Is Tirzepatide?'),
-                                    ('/what-is-retatrutide-2/', 'What Is Retatrutide?'),
+                                    ('/what-is-tirzepatide/', 'What Is Tirzepatide?'),
+                                    ('/what-is-retatrutide/', 'What Is Retatrutide?'),
                                     ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide'),
                                     ('/single-peptide-dosages/sema-5mg-vial-dosage-protocol/', 'Semaglutide Dosage Protocol')],
     'what-is-tirzepatide-2':      [('/what-is-semaglutide/', 'What Is Semaglutide?'),
                                     ('/what-is-glp-1/', 'What Is GLP-1?'),
-                                    ('/what-is-retatrutide-2/', 'What Is Retatrutide?'),
+                                    ('/what-is-retatrutide/', 'What Is Retatrutide?'),
                                     ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide'),
                                     ('/single-peptide-dosages/tirzepatide-10mg-vial-dosage-protocol/', 'Tirzepatide 10 mg Protocol'),
                                     ('/single-peptide-dosages/tirzepatide-30mg-vial-dosage-protocol/', 'Tirzepatide 30 mg Protocol')],
     'what-is-glp-1':              [('/what-is-semaglutide/', 'What Is Semaglutide?'),
-                                    ('/what-is-tirzepatide-2/', 'What Is Tirzepatide?'),
-                                    ('/what-is-retatrutide-2/', 'What Is Retatrutide?'),
+                                    ('/what-is-tirzepatide/', 'What Is Tirzepatide?'),
+                                    ('/what-is-retatrutide/', 'What Is Retatrutide?'),
                                     ('/what-is-mazdutide/', 'What Is Mazdutide?')],
     'what-is-retatrutide-2':      [('/what-is-semaglutide/', 'What Is Semaglutide?'),
-                                    ('/what-is-tirzepatide-2/', 'What Is Tirzepatide?'),
+                                    ('/what-is-tirzepatide/', 'What Is Tirzepatide?'),
                                     ('/what-is-glp-1/', 'What Is GLP-1?'),
                                     ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide')],
     'what-is-mazdutide':          [('/what-is-semaglutide/', 'What Is Semaglutide?'),
                                     ('/what-is-glp-1/', 'What Is GLP-1?'),
-                                    ('/what-is-tirzepatide-2/', 'What Is Tirzepatide?')],
+                                    ('/what-is-tirzepatide/', 'What Is Tirzepatide?')],
     'what-is-mots-c':            [('/what-is-5-amino-1mq/', 'What Is 5-Amino-1MQ?'),
                                     ('/single-peptide-dosages/mots-c-10mg-vial-dosage-protocol/', 'MOTS-c Dosage Protocol')],
     'what-is-5-amino-1mq':       [('/what-is-mots-c/', 'What Is MOTS-c?'),
@@ -341,14 +391,14 @@ _ARTICLE_RELATED = {
     'what-is-tesamorelin':        [('/what-is-ipamorelin/', 'What Is Ipamorelin?'),
                                     ('/tesamorelin-reconstitution-storage/', 'Tesamorelin Storage Guide'),
                                     ('/single-peptide-dosages/tesamorelin-5mg-vial-dosage-protocol/', 'Tesamorelin Dosage Protocol')],
-    'what-is-glow-peptide-blend': [('/what-is-ghk-cu-2/', 'What Is GHK-Cu?'),
+    'what-is-glow-peptide-blend': [('/what-is-ghk-cu/', 'What Is GHK-Cu?'),
                                     ('/what-is-bpc-157/', 'What Is BPC-157?'),
                                     ('/what-is-tb-500/', 'What Is TB-500?'),
                                     ('/what-is-klow-peptide-blend/', 'What Is the KLOW Blend?'),
                                     ('/peptide-blend-dosages/glow-70-mg-vial-dosage-protocol/', 'GLOW Dosage Protocol')],
     'what-is-klow-peptide-blend': [('/what-is-glow-peptide-blend/', 'What Is the GLOW Blend?'),
                                     ('/what-is-kpv-peptide/', 'What Is KPV?'),
-                                    ('/what-is-ghk-cu-2/', 'What Is GHK-Cu?'),
+                                    ('/what-is-ghk-cu/', 'What Is GHK-Cu?'),
                                     ('/what-is-bpc-157/', 'What Is BPC-157?'),
                                     ('/peptide-blend-dosages/klow-80mg-vial-dosage-protocol/', 'KLOW Dosage Protocol')],
     'what-is-the-wolverine-stack':[('/what-is-bpc-157/', 'What Is BPC-157?'),
@@ -379,13 +429,13 @@ _ARTICLE_RELATED = {
     'what-is-pnc-27':            [('/what-are-peptides/', 'What Are Peptides?')],
     'what-is-livagen':            [('/what-is-ovagen/', 'What Is Ovagen?'),
                                     ('/what-is-vesugen/', 'What Is Vesugen?'),
-                                    ('/what-is-vilon-2/', 'What Is Vilon?')],
+                                    ('/what-is-vilon/', 'What Is Vilon?')],
     'what-is-ovagen':             [('/what-is-livagen/', 'What Is Livagen?'),
                                     ('/what-is-vesugen/', 'What Is Vesugen?'),
-                                    ('/what-is-vilon-2/', 'What Is Vilon?')],
+                                    ('/what-is-vilon/', 'What Is Vilon?')],
     'what-is-vesugen':            [('/what-is-livagen/', 'What Is Livagen?'),
                                     ('/what-is-ovagen/', 'What Is Ovagen?'),
-                                    ('/what-is-vilon-2/', 'What Is Vilon?')],
+                                    ('/what-is-vilon/', 'What Is Vilon?')],
     'what-is-vilon-2':            [('/what-is-livagen/', 'What Is Livagen?'),
                                     ('/what-is-ovagen/', 'What Is Ovagen?'),
                                     ('/what-is-vesugen/', 'What Is Vesugen?')],
@@ -393,12 +443,12 @@ _ARTICLE_RELATED = {
     'what-are-peptides':          [('/what-is-bpc-157/', 'What Is BPC-157?'),
                                     ('/what-is-semaglutide/', 'What Is Semaglutide?'),
                                     ('/what-is-glp-1/', 'What Is GLP-1?'),
-                                    ('/what-is-ghk-cu-2/', 'What Is GHK-Cu?')],
+                                    ('/what-is-ghk-cu/', 'What Is GHK-Cu?')],
     'combine-peptides-same-syringe': [('/what-is-the-wolverine-stack/', 'What Is the Wolverine Stack?'),
                                     ('/what-is-bpc-157/', 'What Is BPC-157?'),
                                     ('/what-is-tb-500/', 'What Is TB-500?')],
-    'retatrutide-vs-tirzepatide': [('/what-is-retatrutide-2/', 'What Is Retatrutide?'),
-                                    ('/what-is-tirzepatide-2/', 'What Is Tirzepatide?'),
+    'retatrutide-vs-tirzepatide': [('/what-is-retatrutide/', 'What Is Retatrutide?'),
+                                    ('/what-is-tirzepatide/', 'What Is Tirzepatide?'),
                                     ('/what-is-semaglutide/', 'What Is Semaglutide?'),
                                     ('/what-is-glp-1/', 'What Is GLP-1?')],
     'tesamorelin-reconstitution-storage': [('/what-is-tesamorelin/', 'What Is Tesamorelin?'),
@@ -917,6 +967,7 @@ def process_file(src_path, dst_path):
     # ── Apply content transformations ────────────────────────────────────────
     content = apply_colors(content)
     content = fix_urls(content)
+    content = strip_broken_links(content)
     content = sanitize_old_branding(content)
     content = strip_sponsor_sections(content)
     content = strip_hero_image(content)
@@ -1189,7 +1240,8 @@ def build_blog_page():
         raw = src.read_text(errors='replace')
         title = extract_title(raw) or slug.replace('-', ' ').title()
         title = html_mod.unescape(title)
-        url = f'/{slug}/'
+        live_slug = _DIR_TO_LIVE_SLUG.get(slug, slug)
+        url = f'/{live_slug}/'
         articles.append((title, url, slug))
 
     # Also pick up bare HTML educational articles
