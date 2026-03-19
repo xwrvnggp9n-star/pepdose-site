@@ -196,7 +196,7 @@ def sponsor_url_for_slug(slug):
         base = SPONSOR_URL + product_path
     else:
         base = SPONSOR_URL
-    utm = f'utm_source=pepdose&utm_medium=referral&utm_campaign=sponsor&utm_content={slug}'
+    utm = f'utm_source=pep-dose&utm_medium=referral&utm_campaign=sponsor&utm_content={slug}'
     sep = '&' if '?' in base else '?'
     return base + sep + utm
 
@@ -464,7 +464,7 @@ def inject_article_image(content, slug):
         return content
     img_file, product_path = _ARTICLE_WMP_IMAGES[lookup_slug]
     cdn_url = f'{_WMP_CDN}{img_file}?fit=300%2C300&ssl=1'
-    product_url = f'{_WMP_BASE}{product_path}?utm_source=pepdose&utm_medium=article&utm_campaign=wmp'
+    product_url = f'{_WMP_BASE}{product_path}?utm_source=pep-dose&utm_medium=article&utm_campaign=wmp'
     img_html = (
         f'<div style="float:right;margin:0 0 1rem 1.5rem;max-width:160px;border-radius:8px;overflow:hidden">'
         f'<a href="{product_url}" target="_blank" rel="noopener">'
@@ -902,7 +902,7 @@ def process_file(src_path, dst_path):
 # Discover all source pages
 # ─────────────────────────────────────────────────────────────────────────────
 SKIP_DIRS = {'_dist', '_theme', 'wp-json', '.claude', '.git', '__pycache__',
-             'wp-content', 'wp-includes', 'pepdose-favicon-plugin',
+             'wp-content', 'wp-includes', 'pep-dose-favicon-plugin',
              '_dist 2', '_dist 3', 'category'}
 
 # Files without .html extension that are actually HTML pages

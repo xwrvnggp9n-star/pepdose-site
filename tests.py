@@ -203,7 +203,7 @@ def test_build_sponsor_utm_tags():
         # Find all WMP links
         for m in re.finditer(r'href="(https://whitemarketpeptides\.com[^"]*)"', content):
             url = m.group(1)
-            if 'utm_source=pepdose' not in url:
+            if 'utm_source=pep-dose' not in url:
                 rel = str(f.relative_to(DIST))
                 if rel not in bad_links:
                     bad_links.append(rel)
