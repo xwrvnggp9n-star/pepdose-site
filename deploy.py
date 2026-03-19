@@ -64,7 +64,7 @@ def fetch_all_wp_items(endpoint):
     items = []
     page = 1
     while True:
-        result = wp_request(f'{endpoint}?per_page=100&page={page}&_fields=id,slug,status,title')
+        result = wp_request(f'{endpoint}?per_page=100&page={page}&status=any&_fields=id,slug,status,title')
         if not result or not isinstance(result, list) or len(result) == 0:
             break
         items.extend(result)
@@ -141,6 +141,7 @@ _SEO_DESCRIPTIONS = {
     'what-is-mots-c':                        'What is MOTS-c? Mitochondrial peptide for metabolism and longevity. Mechanism, exercise-mimetic benefits, dosing, and research.',
     'what-is-kpv-peptide':                   'What is KPV? Anti-inflammatory peptide for gut health, skin conditions, and immune modulation. Mechanism, benefits, and dosing.',
     'what-is-selank':                        'What is Selank? Nootropic peptide for anxiety and cognition. Mechanism of action, clinical benefits, dosing, and safety profile.',
+    'what-is-dsip':                          'What is DSIP (Delta Sleep-Inducing Peptide)? How it promotes deep delta-wave sleep, its mechanism, human clinical evidence, dosing, and safety.',
     'what-is-mazdutide':                     'What is Mazdutide? GLP-1/Glucagon dual agonist peptide for weight loss. Mechanism, clinical data, and comparison to other GLP-1s.',
     'what-is-glp-1':                         'What is GLP-1? Complete guide to glucagon-like peptide-1 — natural function, receptor agonist drugs, weight loss, and diabetes management.',
     'what-is-5-amino-1mq':                   'What is 5-Amino-1MQ? NNMT inhibitor for fat metabolism. Mechanism, weight loss benefits, oral dosing, and current research.',
@@ -176,6 +177,7 @@ _SEO_DESCRIPTIONS = {
     'glow-70-mg-vial-dosage-protocol':       'GLOW 70mg peptide blend dosage protocol. GHK-Cu + TB-500 + BPC-157 reconstitution, injection schedule, and syringe guide.',
     'klow-80mg-vial-dosage-protocol':        'KLOW 80mg peptide blend dosage protocol. GHK-Cu + TB-500 + BPC-157 + KPV reconstitution, dosing, and syringe guide.',
     'wolverine-stack-20mg-vial-dosage-protocol': 'Wolverine Stack 20mg dosage protocol. BPC-157 + TB-500 reconstitution, injection schedule, and syringe measurements.',
+    'dsip-5mg-vial-dosage-protocol':         'DSIP 5mg vial dosage protocol. Reconstitute with 2.0 mL bacteriostatic water for 2.5 mg/mL. Starting: 100 mcg; standard: 200 mcg. Inject 30–60 min before sleep.',
 }
 
 

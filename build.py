@@ -160,6 +160,7 @@ _SLUG_TO_NAME = {
     'what-is-ovagen':             'Ovagen',
     'what-is-prostamax':          'Prostamax',
     'what-is-vesugen':            'Vesugen',
+    'what-is-dsip':               'DSIP',
 }
 
 
@@ -270,6 +271,8 @@ _DOSAGE_RELATED = {
                     ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide'),
                     ('/what-is-semaglutide/', 'What Is Semaglutide?'),
                     ('/what-is-tirzepatide-2/', 'What Is Tirzepatide?')],
+    'dsip':        [('/what-is-dsip/', 'What Is DSIP?'),
+                    ('/what-is-selank/', 'What Is Selank?')],
 }
 
 # Education article pages → related articles + dosage protocols (matched by exact slug)
@@ -338,7 +341,11 @@ _ARTICLE_RELATED = {
     'what-is-mgf':               [('/what-is-bpc-157/', 'What Is BPC-157?'),
                                     ('/what-is-tb-500/', 'What Is TB-500?'),
                                     ('/what-are-peptides/', 'What Are Peptides?')],
-    'what-is-selank-2':          [('/what-are-peptides/', 'What Are Peptides?')],
+    'what-is-selank-2':          [('/what-is-dsip/', 'What Is DSIP?'),
+                                   ('/what-are-peptides/', 'What Are Peptides?')],
+    'what-is-dsip':              [('/what-is-selank/', 'What Is Selank?'),
+                                   ('/what-are-peptides/', 'What Are Peptides?'),
+                                   ('/single-peptide-dosages/dsip-5mg-vial-dosage-protocol/', 'DSIP Dosage Protocol')],
     'what-is-pnc-27':            [('/what-are-peptides/', 'What Are Peptides?')],
     'what-is-livagen':            [('/what-is-ovagen/', 'What Is Ovagen?'),
                                     ('/what-is-vesugen/', 'What Is Vesugen?'),
@@ -1105,6 +1112,7 @@ _ARTICLE_CATEGORIES = [
     ]),
     ('Cognitive &amp; Neurological', [
         'what-is-selank',
+        'what-is-dsip',
     ]),
     ('Peptide Fundamentals', [
         'what-are-peptides',
