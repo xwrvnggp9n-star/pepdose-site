@@ -160,7 +160,8 @@ _SLUG_TO_NAME = {
     'what-is-ovagen':             'Ovagen',
     'what-is-prostamax':          'Prostamax',
     'what-is-vesugen':            'Vesugen',
-    'what-is-dsip':               'DSIP',
+    'what-is-dsip':                       'DSIP',
+    'dsip-5mg-vial-dosage-protocol':      'DSIP 5 mg',
 }
 
 
@@ -183,6 +184,7 @@ def derive_peptide_name(slug):
     name = re.sub(r'\bSema\b', 'Semaglutide', name)
     name = re.sub(r'\bGlow\b', 'GLOW', name)
     name = re.sub(r'\bKlow\b', 'KLOW', name)
+    name = re.sub(r'\bDsip\b', 'DSIP', name)
     name = re.sub(r'\bWolverine Stack\b', 'Wolverine Stack', name)
     name = re.sub(r'\bRetatrutide\b', 'Retatrutide', name)
     # Fix "100Mg" → "100 mg" etc.
@@ -1025,6 +1027,7 @@ def _protocol_display_name(dirname):
         peptide = re.sub(r'\bGlow\b', 'GLOW', peptide)
         peptide = re.sub(r'\bKlow\b', 'KLOW', peptide)
         peptide = re.sub(r'\bWolverine Stack\b', 'Wolverine Stack', peptide)
+        peptide = re.sub(r'\bDsip\b', 'DSIP', peptide)
         return f'{peptide} — {dose} Vial'
     # Fallback
     return name.replace('-', ' ').title()
