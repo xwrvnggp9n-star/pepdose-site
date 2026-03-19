@@ -123,7 +123,7 @@ def resolve_slug(slug):
 _SEO_DESCRIPTIONS = {
     # Homepage & nav pages
     'home':                       'Clear dosage protocols, reconstitution guides, and a free calculator for BPC-157, Semaglutide, Tirzepatide, TB-500, and more peptides.',
-    'dosages-and-protocols':      'Browse 15+ peptide dosage protocols with reconstitution instructions, injection schedules, and syringe measurements for every vial size.',
+    'dosages-and-protocols':      'Browse 22 peptide dosage protocols with reconstitution instructions, injection schedules, and syringe measurements for every vial size.',
     'articles':                   'Evidence-based peptide education articles covering mechanisms, benefits, dosing, and safety for BPC-157, Semaglutide, Tirzepatide, and more.',
     'peptide-dosage-calculator':  'Free peptide dosage calculator. Enter vial size and water volume to get exact syringe units, concentration, and doses per vial.',
     'about-us':                   'About pep-dose.com — an independent peptide education resource providing clear, evidence-based dosage protocols and research information.',
