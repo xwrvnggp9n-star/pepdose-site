@@ -414,6 +414,27 @@ def test_live_dosages_content():
               'Dosages page has protocol links')
 
 
+def test_live_dosages_catalog_completeness():
+    section('Live: Dosages catalog lists every protocol source page')
+    status, body = fetch_live('/dosages-and-protocols/')
+    if status != 200:
+        check(False, f'Dosages catalog returned HTTP {status}')
+        return
+    missing = []
+    for parent in ('single-peptide-dosages', 'peptide-blend-dosages', 'peptide-stack-dosages'):
+        d = BASE / parent
+        if not d.exists() or not d.is_dir():
+            continue
+        for child in sorted(d.iterdir()):
+            if child.is_dir() and (child / 'index.html').exists():
+                slug = child.name
+                if slug not in body:
+                    missing.append(f'{parent}/{slug}')
+    check(len(missing) == 0,
+          f'All protocol source dirs appear in live catalog',
+          f'Missing from live catalog: {missing}' if missing else '')
+
+
 def test_live_articles_listing():
     section('Live: Articles listing page')
     status, body = fetch_live('/articles/')
@@ -533,23 +554,15 @@ def test_live_contact_form():
 
 def test_live_all_dosage_protocols():
     section('Live: All dosage protocol pages have real content')
-    protocols = [
-        '/peptide-blend-dosages/glow-70-mg-vial-dosage-protocol/',
-        '/peptide-blend-dosages/klow-80mg-vial-dosage-protocol/',
-        '/peptide-blend-dosages/wolverine-stack-20mg-vial-dosage-protocol/',
-        '/single-peptide-dosages/bpc-157-5mg-vial-dosage-protocol/',
-        '/single-peptide-dosages/bpc-157-10mg-vial-dosage-protocol/',
-        '/single-peptide-dosages/tb-500-5mg-vial-dosage-protocol/',
-        '/single-peptide-dosages/tb-500-10mg-vial-dosage-protocol/',
-        '/single-peptide-dosages/ghk-cu-50mg-vial-dosage-protocol/',
-        '/single-peptide-dosages/ghk-cu-100mg-vial-dosage-protocol/',
-        '/single-peptide-dosages/tesamorelin-5mg-vial-dosage-protocol/',
-        '/single-peptide-dosages/tesamorelin-10mg-vial-dosage-protocol/',
-        '/single-peptide-dosages/mots-c-10mg-vial-dosage-protocol/',
-        '/single-peptide-dosages/sema-5mg-vial-dosage-protocol/',
-        '/single-peptide-dosages/sema-10mg-vial-dosage-protocol/',
-        '/single-peptide-dosages/tirzepatide-10mg-vial-dosage-protocol/',
-    ]
+    # Enumerate dynamically from source dirs so new pages are automatically tested
+    protocols = []
+    for parent in ('single-peptide-dosages', 'peptide-blend-dosages', 'peptide-stack-dosages'):
+        d = BASE / parent
+        if not d.exists() or not d.is_dir():
+            continue
+        for child in sorted(d.iterdir()):
+            if child.is_dir() and (child / 'index.html').exists():
+                protocols.append(f'/{parent}/{child.name}/')
     for path in protocols:
         status, body = fetch_live(path)
         slug = path.strip('/').split('/')[-1]
@@ -626,6 +639,7 @@ LIVE_TESTS = [
     test_live_nav_pages,
     test_live_legal_pages,
     test_live_dosages_content,
+    test_live_dosages_catalog_completeness,
     test_live_articles_listing,
     test_live_articles_api_content,
     test_live_sample_articles,

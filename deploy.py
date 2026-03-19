@@ -226,6 +226,9 @@ def deploy(slug_filter=None, dry_run=False):
     updated = 0
     skipped = 0
     errors  = 0
+    # Track whether catalog pages need redeployment
+    deployed_protocol = False
+    deployed_article  = False
 
     for item, wp_type in all_items:
         slug = item['slug']
@@ -277,8 +280,40 @@ def deploy(slug_filter=None, dry_run=False):
             else:
                 print('✓')
             updated += 1
+            # Flag catalog pages for redeployment
+            if 'dosage-protocol' in slug or re.match(r'retatrutide-\d+mg$', slug):
+                deployed_protocol = True
+            if slug.startswith('what-is') or slug.startswith('what-are'):
+                deployed_article = True
         else:
             errors += 1
+
+    # Auto-redeploy catalog pages if their content changed
+    CATALOG_SLUGS = []
+    if deployed_protocol and slug_filter and slug_filter not in ('dosages-and-protocols', 'articles'):
+        CATALOG_SLUGS.append('dosages-and-protocols')
+    if deployed_article and slug_filter and slug_filter not in ('dosages-and-protocols', 'articles'):
+        CATALOG_SLUGS.append('articles')
+
+    for catalog_slug in CATALOG_SLUGS:
+        catalog_item = next((p for p in pages if p['slug'] == catalog_slug), None)
+        if not catalog_item:
+            continue
+        resolved = resolve_slug(catalog_slug)
+        dist_file = find_dist_file(resolved)
+        if not dist_file:
+            continue
+        content = read_content(dist_file)
+        if not content:
+            continue
+        seo_desc = get_seo_description(catalog_slug, content)
+        payload = {'content': content, 'excerpt': seo_desc, 'meta': {'advanced_seo_description': seo_desc}}
+        if dry_run:
+            print(f'  [DRY RUN] Would also update catalog: {catalog_slug}')
+        else:
+            print(f'  Auto-updating catalog: {catalog_slug} (ID: {catalog_item["id"]})...', end=' ', flush=True)
+            result = wp_request(f'pages/{catalog_item["id"]}', method='POST', data=payload)
+            print('✓' if result else '✗')
 
     print(f'\n{"[DRY RUN] " if dry_run else ""}Done. {updated} updated, {skipped} skipped (no local file), {errors} errors.')
 

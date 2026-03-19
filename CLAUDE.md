@@ -86,6 +86,8 @@ When adding a new peptide or protocol to the site, ALL of the following must be 
    - Add to `_DOSAGE_RELATED` dict (maps peptide keywords → education article links shown on protocol pages)
    - Update `_ARTICLE_RELATED` dict entries for related education articles to link back to new protocol
 5. **Rebuild & deploy** — `python3 build.py && python3 deploy.py <slug>` + `git push` (pushes calculator to GitHub Pages)
+   - `deploy.py` auto-redeploys `dosages-and-protocols` catalog when a protocol slug is deployed
+   - Verify: `python3 tests.py --live` — includes `test_live_dosages_catalog_completeness` that checks every source dir appears on the live catalog page
 
 ### Adding a New Education Article
 1. **Source HTML** — Create `<slug>/index.html` with article content
