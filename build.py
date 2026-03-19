@@ -369,6 +369,113 @@ _ARTICLE_RELATED = {
 }
 
 
+# Maps article slugs to WMP product images (CDN URL suffix → product path)
+_ARTICLE_WMP_IMAGES = {
+    'what-is-tb-500':              ('TB500-10-1.png',    '/product/tb-500-10-mg/'),
+    'what-is-the-wolverine-stack': ('WOLV-20-1.png',     '/product/wolverine-stack-20-mg/'),
+    'what-is-glow-peptide-blend':  ('GLOW-70-1-1.png',   '/product/glow-70-mg/'),
+    'what-is-klow-peptide-blend':  ('KLOW-80-1.png',     '/product/klow-80-mg/'),
+    'what-is-semaglutide':         ('SEMA-10-1.png',     '/product/sema-10-mg/'),
+    'what-is-mots-c':              ('MOTS-10-1.png',     '/product/mots-c-10-mg/'),
+    'what-is-tesamorelin':         ('TESA-10-1.png',     '/product/tesamorelin-10-mg/'),
+    'what-is-tirzepatide':         ('TIRZ-10-1.png',     '/product/tirzepatide-10-mg/'),
+    'what-is-retatrutide':         ('RETA-10-1.png',     '/product/retatrutide-10-mg/'),
+    'what-is-bpc-157':             ('BPC1-10-1.png',     '/product/bpc-157-10-mg/'),
+    'what-is-ghk-cu':              ('GHKc-100-1.png',    '/product/ghk-cu-100-mg/'),
+    'what-is-ipamorelin':          ('IPAM-10-1.png',     '/product/ipamorelin-10-mg/'),
+}
+_WMP_CDN = 'https://i0.wp.com/whitemarketpeptides.com/wp-content/uploads/2026/02/'
+_WMP_BASE = 'https://whitemarketpeptides.com'
+
+
+def clean_headers(content):
+    """Remove AI-generated jargon from article section headers."""
+    # Patterns to strip from h2/h3 tags:
+    # 1. Parenthetical qualifiers at end: (40–60 words), (educational), (NLP-friendly), etc.
+    # 2. "Fast Answer / Executive Summary" → "The Short Answer"
+    # 3. "Entity Properties" h3 → remove entirely
+    # 4. "Core Concepts & Key Entities" → "Key Concepts"
+    # 5. "Templates / Checklist / Example" → "Quick Reference Checklist"
+    # 6. Trailing qualifiers like "answer-first", "snippet-optimized", "copy-ready"
+
+    # Remove entire h3s that are just "Entity Properties" labels
+    content = re.sub(
+        r'<h3>[^<]*Entity Properties[^<]*</h3>\s*',
+        '', content)
+
+    # Remove entire h3s that are "Copy-ready Checklist" or "Snapshot Table" junk
+    content = re.sub(
+        r'<h3>[^<]*(?:Copy[‑\-]ready Checklist|Snapshot Table)[^<]*</h3>\s*',
+        '', content)
+
+    # Normalize "Fast Answer / Executive Summary" headers
+    content = re.sub(
+        r'<(h[23])>[^<]*(?:Fast Answer|Executive Summary)[^<]*</\1>',
+        r'<\1>The Short Answer</\1>', content)
+
+    # Normalize "Core Concepts & Key Entities" or similar
+    content = re.sub(
+        r'<(h[23])>[^<]*Core Concepts[^<]*</\1>',
+        r'<\1>Key Concepts</\1>', content)
+
+    # "Templates / Checklist / Example" → "Quick Reference"
+    content = re.sub(
+        r'<(h[23])>[^<]*Templates\s*/\s*Checklist[^<]*</\1>',
+        r'<\1>Quick Reference</\1>', content)
+
+    # "Step-by-Step / How-To (Educational...)" → "How to Use" (preserve meaningful titles)
+    content = re.sub(
+        r'<(h[23])>Step[‑\-]by[‑\-]Step\s*/\s*How[‑\-]To[^<]*</\1>',
+        r'<\1>How to Use</\1>', content)
+    content = re.sub(
+        r'<(h[23])>Step[‑\-]by[‑\-]Step[^<]*\(Educational[^)]*\)[^<]*</\1>',
+        r'<\1>How to Use</\1>', content)
+
+    # Strip trailing parenthetical qualifiers from all h2/h3
+    # e.g. "FAQs (NLP-friendly; 40–80 words each)" → "Frequently Asked Questions"
+    # First handle FAQ variants
+    content = re.sub(
+        r'<(h[23])>\s*FAQs?\s*\([^)]*\)\s*</\1>',
+        r'<\1>Frequently Asked Questions</\1>', content)
+
+    # Strip remaining parentheticals: "Comparison / Alternatives (foo vs. bar)" → "Comparison"
+    content = re.sub(
+        r'(<h[23]>[^<]+?)\s*\([^)]{5,}\)(</h[23]>)',
+        r'\1\2', content)
+
+    # Strip em-dash separated qualifiers: "Comparison — Ipamorelin vs. GHRP-2" keep as-is
+    # but remove qualifiers like "(with parenthetical)", "(Information Gain)" that sneak through
+    content = re.sub(
+        r'(<h[23]>[^<]+?)\s*\((?:with parenthetical|Information Gain|Answer[‑\-]First|PAA[‑\-]style|copy[‑\-]ready|snippet[‑\-]optimized)[^)]*\)(</h[23]>)',
+        r'\1\2', content)
+
+    return content
+
+
+def inject_article_image(content, slug):
+    """Add a floated WMP product image after the first paragraph if article has a WMP product
+    but no existing product image in the content."""
+    # Source dirs may have -2 suffix (e.g. what-is-ghk-cu-2 → what-is-ghk-cu)
+    lookup_slug = re.sub(r'-2$', '', slug)
+    if lookup_slug not in _ARTICLE_WMP_IMAGES:
+        return content
+    # Skip if article already has a WMP product image
+    if 'whitemarketpeptides.com/wp-content/uploads' in content:
+        return content
+    img_file, product_path = _ARTICLE_WMP_IMAGES[lookup_slug]
+    cdn_url = f'{_WMP_CDN}{img_file}?fit=300%2C300&ssl=1'
+    product_url = f'{_WMP_BASE}{product_path}?utm_source=pepdose&utm_medium=article&utm_campaign=wmp'
+    img_html = (
+        f'<div style="float:right;margin:0 0 1rem 1.5rem;max-width:160px;border-radius:8px;overflow:hidden">'
+        f'<a href="{product_url}" target="_blank" rel="noopener">'
+        f'<img src="{cdn_url}" alt="White Market Peptides product" '
+        f'width="160" height="160" loading="lazy" style="display:block;width:100%;height:auto">'
+        f'</a></div>'
+    )
+    # Insert after the first closing </p> tag
+    return content.replace('</p>', f'</p>\n{img_html}', 1)
+
+
 def _get_related_links(slug, is_dosage):
     """Return list of (url, title) related reading links for a page slug."""
     if is_dosage:
@@ -735,8 +842,17 @@ def process_file(src_path, dst_path):
     content = sanitize_old_branding(content)
     content = strip_sponsor_sections(content)
 
-    # ── Update legal page dates to February 20, 2026 ─────────────────────────
+    # ── Clean AI-generated jargon from headers ───────────────────────────────
     slug = src_path.parent.name if src_path.name == 'index.html' else src_path.stem
+    is_article_or_educational = (slug.startswith('what-is') or slug.startswith('what-are')
+                                  or slug in ('combine-peptides-same-syringe',
+                                              'retatrutide-vs-tirzepatide',
+                                              'tesamorelin-reconstitution-storage'))
+    if is_article_or_educational:
+        content = clean_headers(content)
+        content = inject_article_image(content, slug)
+
+    # ── Update legal page dates to February 20, 2026 ─────────────────────────
     if slug in ('disclaimer', 'privacy-policy', 'terms-conditions', 'cookie-policy'):
         content = re.sub(
             r'(?:Last updated|<strong>Last updated:</strong>)[^<]*(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+\d{4}',
