@@ -441,7 +441,9 @@ def test_live_articles_catalog_completeness():
     if status != 200:
         check(False, f'Articles catalog returned HTTP {status}')
         return
-    # Every what-is-* / what-are-* source dir should appear on the articles page
+    # Every what-is-* / what-are-* source dir should appear on the articles page.
+    # Some source dirs have a -2 suffix (WP duplicate-slug workaround); the live
+    # catalog and WP URLs use the non-suffixed slug, so strip it before checking.
     missing = []
     for child in sorted(BASE.iterdir()):
         if not child.is_dir():
@@ -450,7 +452,9 @@ def test_live_articles_catalog_completeness():
             continue
         if not (child / 'index.html').exists():
             continue
-        if child.name not in body:
+        # Resolve to the live WP slug (strip trailing -2 if present)
+        live_slug = re.sub(r'-2$', '', child.name)
+        if live_slug not in body:
             missing.append(child.name)
     check(len(missing) == 0,
           f'All what-is-*/what-are-* source dirs appear in live articles catalog',
