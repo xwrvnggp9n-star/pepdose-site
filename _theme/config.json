@@ -31,6 +31,19 @@
   },
 
   "_color_comment": "Warm Slate palette applied 2026-03-06. Colors injected via <style> in header template part on WP.com (overrides CDN global styles). Run `python3 build.py` to apply to static build.",
+  "_color_replacements_comment": "Direct old-color → new-color map applied to source HTML inline styles. Add entries here as old colors are discovered — no code changes needed.",
+  "color_replacements": {
+    "#2c3e50": "#2e2a22",
+    "#34495e": "#413c32",
+    "#1a252f": "#1a1710",
+    "#e74c3c": "#c85a30",
+    "#3498db": "#c48630",
+    "#ecf0f1": "#fdf8f0",
+    "#f9f9f9": "#faf5ec",
+    "#333333": "#2b2318",
+    "#bdc3c7": "#8a7a6a",
+    "#dc2626": "#c85a30"
+  },
   "colors": {
     "header_bg":       "#2e2a22",
     "primary_dark":    "#2e2a22",

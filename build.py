@@ -483,7 +483,7 @@ def sanitize_author(text):
 def inject_faq_schema(html):
     """Wrap FAQ sections in FAQPage microdata for rich snippet eligibility.
 
-    Detects the pattern:  <strong>Q\d+: question?</strong><br/> answer...
+    Detects the pattern:  <strong>Q\\d+: question?</strong><br/> answer...
     and wraps each Q/A pair in schema.org/Question + Answer microdata.
     """
     # Find the FAQ heading (use [^<]* instead of .*? to avoid spanning across tags)
