@@ -28,48 +28,30 @@ from pathlib import Path
 BASE       = Path(__file__).parent
 THEME_DIR  = BASE / '_theme'
 DIST_DIR   = BASE / '_dist'
-CONFIG_FILE = THEME_DIR / 'config.json'
+CONFIG_FILE  = THEME_DIR / 'config.json'
+CONTENT_FILE = THEME_DIR / 'content.json'
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Load config
+# Load config + content
 # ─────────────────────────────────────────────────────────────────────────────
 with open(CONFIG_FILE, encoding='utf-8') as f:
     C = json.load(f)
+with open(CONTENT_FILE, encoding='utf-8') as f:
+    CONTENT = json.load(f)
 
 SITE_NAME  = C['site_name']
 SITE_URL   = C.get('site_url', 'https://pep-dose.com')
-COLORS     = C['colors']
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Color replacement: map original hardcoded colors → theme colors
+# Color replacement: old hardcoded hex → new theme hex
+# Add entries to _theme/config.json → "color_replacements" as needed.
 # ─────────────────────────────────────────────────────────────────────────────
-ORIGINAL_COLORS = {
-    'primary_dark':    '#2c3e50',
-    'primary_mid':     '#34495e',
-    'primary_darkest': '#1a252f',
-    'accent':          '#e74c3c',
-    'secondary':       '#3498db',
-    'header_text':     '#ecf0f1',
-    'body_bg':         '#f9f9f9',
-    'body_text':       '#333333',
-}
-
-def build_color_map():
-    """Return {old_hex: new_hex} for colors that changed."""
-    mapping = {}
-    for key, old in ORIGINAL_COLORS.items():
-        new = COLORS.get(key, old)
-        if new.lower() != old.lower():
-            mapping[old.lower()] = new
-            mapping[old.upper()] = new
-    return mapping
-
-COLOR_MAP = build_color_map()
+_COLOR_REPLACEMENTS = C.get('color_replacements', {})
 
 def apply_colors(text):
-    """Replace original hardcoded colors with theme colors."""
-    for old, new in COLOR_MAP.items():
-        text = text.replace(old, new)
+    """Replace old hardcoded inline colors with current theme colors."""
+    for old, new in _COLOR_REPLACEMENTS.items():
+        text = text.replace(old, new).replace(old.upper(), new)
     return text
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -173,42 +155,7 @@ SPONSOR_URL   = SPONSOR.get('url', 'https://whitemarketpeptides.com')
 SPONSOR_CODE  = SPONSOR.get('discount_code', 'PEPDOSE')
 SPONSOR_DEAL  = SPONSOR.get('discount_text', '10% off + free 2-day shipping over $200')
 
-_SLUG_TO_NAME = {
-    'what-is-bpc-157':             'BPC-157',
-    'what-is-ghk-cu-2':           'GHK-Cu',
-    'what-is-tb-500':             'TB-500',
-    'what-is-tesamorelin':        'Tesamorelin',
-    'what-is-mots-c':            'MOTS-c',
-    'what-is-glow-peptide-blend': 'GLOW',
-    'what-is-klow-peptide-blend': 'KLOW',
-    'what-is-the-wolverine-stack':'Wolverine Stack',
-    'what-is-tirzepatide-2':      'Tirzepatide',
-    'what-is-retatrutide-2':      'Retatrutide',
-    'what-is-selank-2':           'Selank',
-    'what-is-vilon-2':            'Vilon',
-    'what-is-semaglutide':        'Semaglutide',
-    'what-is-ipamorelin':         'Ipamorelin',
-    'what-is-glp-1':              'GLP-1',
-    'what-is-5-amino-1mq':        '5-Amino-1MQ',
-    'what-is-kpv-peptide':        'KPV',
-    'what-is-mazdutide':          'Mazdutide',
-    'what-is-mgf':                'MGF',
-    'what-is-pnc-27':             'PNC-27',
-    'what-is-livagen':            'Livagen',
-    'what-is-ovagen':             'Ovagen',
-    'what-is-prostamax':          'Prostamax',
-    'what-is-vesugen':            'Vesugen',
-    'what-is-dsip':                            'DSIP',
-    'dsip-5mg-vial-dosage-protocol':          'DSIP 5 mg',
-    'what-is-pt-141':                         'PT-141',
-    'pt-141-10mg-vial-dosage-protocol':       'PT-141 10 mg',
-    'what-is-melanotan-ii':                   'Melanotan II',
-    'melanotan-ii-10mg-vial-dosage-protocol': 'Melanotan II 10 mg',
-    'what-is-oxytocin':                       'Oxytocin',
-    'oxytocin-5mg-vial-dosage-protocol':      'Oxytocin 5 mg',
-    'kpv-10mg-vial-dosage-protocol':          'KPV 10 mg',
-    'tirzepatide-30mg-vial-dosage-protocol':  'Tirzepatide 30 mg',
-}
+_SLUG_TO_NAME = CONTENT.get('slug_names', {})
 
 
 # Shared title-case corrections applied after .title() — used by both
@@ -295,185 +242,19 @@ def inject_inline_sponsor_link(html, product_url, peptide_name):
 _DIR_TO_LIVE_SLUG = C.get('slug_aliases', {})
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Related Reading cross-links (dosage pages ↔ education articles)
+# Related Reading cross-links + article images — loaded from content.json
 # ─────────────────────────────────────────────────────────────────────────────
-# Dosage protocol pages → education articles (matched by keyword in slug)
-_DOSAGE_RELATED = {
-    'bpc-157':     [('/what-is-bpc-157/', 'What Is BPC-157?'),
-                    ('/what-is-the-wolverine-stack/', 'What Is the Wolverine Stack?'),
-                    ('/combine-peptides-same-syringe/', 'Can You Combine Peptides in the Same Syringe?')],
-    'tb-500':      [('/what-is-tb-500/', 'What Is TB-500?'),
-                    ('/what-is-the-wolverine-stack/', 'What Is the Wolverine Stack?'),
-                    ('/combine-peptides-same-syringe/', 'Can You Combine Peptides in the Same Syringe?')],
-    'ghk-cu':      [('/what-is-ghk-cu/', 'What Is GHK-Cu?'),
-                    ('/what-is-glow-peptide-blend/', 'What Is the GLOW Peptide Blend?')],
-    'tesamorelin': [('/what-is-tesamorelin/', 'What Is Tesamorelin?'),
-                    ('/tesamorelin-reconstitution-storage/', 'Tesamorelin Reconstitution &amp; Storage')],
-    'mots-c':      [('/what-is-mots-c/', 'What Is MOTS-c?')],
-    'sema':        [('/what-is-semaglutide/', 'What Is Semaglutide?'),
-                    ('/what-is-glp-1/', 'What Is GLP-1?'),
-                    ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide')],
-    'tirzepatide': [('/what-is-tirzepatide/', 'What Is Tirzepatide?'),
-                    ('/what-is-glp-1/', 'What Is GLP-1?'),
-                    ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide')],
-    'glow':        [('/what-is-glow-peptide-blend/', 'What Is the GLOW Peptide Blend?'),
-                    ('/what-is-ghk-cu/', 'What Is GHK-Cu?'),
-                    ('/what-is-bpc-157/', 'What Is BPC-157?'),
-                    ('/what-is-tb-500/', 'What Is TB-500?')],
-    'klow':        [('/what-is-klow-peptide-blend/', 'What Is the KLOW Peptide Blend?'),
-                    ('/what-is-kpv-peptide/', 'What Is KPV?'),
-                    ('/what-is-ghk-cu/', 'What Is GHK-Cu?'),
-                    ('/what-is-bpc-157/', 'What Is BPC-157?'),
-                    ('/what-is-tb-500/', 'What Is TB-500?')],
-    'wolverine':   [('/what-is-the-wolverine-stack/', 'What Is the Wolverine Stack?'),
-                    ('/what-is-bpc-157/', 'What Is BPC-157?'),
-                    ('/what-is-tb-500/', 'What Is TB-500?'),
-                    ('/combine-peptides-same-syringe/', 'Can You Combine Peptides in the Same Syringe?')],
-    'retatrutide': [('/what-is-retatrutide/', 'What Is Retatrutide?'),
-                    ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide'),
-                    ('/what-is-semaglutide/', 'What Is Semaglutide?'),
-                    ('/what-is-tirzepatide/', 'What Is Tirzepatide?')],
-    'dsip':        [('/what-is-dsip/', 'What Is DSIP?'),
-                    ('/what-is-selank/', 'What Is Selank?')],
-    'kpv':         [('/what-is-kpv-peptide/', 'What Is KPV?'),
-                    ('/what-is-klow-peptide-blend/', 'What Is the KLOW Blend?'),
-                    ('/what-is-bpc-157/', 'What Is BPC-157?')],
-    'pt-141':      [('/what-is-pt-141/', 'What Is PT-141?'),
-                    ('/what-is-melanotan-ii/', 'What Is Melanotan II?')],
-    'melanotan':   [('/what-is-melanotan-ii/', 'What Is Melanotan II?'),
-                    ('/what-is-pt-141/', 'What Is PT-141?')],
-    'oxytocin':    [('/what-is-oxytocin/', 'What Is Oxytocin?'),
-                    ('/what-is-dsip/', 'What Is DSIP?')],
-}
+# Convert JSON [{url, title}] format → [(url, title)] tuples used internally
+def _links(data):
+    return [(d['url'], d['title']) for d in data]
 
-# Education article pages → related articles + dosage protocols (matched by exact slug)
-_ARTICLE_RELATED = {
-    'what-is-bpc-157':             [('/what-is-tb-500/', 'What Is TB-500?'),
-                                    ('/what-is-the-wolverine-stack/', 'What Is the Wolverine Stack?'),
-                                    ('/what-is-glow-peptide-blend/', 'What Is the GLOW Peptide Blend?'),
-                                    ('/combine-peptides-same-syringe/', 'Combining Peptides in One Syringe'),
-                                    ('/single-peptide-dosages/bpc-157-5mg-vial-dosage-protocol/', 'BPC-157 Dosage Protocol')],
-    'what-is-tb-500':              [('/what-is-bpc-157/', 'What Is BPC-157?'),
-                                    ('/what-is-the-wolverine-stack/', 'What Is the Wolverine Stack?'),
-                                    ('/what-is-glow-peptide-blend/', 'What Is the GLOW Peptide Blend?'),
-                                    ('/combine-peptides-same-syringe/', 'Combining Peptides in One Syringe'),
-                                    ('/single-peptide-dosages/tb-500-5mg-vial-dosage-protocol/', 'TB-500 Dosage Protocol')],
-    'what-is-ghk-cu-2':           [('/what-is-glow-peptide-blend/', 'What Is the GLOW Peptide Blend?'),
-                                    ('/what-is-klow-peptide-blend/', 'What Is the KLOW Peptide Blend?'),
-                                    ('/what-is-bpc-157/', 'What Is BPC-157?'),
-                                    ('/single-peptide-dosages/ghk-cu-50mg-vial-dosage-protocol/', 'GHK-Cu Dosage Protocol')],
-    'what-is-semaglutide':        [('/what-is-glp-1/', 'What Is GLP-1?'),
-                                    ('/what-is-tirzepatide/', 'What Is Tirzepatide?'),
-                                    ('/what-is-retatrutide/', 'What Is Retatrutide?'),
-                                    ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide'),
-                                    ('/single-peptide-dosages/sema-5mg-vial-dosage-protocol/', 'Semaglutide Dosage Protocol')],
-    'what-is-tirzepatide-2':      [('/what-is-semaglutide/', 'What Is Semaglutide?'),
-                                    ('/what-is-glp-1/', 'What Is GLP-1?'),
-                                    ('/what-is-retatrutide/', 'What Is Retatrutide?'),
-                                    ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide'),
-                                    ('/single-peptide-dosages/tirzepatide-10mg-vial-dosage-protocol/', 'Tirzepatide 10 mg Protocol'),
-                                    ('/single-peptide-dosages/tirzepatide-30mg-vial-dosage-protocol/', 'Tirzepatide 30 mg Protocol')],
-    'what-is-glp-1':              [('/what-is-semaglutide/', 'What Is Semaglutide?'),
-                                    ('/what-is-tirzepatide/', 'What Is Tirzepatide?'),
-                                    ('/what-is-retatrutide/', 'What Is Retatrutide?'),
-                                    ('/what-is-mazdutide/', 'What Is Mazdutide?')],
-    'what-is-retatrutide-2':      [('/what-is-semaglutide/', 'What Is Semaglutide?'),
-                                    ('/what-is-tirzepatide/', 'What Is Tirzepatide?'),
-                                    ('/what-is-glp-1/', 'What Is GLP-1?'),
-                                    ('/retatrutide-vs-tirzepatide/', 'Retatrutide vs. Tirzepatide')],
-    'what-is-mazdutide':          [('/what-is-semaglutide/', 'What Is Semaglutide?'),
-                                    ('/what-is-glp-1/', 'What Is GLP-1?'),
-                                    ('/what-is-tirzepatide/', 'What Is Tirzepatide?')],
-    'what-is-mots-c':            [('/what-is-5-amino-1mq/', 'What Is 5-Amino-1MQ?'),
-                                    ('/single-peptide-dosages/mots-c-10mg-vial-dosage-protocol/', 'MOTS-c Dosage Protocol')],
-    'what-is-5-amino-1mq':       [('/what-is-mots-c/', 'What Is MOTS-c?'),
-                                    ('/what-is-semaglutide/', 'What Is Semaglutide?')],
-    'what-is-ipamorelin':        [('/what-is-tesamorelin/', 'What Is Tesamorelin?'),
-                                    ('/what-are-peptides/', 'What Are Peptides?')],
-    'what-is-tesamorelin':        [('/what-is-ipamorelin/', 'What Is Ipamorelin?'),
-                                    ('/tesamorelin-reconstitution-storage/', 'Tesamorelin Storage Guide'),
-                                    ('/single-peptide-dosages/tesamorelin-5mg-vial-dosage-protocol/', 'Tesamorelin Dosage Protocol')],
-    'what-is-glow-peptide-blend': [('/what-is-ghk-cu/', 'What Is GHK-Cu?'),
-                                    ('/what-is-bpc-157/', 'What Is BPC-157?'),
-                                    ('/what-is-tb-500/', 'What Is TB-500?'),
-                                    ('/what-is-klow-peptide-blend/', 'What Is the KLOW Blend?'),
-                                    ('/peptide-blend-dosages/glow-70-mg-vial-dosage-protocol/', 'GLOW Dosage Protocol')],
-    'what-is-klow-peptide-blend': [('/what-is-glow-peptide-blend/', 'What Is the GLOW Blend?'),
-                                    ('/what-is-kpv-peptide/', 'What Is KPV?'),
-                                    ('/what-is-ghk-cu/', 'What Is GHK-Cu?'),
-                                    ('/what-is-bpc-157/', 'What Is BPC-157?'),
-                                    ('/peptide-blend-dosages/klow-80mg-vial-dosage-protocol/', 'KLOW Dosage Protocol')],
-    'what-is-the-wolverine-stack':[('/what-is-bpc-157/', 'What Is BPC-157?'),
-                                    ('/what-is-tb-500/', 'What Is TB-500?'),
-                                    ('/combine-peptides-same-syringe/', 'Combining Peptides in One Syringe'),
-                                    ('/peptide-blend-dosages/wolverine-stack-20mg-vial-dosage-protocol/', 'Wolverine Stack Dosage Protocol')],
-    'what-is-kpv-peptide':        [('/what-is-klow-peptide-blend/', 'What Is the KLOW Blend?'),
-                                    ('/what-is-bpc-157/', 'What Is BPC-157?'),
-                                    ('/what-are-peptides/', 'What Are Peptides?'),
-                                    ('/single-peptide-dosages/kpv-10mg-vial-dosage-protocol/', 'KPV Dosage Protocol')],
-    'what-is-mgf':               [('/what-is-bpc-157/', 'What Is BPC-157?'),
-                                    ('/what-is-tb-500/', 'What Is TB-500?'),
-                                    ('/what-are-peptides/', 'What Are Peptides?')],
-    'what-is-selank-2':          [('/what-is-dsip/', 'What Is DSIP?'),
-                                   ('/what-are-peptides/', 'What Are Peptides?')],
-    'what-is-dsip':              [('/what-is-selank/', 'What Is Selank?'),
-                                   ('/what-are-peptides/', 'What Are Peptides?'),
-                                   ('/single-peptide-dosages/dsip-5mg-vial-dosage-protocol/', 'DSIP Dosage Protocol')],
-    'what-is-pt-141':            [('/what-is-melanotan-ii/', 'What Is Melanotan II?'),
-                                    ('/what-are-peptides/', 'What Are Peptides?'),
-                                    ('/single-peptide-dosages/pt-141-10mg-vial-dosage-protocol/', 'PT-141 Dosage Protocol')],
-    'what-is-melanotan-ii':      [('/what-is-pt-141/', 'What Is PT-141?'),
-                                    ('/what-are-peptides/', 'What Are Peptides?'),
-                                    ('/single-peptide-dosages/melanotan-ii-10mg-vial-dosage-protocol/', 'Melanotan II Dosage Protocol')],
-    'what-is-oxytocin':          [('/what-is-dsip/', 'What Is DSIP?'),
-                                    ('/what-are-peptides/', 'What Are Peptides?'),
-                                    ('/single-peptide-dosages/oxytocin-5mg-vial-dosage-protocol/', 'Oxytocin Dosage Protocol')],
-    'what-is-pnc-27':            [('/what-are-peptides/', 'What Are Peptides?')],
-    'what-is-livagen':            [('/what-is-ovagen/', 'What Is Ovagen?'),
-                                    ('/what-is-vesugen/', 'What Is Vesugen?'),
-                                    ('/what-is-vilon/', 'What Is Vilon?')],
-    'what-is-ovagen':             [('/what-is-livagen/', 'What Is Livagen?'),
-                                    ('/what-is-vesugen/', 'What Is Vesugen?'),
-                                    ('/what-is-vilon/', 'What Is Vilon?')],
-    'what-is-vesugen':            [('/what-is-livagen/', 'What Is Livagen?'),
-                                    ('/what-is-ovagen/', 'What Is Ovagen?'),
-                                    ('/what-is-vilon/', 'What Is Vilon?')],
-    'what-is-vilon-2':            [('/what-is-livagen/', 'What Is Livagen?'),
-                                    ('/what-is-ovagen/', 'What Is Ovagen?'),
-                                    ('/what-is-vesugen/', 'What Is Vesugen?')],
-    'what-is-prostamax':          [('/what-are-peptides/', 'What Are Peptides?')],
-    'what-are-peptides':          [('/what-is-bpc-157/', 'What Is BPC-157?'),
-                                    ('/what-is-semaglutide/', 'What Is Semaglutide?'),
-                                    ('/what-is-glp-1/', 'What Is GLP-1?'),
-                                    ('/what-is-ghk-cu/', 'What Is GHK-Cu?')],
-    'combine-peptides-same-syringe': [('/what-is-the-wolverine-stack/', 'What Is the Wolverine Stack?'),
-                                    ('/what-is-bpc-157/', 'What Is BPC-157?'),
-                                    ('/what-is-tb-500/', 'What Is TB-500?')],
-    'retatrutide-vs-tirzepatide': [('/what-is-retatrutide/', 'What Is Retatrutide?'),
-                                    ('/what-is-tirzepatide/', 'What Is Tirzepatide?'),
-                                    ('/what-is-semaglutide/', 'What Is Semaglutide?'),
-                                    ('/what-is-glp-1/', 'What Is GLP-1?')],
-    'tesamorelin-reconstitution-storage': [('/what-is-tesamorelin/', 'What Is Tesamorelin?'),
-                                    ('/single-peptide-dosages/tesamorelin-5mg-vial-dosage-protocol/', 'Tesamorelin Dosage Protocol')],
-}
-
-
-# Maps article slugs to WMP product images (CDN URL suffix → product path)
+_DOSAGE_RELATED  = {k: _links(v) for k, v in CONTENT.get('dosage_related', {}).items()}
+_ARTICLE_RELATED = {k: _links(v) for k, v in CONTENT.get('article_related', {}).items()}
 _ARTICLE_WMP_IMAGES = {
-    'what-is-tb-500':              ('TB500-10-1.png',    '/product/tb-500-10-mg/'),
-    'what-is-the-wolverine-stack': ('WOLV-20-1.png',     '/product/wolverine-stack-20-mg/'),
-    'what-is-glow-peptide-blend':  ('GLOW-70-1-1.png',   '/product/glow-70-mg/'),
-    'what-is-klow-peptide-blend':  ('KLOW-80-1.png',     '/product/klow-80-mg/'),
-    'what-is-semaglutide':         ('SEMA-10-1.png',     '/product/sema-10-mg/'),
-    'what-is-mots-c':              ('MOTS-10-1.png',     '/product/mots-c-10-mg/'),
-    'what-is-tesamorelin':         ('TESA-10-1.png',     '/product/tesamorelin-10-mg/'),
-    'what-is-tirzepatide':         ('TIRZ-10-1.png',     '/product/tirzepatide-10-mg/'),
-    'what-is-retatrutide':         ('RETA-10-1.png',     '/product/retatrutide-10-mg/'),
-    'what-is-bpc-157':             ('BPC1-10-1.png',     '/product/bpc-157-10-mg/'),
-    'what-is-ghk-cu':              ('GHKc-100-1.png',    '/product/ghk-cu-100-mg/'),
-    'what-is-ipamorelin':          ('IPAM-10-1.png',     '/product/ipamorelin-10-mg/'),
+    k: (v['image'], v['wmp_url'])
+    for k, v in CONTENT.get('article_wmp_images', {}).items()
 }
-_WMP_CDN = 'https://i0.wp.com/whitemarketpeptides.com/wp-content/uploads/2026/02/'
+_WMP_CDN  = 'https://i0.wp.com/whitemarketpeptides.com/wp-content/uploads/2026/02/'
 _WMP_BASE = 'https://whitemarketpeptides.com'
 
 
@@ -1162,40 +943,10 @@ _BLOG_EXCLUDE = {'about-us', 'contact-us', 'cookie-policy', 'disclaimer',
 _DOSAGE_PARENT_DIRS = {'single-peptide-dosages', 'peptide-blend-dosages',
                        'peptide-stack-dosages'}
 
-# Article categories — slug patterns mapped to display category
+# Article categories — loaded from _theme/content.json
 _ARTICLE_CATEGORIES = [
-    ('Tissue Repair &amp; Recovery', [
-        'what-is-bpc-157', 'what-is-tb-500', 'what-is-ghk-cu',
-        'what-is-the-wolverine-stack', 'what-is-glow-peptide-blend',
-        'what-is-klow-peptide-blend', 'what-is-mgf',
-        'combine-peptides-same-syringe',
-    ]),
-    ('Weight Loss &amp; Metabolic', [
-        'what-is-semaglutide', 'what-is-tirzepatide', 'what-is-glp-1',
-        'what-is-retatrutide', 'what-is-mazdutide', 'what-is-5-amino-1mq',
-        'what-is-mots-c', 'retatrutide-vs-tirzepatide',
-    ]),
-    ('Growth Hormone &amp; Anti-Aging', [
-        'what-is-ipamorelin', 'what-is-tesamorelin',
-        'tesamorelin-reconstitution-storage',
-    ]),
-    ('Immune &amp; Organ Health', [
-        'what-is-kpv-peptide', 'what-is-livagen', 'what-is-ovagen',
-        'what-is-vesugen', 'what-is-vilon', 'what-is-prostamax',
-        'what-is-pnc-27',
-    ]),
-    ('Cognitive &amp; Neurological', [
-        'what-is-selank',
-        'what-is-dsip',
-        'what-is-oxytocin',
-    ]),
-    ('Sexual Health &amp; Tanning', [
-        'what-is-pt-141',
-        'what-is-melanotan-ii',
-    ]),
-    ('Peptide Fundamentals', [
-        'what-are-peptides',
-    ]),
+    (cat['label'], cat['slugs'])
+    for cat in CONTENT.get('article_categories', [])
 ]
 
 
