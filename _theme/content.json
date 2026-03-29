@@ -28,15 +28,15 @@
     "what-is-prostamax":           "Prostamax",
     "what-is-vesugen":             "Vesugen",
     "what-is-dsip":                            "DSIP",
-    "dsip-5mg-vial-dosage-protocol":           "DSIP 5 mg",
+    "dsip-5mg-vial-dosage-protocol":           "DSIP (5 mg)",
     "what-is-pt-141":                          "PT-141",
-    "pt-141-10mg-vial-dosage-protocol":        "PT-141 10 mg",
+    "pt-141-10mg-vial-dosage-protocol":        "PT-141 (10 mg)",
     "what-is-melanotan-ii":                    "Melanotan II",
-    "melanotan-ii-10mg-vial-dosage-protocol":  "Melanotan II 10 mg",
+    "melanotan-ii-10mg-vial-dosage-protocol":  "Melanotan II (10 mg)",
     "what-is-oxytocin":                        "Oxytocin",
-    "oxytocin-5mg-vial-dosage-protocol":       "Oxytocin 5 mg",
-    "kpv-10mg-vial-dosage-protocol":           "KPV 10 mg",
-    "tirzepatide-30mg-vial-dosage-protocol":   "Tirzepatide 30 mg"
+    "oxytocin-5mg-vial-dosage-protocol":       "Oxytocin (5 mg)",
+    "kpv-10mg-vial-dosage-protocol":           "KPV (10 mg)",
+    "tirzepatide-30mg-vial-dosage-protocol":   "Tirzepatide (30 mg)"
   },
 
   "_article_categories_comment": "Ordered list of article categories shown on the Education & Articles catalog page. Uses HTML entities for & because labels are inserted directly into HTML.",
