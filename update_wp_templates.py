@@ -285,6 +285,18 @@ h1, h2, h3, h4, h5, h6,
 .search-results-list li .search-excerpt { display: block; color: #6b7280; font-size: .9rem; margin-top: 4px; }
 .search-results-list li .search-date { display: block; color: #9ca3af; font-size: .8rem; margin-top: 2px; }
 
+/* ── Page heading: headline + subhead ── */
+.page-subhead {
+  font-family: 'Poppins', sans-serif !important;
+  font-size: .78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: #8a7a6a;
+  margin: 0 0 1.75rem;
+  padding: 0;
+}
+
 /* ── Sponsor CTA Block ── */
 .sponsor-cta { max-width: 750px; margin: 2rem auto; background: linear-gradient(135deg, #faf5ec 0%, #fff 100%); border: 2px solid #c85a30; border-radius: 12px; padding: 24px; position: relative; overflow: hidden; }
 .sponsor-cta-badge { position: absolute; top: 0; right: 0; background: #c85a30; color: #fff; font-size: .7rem; font-weight: 600; padding: 4px 12px; border-radius: 0 0 0 8px; text-transform: uppercase; letter-spacing: .05em; }

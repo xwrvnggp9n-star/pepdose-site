@@ -656,6 +656,47 @@ def add_lazy_loading(html):
     return re.sub(r'<img [^>]+/?>', lazy_replace, html)
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Page heading: split H1 into headline + subhead, reduce size
+# ─────────────────────────────────────────────────────────────────────────────
+def rewrite_page_heading(content, slug):
+    """Replace the page H1 with a smaller headline + optional subhead.
+
+    Protocol pages: "BPC-157 (10 mg Vial) Dosage Protocol"
+        → h1: "BPC-157 (10 mg)"  subhead: "Dosage Protocol"
+    Article pages:  "What Is X? The Full Subtitle"
+        → h1: "What Is X?"       subhead: "The Full Subtitle"
+    """
+    m = re.match(r'(<h1[^>]*>)(.*?)(</h1>)', content, re.DOTALL)
+    if not m:
+        return content
+
+    title    = m.group(2)
+    headline = title
+    subhead  = None
+
+    if 'dosage-protocol' in slug or 'vial-dosage' in slug:
+        dp = re.match(r'^(.+?)\s+Dosage Protocol\b.*$', title, re.IGNORECASE | re.DOTALL)
+        if dp:
+            headline = re.sub(r'\s+Vial\b', '', dp.group(1)).strip()
+            subhead  = 'Dosage Protocol'
+    else:
+        qs = re.match(r'^(.+?\?)\s+(.+)$', title, re.DOTALL)
+        cs = re.match(r'^(.+?):\s+(.+)$', title, re.DOTALL)
+        if qs:
+            headline, subhead = qs.group(1), qs.group(2)
+        elif cs:
+            headline = cs.group(1).rstrip(':').strip()
+            subhead  = cs.group(2)
+
+    new_h1 = (f'<h1 style="font-size:1.75rem;line-height:1.25;margin-bottom:.2rem">'
+              f'{headline}</h1>')
+    if subhead:
+        new_h1 += f'\n<p class="page-subhead">{subhead}</p>'
+
+    return content[:m.start()] + new_h1 + content[m.end():]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Extract title from source HTML
 # ─────────────────────────────────────────────────────────────────────────────
 def extract_title(raw):
@@ -782,6 +823,8 @@ def process_file(src_path, dst_path):
                  or re.match(r'retatrutide-\d+mg$', slug))
     is_educational = slug in ('combine-peptides-same-syringe', 'retatrutide-vs-tirzepatide',
                               'tesamorelin-reconstitution-storage')
+    if is_article or is_dosage or is_educational:
+        content = rewrite_page_heading(content, slug)
     if is_article or is_dosage or is_educational:
         peptide_name = derive_peptide_name(slug)
         content = inject_inline_sponsor_link(content, sponsor_url, peptide_name)
