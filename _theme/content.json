@@ -1,0 +1,367 @@
+{
+  "_comment": "Peptide content data: cross-links, categories, images, display names. Edit here when adding a new peptide — no Python changes needed.",
+
+  "_slug_names_comment": "Maps source dir slug → display name used in sponsor CTAs and related-reading labels.",
+  "slug_names": {
+    "what-is-bpc-157":             "BPC-157",
+    "what-is-ghk-cu-2":            "GHK-Cu",
+    "what-is-tb-500":              "TB-500",
+    "what-is-tesamorelin":         "Tesamorelin",
+    "what-is-mots-c":              "MOTS-c",
+    "what-is-glow-peptide-blend":  "GLOW",
+    "what-is-klow-peptide-blend":  "KLOW",
+    "what-is-the-wolverine-stack": "Wolverine Stack",
+    "what-is-tirzepatide-2":       "Tirzepatide",
+    "what-is-retatrutide-2":       "Retatrutide",
+    "what-is-selank-2":            "Selank",
+    "what-is-vilon-2":             "Vilon",
+    "what-is-semaglutide":         "Semaglutide",
+    "what-is-ipamorelin":          "Ipamorelin",
+    "what-is-glp-1":               "GLP-1",
+    "what-is-5-amino-1mq":         "5-Amino-1MQ",
+    "what-is-kpv-peptide":         "KPV",
+    "what-is-mazdutide":           "Mazdutide",
+    "what-is-mgf":                 "MGF",
+    "what-is-pnc-27":              "PNC-27",
+    "what-is-livagen":             "Livagen",
+    "what-is-ovagen":              "Ovagen",
+    "what-is-prostamax":           "Prostamax",
+    "what-is-vesugen":             "Vesugen",
+    "what-is-dsip":                            "DSIP",
+    "dsip-5mg-vial-dosage-protocol":           "DSIP 5 mg",
+    "what-is-pt-141":                          "PT-141",
+    "pt-141-10mg-vial-dosage-protocol":        "PT-141 10 mg",
+    "what-is-melanotan-ii":                    "Melanotan II",
+    "melanotan-ii-10mg-vial-dosage-protocol":  "Melanotan II 10 mg",
+    "what-is-oxytocin":                        "Oxytocin",
+    "oxytocin-5mg-vial-dosage-protocol":       "Oxytocin 5 mg",
+    "kpv-10mg-vial-dosage-protocol":           "KPV 10 mg",
+    "tirzepatide-30mg-vial-dosage-protocol":   "Tirzepatide 30 mg"
+  },
+
+  "_article_categories_comment": "Ordered list of article categories shown on the Education & Articles catalog page. Uses HTML entities for & because labels are inserted directly into HTML.",
+  "article_categories": [
+    {
+      "label": "Tissue Repair &amp; Recovery",
+      "slugs": [
+        "what-is-bpc-157", "what-is-tb-500", "what-is-ghk-cu",
+        "what-is-the-wolverine-stack", "what-is-glow-peptide-blend",
+        "what-is-klow-peptide-blend", "what-is-mgf",
+        "combine-peptides-same-syringe"
+      ]
+    },
+    {
+      "label": "Weight Loss &amp; Metabolic",
+      "slugs": [
+        "what-is-semaglutide", "what-is-tirzepatide", "what-is-glp-1",
+        "what-is-retatrutide", "what-is-mazdutide", "what-is-5-amino-1mq",
+        "what-is-mots-c", "retatrutide-vs-tirzepatide"
+      ]
+    },
+    {
+      "label": "Growth Hormone &amp; Anti-Aging",
+      "slugs": [
+        "what-is-ipamorelin", "what-is-tesamorelin",
+        "tesamorelin-reconstitution-storage"
+      ]
+    },
+    {
+      "label": "Immune &amp; Organ Health",
+      "slugs": [
+        "what-is-kpv-peptide", "what-is-livagen", "what-is-ovagen",
+        "what-is-vesugen", "what-is-vilon", "what-is-prostamax",
+        "what-is-pnc-27"
+      ]
+    },
+    {
+      "label": "Cognitive &amp; Neurological",
+      "slugs": [
+        "what-is-selank", "what-is-dsip", "what-is-oxytocin"
+      ]
+    },
+    {
+      "label": "Sexual Health &amp; Tanning",
+      "slugs": [
+        "what-is-pt-141", "what-is-melanotan-ii"
+      ]
+    },
+    {
+      "label": "Peptide Fundamentals",
+      "slugs": [
+        "what-are-peptides"
+      ]
+    }
+  ],
+
+  "_article_wmp_images_comment": "Maps article slug (live, without -2 suffix) → WMP product image filename and product path. Image looked up via _WMP_CDN prefix. Missing entries = no image injected.",
+  "article_wmp_images": {
+    "what-is-tb-500":              { "image": "TB500-10-1.png",  "wmp_url": "/product/tb-500-10-mg/" },
+    "what-is-the-wolverine-stack": { "image": "WOLV-20-1.png",   "wmp_url": "/product/wolverine-stack-20-mg/" },
+    "what-is-glow-peptide-blend":  { "image": "GLOW-70-1-1.png", "wmp_url": "/product/glow-70-mg/" },
+    "what-is-klow-peptide-blend":  { "image": "KLOW-80-1.png",   "wmp_url": "/product/klow-80-mg/" },
+    "what-is-semaglutide":         { "image": "SEMA-10-1.png",   "wmp_url": "/product/sema-10-mg/" },
+    "what-is-mots-c":              { "image": "MOTS-10-1.png",   "wmp_url": "/product/mots-c-10-mg/" },
+    "what-is-tesamorelin":         { "image": "TESA-10-1.png",   "wmp_url": "/product/tesamorelin-10-mg/" },
+    "what-is-tirzepatide":         { "image": "TIRZ-10-1.png",   "wmp_url": "/product/tirzepatide-10-mg/" },
+    "what-is-retatrutide":         { "image": "RETA-10-1.png",   "wmp_url": "/product/retatrutide-10-mg/" },
+    "what-is-bpc-157":             { "image": "BPC1-10-1.png",   "wmp_url": "/product/bpc-157-10-mg/" },
+    "what-is-ghk-cu":              { "image": "GHKc-100-1.png",  "wmp_url": "/product/ghk-cu-100-mg/" },
+    "what-is-ipamorelin":          { "image": "IPAM-10-1.png",   "wmp_url": "/product/ipamorelin-10-mg/" }
+  },
+
+  "_dosage_related_comment": "Keyword → related article links shown on dosage protocol pages. Key is a substring matched against the protocol slug (e.g. 'bpc-157' matches 'bpc-157-5mg-vial-dosage-protocol').",
+  "dosage_related": {
+    "bpc-157":     [
+      { "url": "/what-is-bpc-157/",                    "title": "What Is BPC-157?" },
+      { "url": "/what-is-the-wolverine-stack/",        "title": "What Is the Wolverine Stack?" },
+      { "url": "/combine-peptides-same-syringe/",      "title": "Can You Combine Peptides in the Same Syringe?" }
+    ],
+    "tb-500":      [
+      { "url": "/what-is-tb-500/",                     "title": "What Is TB-500?" },
+      { "url": "/what-is-the-wolverine-stack/",        "title": "What Is the Wolverine Stack?" },
+      { "url": "/combine-peptides-same-syringe/",      "title": "Can You Combine Peptides in the Same Syringe?" }
+    ],
+    "ghk-cu":      [
+      { "url": "/what-is-ghk-cu/",                     "title": "What Is GHK-Cu?" },
+      { "url": "/what-is-glow-peptide-blend/",         "title": "What Is the GLOW Peptide Blend?" }
+    ],
+    "tesamorelin": [
+      { "url": "/what-is-tesamorelin/",                "title": "What Is Tesamorelin?" },
+      { "url": "/tesamorelin-reconstitution-storage/", "title": "Tesamorelin Reconstitution &amp; Storage" }
+    ],
+    "mots-c":      [
+      { "url": "/what-is-mots-c/",                     "title": "What Is MOTS-c?" }
+    ],
+    "sema":        [
+      { "url": "/what-is-semaglutide/",                "title": "What Is Semaglutide?" },
+      { "url": "/what-is-glp-1/",                      "title": "What Is GLP-1?" },
+      { "url": "/retatrutide-vs-tirzepatide/",         "title": "Retatrutide vs. Tirzepatide" }
+    ],
+    "tirzepatide": [
+      { "url": "/what-is-tirzepatide/",                "title": "What Is Tirzepatide?" },
+      { "url": "/what-is-glp-1/",                      "title": "What Is GLP-1?" },
+      { "url": "/retatrutide-vs-tirzepatide/",         "title": "Retatrutide vs. Tirzepatide" }
+    ],
+    "glow":        [
+      { "url": "/what-is-glow-peptide-blend/",         "title": "What Is the GLOW Peptide Blend?" },
+      { "url": "/what-is-ghk-cu/",                     "title": "What Is GHK-Cu?" },
+      { "url": "/what-is-bpc-157/",                    "title": "What Is BPC-157?" },
+      { "url": "/what-is-tb-500/",                     "title": "What Is TB-500?" }
+    ],
+    "klow":        [
+      { "url": "/what-is-klow-peptide-blend/",         "title": "What Is the KLOW Peptide Blend?" },
+      { "url": "/what-is-kpv-peptide/",               "title": "What Is KPV?" },
+      { "url": "/what-is-ghk-cu/",                     "title": "What Is GHK-Cu?" },
+      { "url": "/what-is-bpc-157/",                    "title": "What Is BPC-157?" },
+      { "url": "/what-is-tb-500/",                     "title": "What Is TB-500?" }
+    ],
+    "wolverine":   [
+      { "url": "/what-is-the-wolverine-stack/",        "title": "What Is the Wolverine Stack?" },
+      { "url": "/what-is-bpc-157/",                    "title": "What Is BPC-157?" },
+      { "url": "/what-is-tb-500/",                     "title": "What Is TB-500?" },
+      { "url": "/combine-peptides-same-syringe/",      "title": "Can You Combine Peptides in the Same Syringe?" }
+    ],
+    "retatrutide": [
+      { "url": "/what-is-retatrutide/",                "title": "What Is Retatrutide?" },
+      { "url": "/retatrutide-vs-tirzepatide/",         "title": "Retatrutide vs. Tirzepatide" },
+      { "url": "/what-is-semaglutide/",                "title": "What Is Semaglutide?" },
+      { "url": "/what-is-tirzepatide/",                "title": "What Is Tirzepatide?" }
+    ],
+    "dsip":        [
+      { "url": "/what-is-dsip/",                       "title": "What Is DSIP?" },
+      { "url": "/what-is-selank/",                     "title": "What Is Selank?" }
+    ],
+    "kpv":         [
+      { "url": "/what-is-kpv-peptide/",               "title": "What Is KPV?" },
+      { "url": "/what-is-klow-peptide-blend/",         "title": "What Is the KLOW Blend?" },
+      { "url": "/what-is-bpc-157/",                    "title": "What Is BPC-157?" }
+    ],
+    "pt-141":      [
+      { "url": "/what-is-pt-141/",                     "title": "What Is PT-141?" },
+      { "url": "/what-is-melanotan-ii/",               "title": "What Is Melanotan II?" }
+    ],
+    "melanotan":   [
+      { "url": "/what-is-melanotan-ii/",               "title": "What Is Melanotan II?" },
+      { "url": "/what-is-pt-141/",                     "title": "What Is PT-141?" }
+    ],
+    "oxytocin":    [
+      { "url": "/what-is-oxytocin/",                   "title": "What Is Oxytocin?" },
+      { "url": "/what-is-dsip/",                       "title": "What Is DSIP?" }
+    ]
+  },
+
+  "_article_related_comment": "Article slug (source dir name, may include -2 suffix) → related reading links shown at bottom of article pages.",
+  "article_related": {
+    "what-is-bpc-157": [
+      { "url": "/what-is-tb-500/",                                              "title": "What Is TB-500?" },
+      { "url": "/what-is-the-wolverine-stack/",                                 "title": "What Is the Wolverine Stack?" },
+      { "url": "/what-is-glow-peptide-blend/",                                  "title": "What Is the GLOW Peptide Blend?" },
+      { "url": "/combine-peptides-same-syringe/",                               "title": "Combining Peptides in One Syringe" },
+      { "url": "/single-peptide-dosages/bpc-157-5mg-vial-dosage-protocol/",     "title": "BPC-157 Dosage Protocol" }
+    ],
+    "what-is-tb-500": [
+      { "url": "/what-is-bpc-157/",                                             "title": "What Is BPC-157?" },
+      { "url": "/what-is-the-wolverine-stack/",                                 "title": "What Is the Wolverine Stack?" },
+      { "url": "/what-is-glow-peptide-blend/",                                  "title": "What Is the GLOW Peptide Blend?" },
+      { "url": "/combine-peptides-same-syringe/",                               "title": "Combining Peptides in One Syringe" },
+      { "url": "/single-peptide-dosages/tb-500-5mg-vial-dosage-protocol/",      "title": "TB-500 Dosage Protocol" }
+    ],
+    "what-is-ghk-cu-2": [
+      { "url": "/what-is-glow-peptide-blend/",                                  "title": "What Is the GLOW Peptide Blend?" },
+      { "url": "/what-is-klow-peptide-blend/",                                  "title": "What Is the KLOW Peptide Blend?" },
+      { "url": "/what-is-bpc-157/",                                             "title": "What Is BPC-157?" },
+      { "url": "/single-peptide-dosages/ghk-cu-50mg-vial-dosage-protocol/",     "title": "GHK-Cu Dosage Protocol" }
+    ],
+    "what-is-semaglutide": [
+      { "url": "/what-is-glp-1/",                                               "title": "What Is GLP-1?" },
+      { "url": "/what-is-tirzepatide/",                                         "title": "What Is Tirzepatide?" },
+      { "url": "/what-is-retatrutide/",                                         "title": "What Is Retatrutide?" },
+      { "url": "/retatrutide-vs-tirzepatide/",                                  "title": "Retatrutide vs. Tirzepatide" },
+      { "url": "/single-peptide-dosages/sema-5mg-vial-dosage-protocol/",        "title": "Semaglutide Dosage Protocol" }
+    ],
+    "what-is-tirzepatide-2": [
+      { "url": "/what-is-semaglutide/",                                         "title": "What Is Semaglutide?" },
+      { "url": "/what-is-glp-1/",                                               "title": "What Is GLP-1?" },
+      { "url": "/what-is-retatrutide/",                                         "title": "What Is Retatrutide?" },
+      { "url": "/retatrutide-vs-tirzepatide/",                                  "title": "Retatrutide vs. Tirzepatide" },
+      { "url": "/single-peptide-dosages/tirzepatide-10mg-vial-dosage-protocol/","title": "Tirzepatide 10 mg Protocol" },
+      { "url": "/single-peptide-dosages/tirzepatide-30mg-vial-dosage-protocol/","title": "Tirzepatide 30 mg Protocol" }
+    ],
+    "what-is-glp-1": [
+      { "url": "/what-is-semaglutide/",                                         "title": "What Is Semaglutide?" },
+      { "url": "/what-is-tirzepatide/",                                         "title": "What Is Tirzepatide?" },
+      { "url": "/what-is-retatrutide/",                                         "title": "What Is Retatrutide?" },
+      { "url": "/what-is-mazdutide/",                                           "title": "What Is Mazdutide?" }
+    ],
+    "what-is-retatrutide-2": [
+      { "url": "/what-is-semaglutide/",                                         "title": "What Is Semaglutide?" },
+      { "url": "/what-is-tirzepatide/",                                         "title": "What Is Tirzepatide?" },
+      { "url": "/what-is-glp-1/",                                               "title": "What Is GLP-1?" },
+      { "url": "/retatrutide-vs-tirzepatide/",                                  "title": "Retatrutide vs. Tirzepatide" }
+    ],
+    "what-is-mazdutide": [
+      { "url": "/what-is-semaglutide/",                                         "title": "What Is Semaglutide?" },
+      { "url": "/what-is-glp-1/",                                               "title": "What Is GLP-1?" },
+      { "url": "/what-is-tirzepatide/",                                         "title": "What Is Tirzepatide?" }
+    ],
+    "what-is-mots-c": [
+      { "url": "/what-is-5-amino-1mq/",                                         "title": "What Is 5-Amino-1MQ?" },
+      { "url": "/single-peptide-dosages/mots-c-10mg-vial-dosage-protocol/",     "title": "MOTS-c Dosage Protocol" }
+    ],
+    "what-is-5-amino-1mq": [
+      { "url": "/what-is-mots-c/",                                              "title": "What Is MOTS-c?" },
+      { "url": "/what-is-semaglutide/",                                         "title": "What Is Semaglutide?" }
+    ],
+    "what-is-ipamorelin": [
+      { "url": "/what-is-tesamorelin/",                                         "title": "What Is Tesamorelin?" },
+      { "url": "/what-are-peptides/",                                           "title": "What Are Peptides?" }
+    ],
+    "what-is-tesamorelin": [
+      { "url": "/what-is-ipamorelin/",                                          "title": "What Is Ipamorelin?" },
+      { "url": "/tesamorelin-reconstitution-storage/",                          "title": "Tesamorelin Storage Guide" },
+      { "url": "/single-peptide-dosages/tesamorelin-5mg-vial-dosage-protocol/", "title": "Tesamorelin Dosage Protocol" }
+    ],
+    "what-is-glow-peptide-blend": [
+      { "url": "/what-is-ghk-cu/",                                              "title": "What Is GHK-Cu?" },
+      { "url": "/what-is-bpc-157/",                                             "title": "What Is BPC-157?" },
+      { "url": "/what-is-tb-500/",                                              "title": "What Is TB-500?" },
+      { "url": "/what-is-klow-peptide-blend/",                                  "title": "What Is the KLOW Blend?" },
+      { "url": "/peptide-blend-dosages/glow-70-mg-vial-dosage-protocol/",       "title": "GLOW Dosage Protocol" }
+    ],
+    "what-is-klow-peptide-blend": [
+      { "url": "/what-is-glow-peptide-blend/",                                  "title": "What Is the GLOW Blend?" },
+      { "url": "/what-is-kpv-peptide/",                                        "title": "What Is KPV?" },
+      { "url": "/what-is-ghk-cu/",                                              "title": "What Is GHK-Cu?" },
+      { "url": "/what-is-bpc-157/",                                             "title": "What Is BPC-157?" },
+      { "url": "/peptide-blend-dosages/klow-80mg-vial-dosage-protocol/",        "title": "KLOW Dosage Protocol" }
+    ],
+    "what-is-the-wolverine-stack": [
+      { "url": "/what-is-bpc-157/",                                             "title": "What Is BPC-157?" },
+      { "url": "/what-is-tb-500/",                                              "title": "What Is TB-500?" },
+      { "url": "/combine-peptides-same-syringe/",                               "title": "Combining Peptides in One Syringe" },
+      { "url": "/peptide-blend-dosages/wolverine-stack-20mg-vial-dosage-protocol/", "title": "Wolverine Stack Dosage Protocol" }
+    ],
+    "what-is-kpv-peptide": [
+      { "url": "/what-is-klow-peptide-blend/",                                  "title": "What Is the KLOW Blend?" },
+      { "url": "/what-is-bpc-157/",                                             "title": "What Is BPC-157?" },
+      { "url": "/what-are-peptides/",                                           "title": "What Are Peptides?" },
+      { "url": "/single-peptide-dosages/kpv-10mg-vial-dosage-protocol/",        "title": "KPV Dosage Protocol" }
+    ],
+    "what-is-mgf": [
+      { "url": "/what-is-bpc-157/",                                             "title": "What Is BPC-157?" },
+      { "url": "/what-is-tb-500/",                                              "title": "What Is TB-500?" },
+      { "url": "/what-are-peptides/",                                           "title": "What Are Peptides?" }
+    ],
+    "what-is-selank-2": [
+      { "url": "/what-is-dsip/",                                                "title": "What Is DSIP?" },
+      { "url": "/what-are-peptides/",                                           "title": "What Are Peptides?" }
+    ],
+    "what-is-dsip": [
+      { "url": "/what-is-selank/",                                              "title": "What Is Selank?" },
+      { "url": "/what-are-peptides/",                                           "title": "What Are Peptides?" },
+      { "url": "/single-peptide-dosages/dsip-5mg-vial-dosage-protocol/",        "title": "DSIP Dosage Protocol" }
+    ],
+    "what-is-pt-141": [
+      { "url": "/what-is-melanotan-ii/",                                        "title": "What Is Melanotan II?" },
+      { "url": "/what-are-peptides/",                                           "title": "What Are Peptides?" },
+      { "url": "/single-peptide-dosages/pt-141-10mg-vial-dosage-protocol/",     "title": "PT-141 Dosage Protocol" }
+    ],
+    "what-is-melanotan-ii": [
+      { "url": "/what-is-pt-141/",                                              "title": "What Is PT-141?" },
+      { "url": "/what-are-peptides/",                                           "title": "What Are Peptides?" },
+      { "url": "/single-peptide-dosages/melanotan-ii-10mg-vial-dosage-protocol/","title": "Melanotan II Dosage Protocol" }
+    ],
+    "what-is-oxytocin": [
+      { "url": "/what-is-dsip/",                                                "title": "What Is DSIP?" },
+      { "url": "/what-are-peptides/",                                           "title": "What Are Peptides?" },
+      { "url": "/single-peptide-dosages/oxytocin-5mg-vial-dosage-protocol/",    "title": "Oxytocin Dosage Protocol" }
+    ],
+    "what-is-pnc-27": [
+      { "url": "/what-are-peptides/",                                           "title": "What Are Peptides?" }
+    ],
+    "what-is-livagen": [
+      { "url": "/what-is-ovagen/",                                              "title": "What Is Ovagen?" },
+      { "url": "/what-is-vesugen/",                                             "title": "What Is Vesugen?" },
+      { "url": "/what-is-vilon/",                                               "title": "What Is Vilon?" }
+    ],
+    "what-is-ovagen": [
+      { "url": "/what-is-livagen/",                                             "title": "What Is Livagen?" },
+      { "url": "/what-is-vesugen/",                                             "title": "What Is Vesugen?" },
+      { "url": "/what-is-vilon/",                                               "title": "What Is Vilon?" }
+    ],
+    "what-is-vesugen": [
+      { "url": "/what-is-livagen/",                                             "title": "What Is Livagen?" },
+      { "url": "/what-is-ovagen/",                                              "title": "What Is Ovagen?" },
+      { "url": "/what-is-vilon/",                                               "title": "What Is Vilon?" }
+    ],
+    "what-is-vilon-2": [
+      { "url": "/what-is-livagen/",                                             "title": "What Is Livagen?" },
+      { "url": "/what-is-ovagen/",                                              "title": "What Is Ovagen?" },
+      { "url": "/what-is-vesugen/",                                             "title": "What Is Vesugen?" }
+    ],
+    "what-is-prostamax": [
+      { "url": "/what-are-peptides/",                                           "title": "What Are Peptides?" }
+    ],
+    "what-are-peptides": [
+      { "url": "/what-is-bpc-157/",                                             "title": "What Is BPC-157?" },
+      { "url": "/what-is-semaglutide/",                                         "title": "What Is Semaglutide?" },
+      { "url": "/what-is-glp-1/",                                               "title": "What Is GLP-1?" },
+      { "url": "/what-is-ghk-cu/",                                              "title": "What Is GHK-Cu?" }
+    ],
+    "combine-peptides-same-syringe": [
+      { "url": "/what-is-the-wolverine-stack/",                                 "title": "What Is the Wolverine Stack?" },
+      { "url": "/what-is-bpc-157/",                                             "title": "What Is BPC-157?" },
+      { "url": "/what-is-tb-500/",                                              "title": "What Is TB-500?" }
+    ],
+    "retatrutide-vs-tirzepatide": [
+      { "url": "/what-is-retatrutide/",                                         "title": "What Is Retatrutide?" },
+      { "url": "/what-is-tirzepatide/",                                         "title": "What Is Tirzepatide?" },
+      { "url": "/what-is-semaglutide/",                                         "title": "What Is Semaglutide?" },
+      { "url": "/what-is-glp-1/",                                               "title": "What Is GLP-1?" }
+    ],
+    "tesamorelin-reconstitution-storage": [
+      { "url": "/what-is-tesamorelin/",                                         "title": "What Is Tesamorelin?" },
+      { "url": "/single-peptide-dosages/tesamorelin-5mg-vial-dosage-protocol/", "title": "Tesamorelin Dosage Protocol" }
+    ]
+  }
+}
