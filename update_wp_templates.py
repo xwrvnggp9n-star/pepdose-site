@@ -360,10 +360,26 @@ SEARCH_TEMPLATE = r'''<!-- wp:template-part {"slug":"header","tagName":"header",
         container.innerHTML = '<p style="color:#6b7280;font-family:Poppins,sans-serif">No results found for \u201c' + q + '\u201d. Try browsing <a href="/articles/" style="color:#c85a30">Education &amp; Articles</a> or <a href="/dosages-and-protocols/" style="color:#c85a30">Dosages &amp; Protocols</a>.</p>';
         return;
       }
+      var BADGE = {
+        protocol: {text:'Protocol', bg:'#3aaa8c'},
+        article:  {text:'Article',  bg:'#c48630'}
+      };
+      function badge(item) {
+        var u = item.url;
+        if (u.indexOf('dosage-protocol') !== -1 ||
+            u.indexOf('/single-peptide-dosages/') !== -1 ||
+            u.indexOf('/peptide-blend-dosages/')  !== -1 ||
+            u.indexOf('/peptide-stack-dosages/')  !== -1) return BADGE.protocol;
+        if (item.subtype === 'post') return BADGE.article;
+        return null;
+      }
+      var PILL = 'display:inline-block;font-family:Poppins,sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#fff;padding:2px 8px;border-radius:20px;margin-top:5px;';
       var html = '';
       results.forEach(function(item){
-        html += '<div style="padding:12px 0;border-bottom:1px solid #e5e0d5">';
-        html += '<a href="' + item.url + '" style="color:#2e2a22;text-decoration:none;font-size:1.05rem;font-weight:600;font-family:Poppins,sans-serif">' + item.title + '</a>';
+        var b = badge(item);
+        html += '<div style="padding:14px 0;border-bottom:1px solid #e5e0d5">';
+        html += '<a href="' + item.url + '" style="color:#2e2a22;text-decoration:none;font-size:1.05rem;font-weight:600;font-family:Poppins,sans-serif;line-height:1.4">' + item.title + '</a>';
+        if (b) html += '<br><span style="' + PILL + 'background:' + b.bg + '">' + b.text + '</span>';
         html += '</div>';
       });
       container.innerHTML = html;
