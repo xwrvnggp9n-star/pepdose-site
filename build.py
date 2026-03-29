@@ -610,21 +610,31 @@ def inject_howto_schema(html, slug):
     if desc_match:
         description = re.sub(r'<[^>]+>', '', desc_match.group(1)).strip()[:200]
 
-    # Find the reconstitution steps <ol> (h2 with icon after restructuring, plain h3 in source)
-    ol_match = re.search(r'<h[23][^>]*>.*?(?:Reconstitution Steps|How to Reconstitute).*?</h[23]>\s*(<ol>.*?</ol>)', html, re.DOTALL)
+    # Find the reconstitution steps <ol> — handles h2 with icon, h3, and variant headings;
+    # also handles <ol> with pre-existing itemscope/HowTo attributes
+    ol_match = re.search(
+        r'<h[23][^>]*>.*?(?:Reconstitution(?:\s+Steps)?|How to Reconstitute).*?</h[23]>\s*'
+        r'(<ol\b[^>]*>.*?</ol>)',
+        html, re.DOTALL
+    )
     if not ol_match:
         return html
 
     ol_html = ol_match.group(1)
-    # Parse <li> items
-    steps = re.findall(r'<li>(.*?)</li>', ol_html, re.DOTALL)
+    # Parse <li> items — handles <li> with or without itemprop attributes
+    steps = re.findall(r'<li[^>]*>(.*?)</li>', ol_html, re.DOTALL)
     if not steps:
         return html
 
     # Build microdata-enhanced <ol>
     new_ol = '<ol>\n'
     for i, step_text in enumerate(steps, 1):
-        step_clean = step_text.strip()
+        # Strip pre-existing <span itemprop="text"> wrapper if source was already annotated
+        span_m = re.match(
+            r'<span[^>]*itemprop=["\']text["\'][^>]*>(.*?)</span>\s*$',
+            step_text.strip(), re.DOTALL
+        )
+        step_clean = span_m.group(1).strip() if span_m else step_text.strip()
         new_ol += (
             f'<li itemprop="step" itemscope itemtype="https://schema.org/HowToStep">'
             f'<meta itemprop="position" content="{i}" />'
@@ -739,35 +749,61 @@ _STANDARD_INJECTION_TIPS_HTML = '''\
 def _split_dosing_wrapper(wrapper_html):
     """Split dosing-recon-wrapper into separate dosing-schedule and reconstitution sections.
 
+    Handles heading variants:
+      - "Dosing Schedule" or "Dosing Schedule (3.0 mL → ...)"
+      - "How to Reconstitute", "Reconstitution Steps", or "Reconstitution"
+      - Reversed order (reconstitution first, then schedule — e.g. Melanotan II)
+      - <ol> with or without itemscope/HowTo attributes
+
     Returns (dosing_html, recon_html).
     """
     if not wrapper_html:
         return '', ''
-    # Extract the dosing schedule table + context paragraph
-    sched_m = re.search(
-        r'(<h2>Dosing Schedule</h2>.*?)(?=<h3>(?:Reconstitution Steps|How to Reconstitute)</h3>)',
-        wrapper_html, re.DOTALL
+
+    # Find schedule heading (may have concentration annotation)
+    sched_heading_m = re.search(r'<h2>Dosing Schedule[^<]*</h2>', wrapper_html)
+
+    # Find reconstitution heading (multiple variants)
+    recon_heading_m = re.search(
+        r'<h[23]>(?:How to Reconstitute|Reconstitution(?:\s+Steps)?)</h[23]>',
+        wrapper_html
     )
-    # Extract the reconstitution numbered steps
-    recon_m = re.search(
-        r'<h3>(?:Reconstitution Steps|How to Reconstitute)</h3>\s*(<ol>.*?</ol>)',
-        wrapper_html, re.DOTALL
-    )
+
+    # Extract the reconstitution <ol> (may have itemscope/HowTo attributes)
+    recon_html = ''
+    if recon_heading_m:
+        after_recon = wrapper_html[recon_heading_m.start():]
+        ol_m = re.search(r'(<ol\b[^>]*>.*?</ol>)', after_recon, re.DOTALL)
+        if ol_m:
+            recon_html = (
+                '<section id="how-to-reconstitute" class="section-block fade-in delay-3">\n'
+                '<h2><i class="fas fa-flask"></i> How to Reconstitute</h2>\n'
+                + ol_m.group(1)
+                + '\n</section>\n'
+            )
+
+    # Extract the dosing schedule content
     dosing_html = ''
-    if sched_m:
+    if sched_heading_m:
+        sched_start = sched_heading_m.start()
+        # If recon heading comes AFTER schedule, it marks the end of schedule content
+        if recon_heading_m and recon_heading_m.start() > sched_start:
+            sched_content = wrapper_html[sched_start:recon_heading_m.start()]
+        else:
+            # Recon is before schedule or absent; take to end, strip closing wrapper tags
+            sched_content = wrapper_html[sched_start:]
+            sched_content = re.sub(r'(?:\s*</section>)*(?:\s*</div>)*\s*$', '', sched_content)
+        # Normalize heading: strip concentration annotation "(3.0 mL → 5.0 mg/mL)"
+        sched_content = re.sub(
+            r'<h2>Dosing Schedule[^<]*</h2>', '<h2>Dosing Schedule</h2>',
+            sched_content, count=1
+        )
         dosing_html = (
             '<section id="dosing-schedule-table" class="section-block fade-in delay-2">\n'
-            + sched_m.group(1).strip()
+            + sched_content.strip()
             + '\n</section>\n'
         )
-    recon_html = ''
-    if recon_m:
-        recon_html = (
-            '<section id="how-to-reconstitute" class="section-block fade-in delay-3">\n'
-            '<h2><i class="fas fa-flask"></i> How to Reconstitute</h2>\n'
-            + recon_m.group(1)
-            + '\n</section>\n'
-        )
+
     return dosing_html, recon_html
 
 
