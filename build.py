@@ -349,6 +349,30 @@ def inject_article_image(content, slug):
     return content.replace('</p>', f'</p>\n{img_html}', 1)
 
 
+def inject_article_category(html, slug):
+    """Inject 'Category: X' label after the article subhead (or h1 if no subhead)."""
+    cat = _match_article_to_category(slug)
+    if not cat:
+        return html
+    cat_display = html_mod.unescape(cat)
+    cat_id = re.sub(r'[^a-z0-9]+', '-', cat_display.lower()).strip('-')
+    cat_html = (
+        f'<p class="article-meta">'
+        f'<span class="article-meta-label">Category:</span> '
+        f'<a href="/articles/#{cat_id}" class="article-meta-value">{cat_display}</a>'
+        f'</p>'
+    )
+    subhead_m = re.search(r'<p class="page-subhead">[^<]*</p>', html)
+    if subhead_m:
+        pos = subhead_m.end()
+        return html[:pos] + '\n' + cat_html + html[pos:]
+    h1_m = re.search(r'</h1>', html)
+    if h1_m:
+        pos = h1_m.end()
+        return html[:pos] + '\n' + cat_html + html[pos:]
+    return html
+
+
 def strip_hero_image(content):
     """Remove broken featured-image divs (old WP export media not present on the live site)."""
     # Remove <div class="featured-image">...<img .../></div>
@@ -1071,6 +1095,9 @@ def process_file(src_path, dst_path):
     if is_article or is_dosage or is_educational:
         content = rewrite_page_heading(content, slug)
 
+    if is_article or is_educational:
+        content = inject_article_category(content, slug)
+
     # Restructure dosage protocol pages to the standard section order
     if is_dosage:
         content = restructure_protocol_page(content, slug)
@@ -1316,7 +1343,8 @@ def build_blog_page():
         list_items = ''
         for title, url, slug in items:
             list_items += f'<li style="padding:8px 0;border-bottom:1px solid #eee"><a href="{url}" style="color:#2e2a22;text-decoration:none;font-size:1rem">{html_mod.escape(title)}</a></li>\n'
-        sections_html += f'''<div style="margin-bottom:2rem">
+        cat_id = re.sub(r'[^a-z0-9]+', '-', html_mod.unescape(cat_name).lower()).strip('-')
+        sections_html += f'''<div style="margin-bottom:2rem" id="{cat_id}">
 <h2 style="font-size:1.15rem;color:#2e2a22;margin:0 0 .75rem;padding-bottom:.5rem;border-bottom:2px solid #c85a30">{cat_name} <span style="font-weight:400;color:#6b7280;font-size:.9rem">({len(items)})</span></h2>
 <ul style="list-style:none;padding:0;margin:0">
 {list_items}</ul>

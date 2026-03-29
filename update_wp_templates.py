@@ -293,9 +293,21 @@ h1, h2, h3, h4, h5, h6,
   text-transform: uppercase;
   letter-spacing: .1em;
   color: #8a7a6a;
+  margin: 0 0 .5rem;
+  padding: 0;
+}
+
+/* ── Article category meta ── */
+.article-meta {
+  font-family: 'Poppins', sans-serif !important;
+  font-size: .82rem;
+  color: #8a7a6a;
   margin: 0 0 1.75rem;
   padding: 0;
 }
+.article-meta-label { font-weight: 600; color: #6b7280; }
+.article-meta-value { color: #c85a30; text-decoration: none; font-weight: 600; }
+.article-meta-value:hover { text-decoration: underline; }
 
 /* ── Sponsor CTA Block ── */
 .sponsor-cta { max-width: 750px; margin: 2rem auto; background: linear-gradient(135deg, #faf5ec 0%, #fff 100%); border: 2px solid #c85a30; border-radius: 12px; padding: 24px; position: relative; overflow: hidden; }
@@ -424,3 +436,35 @@ else:
         print('  ✓ Search template created')
     else:
         print('  ✗ Search template creation failed')
+
+
+# ── Single post template — clean article layout, no date/author ──────────────
+# Removes the theme's default date, author, and title header so our embedded
+# H1/subhead/category-meta in the post content controls the full layout.
+SINGLE_TEMPLATE = r'''<!-- wp:template-part {"slug":"header","tagName":"header","theme":"blank-canvas-3"} /-->
+
+<!-- wp:group {"tagName":"main","style":{"spacing":{"padding":{"top":"2rem","bottom":"3rem","left":"1.5rem","right":"1.5rem"}}},"layout":{"type":"constrained","contentSize":"860px"}} -->
+<main class="wp-block-group" style="padding-top:2rem;padding-bottom:3rem;padding-left:1.5rem;padding-right:1.5rem">
+<!-- wp:post-content {"layout":{"type":"constrained","contentSize":"860px"}} /-->
+</main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","tagName":"footer","theme":"blank-canvas-3"} /-->'''
+
+print('\nUpdating single post template...')
+result = wp_request('templates/blank-canvas-3%2F%2Fsingle', method='POST',
+                    data={'content': SINGLE_TEMPLATE})
+if result:
+    print('  ✓ Single post template updated')
+else:
+    print('  Trying to create single post template...')
+    result = wp_request('templates', method='POST',
+                        data={'slug': 'single',
+                              'theme': 'blank-canvas-3',
+                              'content': SINGLE_TEMPLATE,
+                              'title': 'Single Post',
+                              'status': 'publish'})
+    if result:
+        print('  ✓ Single post template created')
+    else:
+        print('  ✗ Single post template failed')
