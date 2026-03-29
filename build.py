@@ -1041,7 +1041,6 @@ BARE_HTML_FILES = [
     'about-us', 'contact-us', 'cookie-policy', 'disclaimer',
     'privacy-policy', 'terms-conditions',
     'peptide-stack-dosages',
-    'retatrutide-5mg', 'retatrutide-10mg', 'retatrutide-30mg',
 ]
 
 def iter_source_files():

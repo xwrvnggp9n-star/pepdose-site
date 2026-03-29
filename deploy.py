@@ -105,9 +105,6 @@ SLUG_ALIASES = {
     'what-is-selank':      'what-is-selank-2',
     'what-is-vilon':       'what-is-vilon-2',
     'what-is-retatrutide':  'what-is-retatrutide-2',
-    'retatrutide-5mg-vial-dosage-protocol':  'retatrutide-5mg',
-    'retatrutide-10mg-vial-dosage-protocol': 'retatrutide-10mg',
-    'retatrutide-30mg-vial-dosage-protocol': 'retatrutide-30mg',
     'dosages-and-protocols': 'dosages',
     'articles':              'blog',
 }
