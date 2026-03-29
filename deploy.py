@@ -13,9 +13,13 @@ Usage:
 import json, os, re, sys, urllib.request, urllib.error, base64
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
-DIST = ROOT / '_dist'
-ENV  = ROOT / '.env'
+ROOT        = Path(__file__).resolve().parent
+DIST        = ROOT / '_dist'
+ENV         = ROOT / '.env'
+CONFIG_FILE = ROOT / '_theme' / 'config.json'
+
+with open(CONFIG_FILE, encoding='utf-8') as _f:
+    C = json.load(_f)
 
 # ── Load credentials ──────────────────────────────────────────────────────────
 def load_env():
@@ -97,17 +101,13 @@ def find_dist_file(slug):
 
 
 # ── Slug mapping for WP slugs that differ from source dir names ──────────────
-# Some WP posts/pages use slightly different slugs than the source directories.
-# This maps WP slug → source directory name when they differ.
-SLUG_ALIASES = {
-    'what-is-tirzepatide':  'what-is-tirzepatide-2',
-    'what-is-ghk-cu':      'what-is-ghk-cu-2',
-    'what-is-selank':      'what-is-selank-2',
-    'what-is-vilon':       'what-is-vilon-2',
-    'what-is-retatrutide':  'what-is-retatrutide-2',
-    'dosages-and-protocols': 'dosages',
-    'articles':              'blog',
-}
+# The -2 suffix aliases come from config.json (single source of truth with build.py).
+# Config stores source_dir → live_slug; invert it here for deploy's live_slug → source_dir use.
+_slug_aliases = C.get('slug_aliases', {})
+SLUG_ALIASES = {live: src for src, live in _slug_aliases.items()}
+# Catalog pages: WP slug differs from _dist/ directory name for build reasons
+SLUG_ALIASES['dosages-and-protocols'] = 'dosages'
+SLUG_ALIASES['articles']              = 'blog'
 
 
 def resolve_slug(slug):
@@ -116,74 +116,8 @@ def resolve_slug(slug):
 
 
 # ── SEO meta descriptions ────────────────────────────────────────────────────
-# Custom meta descriptions for SERP appearance. Max ~155 chars for Google display.
-_SEO_DESCRIPTIONS = {
-    # Homepage & nav pages
-    'home':                       'Clear dosage protocols, reconstitution guides, and a free calculator for BPC-157, Semaglutide, Tirzepatide, TB-500, and more peptides.',
-    'dosages-and-protocols':      'Browse 22 peptide dosage protocols with reconstitution instructions, injection schedules, and syringe measurements for every vial size.',
-    'articles':                   'Evidence-based peptide education articles covering mechanisms, benefits, dosing, and safety for BPC-157, Semaglutide, Tirzepatide, and more.',
-    'peptide-dosage-calculator':  'Free peptide dosage calculator. Enter vial size and water volume to get exact syringe units, concentration, and doses per vial.',
-    'about-us':                   'About pep-dose.com — an independent peptide education resource providing clear, evidence-based dosage protocols and research information.',
-    'contact-us':                 'Contact the pep-dose.com team with questions about peptide dosages, protocols, or site content.',
-    # Education articles
-    'what-are-peptides':                     'What are peptides? A practical, evidence-based guide to peptide types, mechanisms of action, administration methods, and safety considerations.',
-    'what-is-bpc-157':                       'What is BPC-157? Learn about this healing peptide — mechanism of action, tissue repair benefits, dosing guidelines, and safety profile.',
-    'what-is-tb-500':                        'What is TB-500 (Thymosin Beta-4 Fragment)? Mechanism of action, tissue repair benefits, recommended dosing, and safety considerations.',
-    'what-is-ghk-cu':                        'What is GHK-Cu? Copper peptide for skin, hair, and tissue regeneration. Mechanism, evidence-based benefits, dosage guide, and risks.',
-    'what-is-semaglutide':                   'What is Semaglutide? GLP-1 receptor agonist for weight loss. Mechanism, clinical benefits, dosing protocols, and side effects explained.',
-    'what-is-tirzepatide':                   'What is Tirzepatide (Mounjaro/Zepbound)? Dual GIP/GLP-1 agonist mechanism, weight loss results, dosing schedule, and side effects.',
-    'what-is-retatrutide':                   'What is Retatrutide? Triple-receptor agonist (GLP-1/GIP/Glucagon) for weight loss. Mechanism, clinical trial data, and dosing guidance.',
-    'what-is-tesamorelin':                   'What is Tesamorelin? Growth hormone-releasing hormone analog. Benefits for visceral fat, mechanism, dosing, and side effects.',
-    'what-is-ipamorelin':                    'What is Ipamorelin? Selective growth hormone secretagogue. Mechanism, anti-aging benefits, dosage guide, and safety profile.',
-    'what-is-mots-c':                        'What is MOTS-c? Mitochondrial peptide for metabolism and longevity. Mechanism, exercise-mimetic benefits, dosing, and research.',
-    'what-is-kpv-peptide':                   'What is KPV? Anti-inflammatory peptide for gut health, skin conditions, and immune modulation. Mechanism, benefits, and dosing.',
-    'what-is-selank':                        'What is Selank? Nootropic peptide for anxiety and cognition. Mechanism of action, clinical benefits, dosing, and safety profile.',
-    'what-is-dsip':                          'What is DSIP (Delta Sleep-Inducing Peptide)? How it promotes deep delta-wave sleep, its mechanism, human clinical evidence, dosing, and safety.',
-    'what-is-mazdutide':                     'What is Mazdutide? GLP-1/Glucagon dual agonist peptide for weight loss. Mechanism, clinical data, and comparison to other GLP-1s.',
-    'what-is-glp-1':                         'What is GLP-1? Complete guide to glucagon-like peptide-1 — natural function, receptor agonist drugs, weight loss, and diabetes management.',
-    'what-is-5-amino-1mq':                   'What is 5-Amino-1MQ? NNMT inhibitor for fat metabolism. Mechanism, weight loss benefits, oral dosing, and current research.',
-    'what-is-mgf':                           'What is MGF (Mechano Growth Factor)? Muscle repair peptide — mechanism, benefits for recovery and hypertrophy, dosing guide.',
-    'what-is-pnc-27':                        'What is PNC-27? Anti-cancer peptide targeting HDM-2. Mechanism, research on tumor cell destruction, and current status.',
-    'what-is-livagen':                       'What is Livagen? Bioregulator peptide for liver health and DNA repair. Mechanism, epigenetic benefits, and dosage information.',
-    'what-is-ovagen':                        'What is Ovagen? Liver bioregulator peptide for hepatoprotection. Mechanism, benefits, dosing protocols, and safety information.',
-    'what-is-prostamax':                     'What is Prostamax? Prostate bioregulator peptide. Mechanism of action, prostate health benefits, dosing, and research evidence.',
-    'what-is-vesugen':                       'What is Vesugen? Vascular bioregulator peptide for cardiovascular health. Mechanism, benefits for blood vessels, and dosing guide.',
-    'what-is-vilon':                         'What is Vilon? Lysylglutamic acid peptide for immune modulation. Mechanism, thymus support benefits, and dosing protocols.',
-    'what-is-glow-peptide-blend':            'What is the GLOW peptide blend? GHK-Cu + TB-500 + BPC-157 regeneration stack. Components, synergy, dosing, and benefits.',
-    'what-is-klow-peptide-blend':            'What is the KLOW peptide blend? GHK-Cu + TB-500 + BPC-157 + KPV stack. Components, anti-inflammatory benefits, and dosing.',
-    'what-is-the-wolverine-stack':           'What is the Wolverine Stack? BPC-157 + TB-500 healing peptide combination. Synergy, tissue repair benefits, and dosing guide.',
-    'combine-peptides-same-syringe':         'Can you combine peptides in the same syringe? Compatibility guide for mixing BPC-157, TB-500, GHK-Cu, and other peptides safely.',
-    'retatrutide-vs-tirzepatide':            'Retatrutide vs Tirzepatide comparison. Triple agonist vs dual agonist — weight loss data, mechanisms, side effects, and dosing.',
-    'tesamorelin-reconstitution-storage':    'How to store reconstituted Tesamorelin. Temperature, shelf life, bacteriostatic water guidelines, and best practices.',
-    # Dosage protocols
-    'bpc-157-5mg-vial-dosage-protocol':      'BPC-157 5mg vial dosage protocol. Reconstitution, injection schedule, syringe measurements, and recommended dosing for healing.',
-    'bpc-157-10mg-vial-dosage-protocol':     'BPC-157 10mg vial dosage protocol. Reconstitution with bacteriostatic water, injection dosing, syringe units, and schedule.',
-    'ghk-cu-50mg-vial-dosage-protocol':      'GHK-Cu 50mg vial dosage protocol. Reconstitution guide, injection schedule, syringe measurements, and copper peptide dosing.',
-    'ghk-cu-100mg-vial-dosage-protocol':     'GHK-Cu 100mg vial dosage protocol. Reconstitution, recommended doses, syringe units, and injection frequency guide.',
-    'tb-500-5mg-vial-dosage-protocol':       'TB-500 5mg vial dosage protocol. Reconstitution instructions, loading and maintenance dosing, and syringe measurements.',
-    'tb-500-10mg-vial-dosage-protocol':      'TB-500 10mg vial dosage protocol. Reconstitution, injection schedule, syringe units, and tissue repair dosing guide.',
-    'sema-5mg-vial-dosage-protocol':         'Semaglutide 5mg vial dosage protocol. Reconstitution, weekly injection schedule, dose titration, and syringe measurements.',
-    'sema-10mg-vial-dosage-protocol':        'Semaglutide 10mg vial dosage protocol. Reconstitution guide, dose escalation schedule, syringe units, and weekly dosing.',
-    'tesamorelin-5mg-vial-dosage-protocol':  'Tesamorelin 5mg vial dosage protocol. Reconstitution, daily injection schedule, syringe measurements, and storage guidance.',
-    'tesamorelin-10mg-vial-dosage-protocol': 'Tesamorelin 10mg vial dosage protocol. Reconstitution, daily dosing, syringe units, and growth hormone release guide.',
-    'tirzepatide-10mg-vial-dosage-protocol': 'Tirzepatide 10mg vial dosage protocol. Reconstitution, weekly dose titration schedule, syringe measurements, and guidance.',
-    'mots-c-10mg-vial-dosage-protocol':      'MOTS-c 10mg vial dosage protocol. Reconstitution, injection schedule, syringe units, and mitochondrial peptide dosing.',
-    'retatrutide-5mg':                       'Retatrutide 5mg vial dosage protocol. Reconstitution, weekly dosing schedule, syringe measurements, and titration guide.',
-    'retatrutide-10mg':                      'Retatrutide 10mg vial dosage protocol. Reconstitution, dose escalation, syringe units, and triple agonist dosing guide.',
-    'retatrutide-30mg':                      'Retatrutide 30mg vial dosage protocol. Reconstitution, weekly injection schedule, syringe measurements, and dosing guide.',
-    'glow-70-mg-vial-dosage-protocol':       'GLOW 70mg peptide blend dosage protocol. GHK-Cu + TB-500 + BPC-157 reconstitution, injection schedule, and syringe guide.',
-    'klow-80mg-vial-dosage-protocol':        'KLOW 80mg peptide blend dosage protocol. GHK-Cu + TB-500 + BPC-157 + KPV reconstitution, dosing, and syringe guide.',
-    'wolverine-stack-20mg-vial-dosage-protocol': 'Wolverine Stack 20mg dosage protocol. BPC-157 + TB-500 reconstitution, injection schedule, and syringe measurements.',
-    'dsip-5mg-vial-dosage-protocol':              'DSIP 5mg vial dosage protocol. Reconstitute with 2.0 mL bacteriostatic water for 2.5 mg/mL. Starting: 100 mcg; standard: 200 mcg. Inject 30–60 min before sleep.',
-    'what-is-pt-141':                             'What is PT-141 (Bremelanotide)? FDA-approved melanocortin peptide for sexual desire. Mechanism, clinical evidence, dosing, and safety.',
-    'pt-141-10mg-vial-dosage-protocol':           'PT-141 10mg vial dosage protocol. Reconstitute with 3.0 mL BAC water for 3.33 mg/mL. Research dosing 500–1,750 mcg SC 30–45 min before activity.',
-    'what-is-melanotan-ii':                       'What is Melanotan II? Non-selective melanocortin agonist for tanning and sexual function research. Mechanism, evidence, dosing, and safety risks.',
-    'melanotan-ii-10mg-vial-dosage-protocol':     'Melanotan II 10mg vial dosage protocol. Reconstitute with 3.0 mL BAC water for 3.33 mg/mL. Loading: 250–1,000 mcg/day SC. Safety ceiling: 2 mg/day.',
-    'what-is-oxytocin':                           'What is Oxytocin? The bonding neuropeptide — social trust, anxiety, and neurological research. Mechanism, evidence, dosing, and safety.',
-    'oxytocin-5mg-vial-dosage-protocol':          'Oxytocin 5mg vial dosage protocol. Reconstitute with 3.0 mL BAC water for 1.67 mg/mL. Research dosing 100–500 mcg SC, titrated over 12 weeks.',
-    'kpv-10mg-vial-dosage-protocol':              'KPV 10mg vial dosage protocol. Reconstitute with 3.0 mL BAC water for 3.33 mg/mL. Titrate 200–500 mcg/day SC. 20 doses per vial at maintenance.',
-    'tirzepatide-30mg-vial-dosage-protocol':      'Tirzepatide 30mg vial dosage protocol. Reconstitute with 3.0 mL BAC water for 10.0 mg/mL. Weekly SC injection, 2.5–15 mg titration over 20+ weeks.',
-}
+# Loaded from _theme/config.json → "seo_descriptions". Edit there, not here.
+_SEO_DESCRIPTIONS = C.get('seo_descriptions', {})
 
 
 def generate_excerpt(html_content, max_len=155):

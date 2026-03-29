@@ -211,31 +211,39 @@ _SLUG_TO_NAME = {
 }
 
 
+# Shared title-case corrections applied after .title() — used by both
+# derive_peptide_name() and _protocol_display_name().
+_PEPTIDE_NAME_FIXES = [
+    (r'\bBpc 157\b',        'BPC-157'),
+    (r'\bGhk Cu\b',         'GHK-Cu'),
+    (r'\bTb 500\b',         'TB-500'),
+    (r'\bMots C\b',         'MOTS-c'),
+    (r'\bSema\b',           'Semaglutide'),
+    (r'\bGlow\b',           'GLOW'),
+    (r'\bKlow\b',           'KLOW'),
+    (r'\bDsip\b',           'DSIP'),
+    (r'\bWolverine Stack\b','Wolverine Stack'),
+    (r'\bRetatrutide\b',    'Retatrutide'),
+    (r'(\d+)\s*Mg\b',       r'\1 mg'),    # "100Mg" → "100 mg"
+]
+
+
+def _fix_peptide_name_case(name):
+    """Apply standard title-case corrections for known peptide names."""
+    for pattern, replacement in _PEPTIDE_NAME_FIXES:
+        name = re.sub(pattern, replacement, name)
+    return name
+
+
 def derive_peptide_name(slug):
     """Convert a page slug like 'what-is-bpc-157' to a display name."""
     if slug in _SLUG_TO_NAME:
         return _SLUG_TO_NAME[slug]
-    # Strip common suffixes to get the raw peptide part
-    name = slug
-    for suffix in ('what-is-', ):
-        name = name.replace(suffix, '')
+    # Strip common prefixes/suffixes to get the raw peptide part
+    name = slug.replace('what-is-', '')
     for suffix in ('-vial-dosage-protocol', '-dosage-protocol'):
         name = name.replace(suffix, '')
-    # Convert to title case, then fix known peptide names
-    name = name.replace('-', ' ').title()
-    name = re.sub(r'\bBpc 157\b', 'BPC-157', name)
-    name = re.sub(r'\bGhk Cu\b', 'GHK-Cu', name)
-    name = re.sub(r'\bTb 500\b', 'TB-500', name)
-    name = re.sub(r'\bMots C\b', 'MOTS-c', name)
-    name = re.sub(r'\bSema\b', 'Semaglutide', name)
-    name = re.sub(r'\bGlow\b', 'GLOW', name)
-    name = re.sub(r'\bKlow\b', 'KLOW', name)
-    name = re.sub(r'\bDsip\b', 'DSIP', name)
-    name = re.sub(r'\bWolverine Stack\b', 'Wolverine Stack', name)
-    name = re.sub(r'\bRetatrutide\b', 'Retatrutide', name)
-    # Fix "100Mg" → "100 mg" etc.
-    name = re.sub(r'(\d+)\s*Mg\b', r'\1 mg', name)
-    return name
+    return _fix_peptide_name_case(name.replace('-', ' ').title())
 
 
 def sponsor_url_for_slug(slug):
@@ -282,15 +290,9 @@ def inject_inline_sponsor_link(html, product_url, peptide_name):
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Source dir name → live WP slug (for dirs with -2 suffix that WP doesn't use)
-# Mirrors SLUG_ALIASES in deploy.py (but reversed: dir → live)
+# Single source of truth: _theme/config.json → "slug_aliases"
 # ─────────────────────────────────────────────────────────────────────────────
-_DIR_TO_LIVE_SLUG = {
-    'what-is-ghk-cu-2':      'what-is-ghk-cu',
-    'what-is-tirzepatide-2':  'what-is-tirzepatide',
-    'what-is-retatrutide-2':  'what-is-retatrutide',
-    'what-is-selank-2':       'what-is-selank',
-    'what-is-vilon-2':        'what-is-vilon',
-}
+_DIR_TO_LIVE_SLUG = C.get('slug_aliases', {})
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Related Reading cross-links (dosage pages ↔ education articles)
@@ -1090,27 +1092,16 @@ DOSAGE_CATEGORIES = {
 
 
 def _protocol_display_name(dirname):
-    """Convert a protocol directory name to a display-friendly title."""
+    """Convert a protocol directory name to a display-friendly title.
+    E.g. 'bpc-157-5mg-vial-dosage-protocol' → 'BPC-157 — 5 mg Vial'"""
     name = dirname.replace('-vial-dosage-protocol', '').replace('-dosage-protocol', '')
-    # Handle known patterns: "bpc-157-5mg" → "BPC-157 — 5 mg Vial"
-    # Match dose with optional hyphen before mg: "70-mg" or "5mg" or "100mg"
+    # Match "<peptide>-<dose><mg>" pattern, e.g. "bpc-157-5mg" or "ghk-cu-70-mg"
     m = re.match(r'^(.+?)-(\d+(?:\.\d+)?)-?(m?g)$', name)
     if m:
-        peptide = m.group(1).replace('-', ' ').title()
-        dose = m.group(2) + ' ' + m.group(3)
-        # Fix common peptide names
-        peptide = re.sub(r'\bBpc 157\b', 'BPC-157', peptide)
-        peptide = re.sub(r'\bGhk Cu\b', 'GHK-Cu', peptide)
-        peptide = re.sub(r'\bTb 500\b', 'TB-500', peptide)
-        peptide = re.sub(r'\bMots C\b', 'MOTS-c', peptide)
-        peptide = re.sub(r'\bSema\b', 'Semaglutide', peptide)
-        peptide = re.sub(r'\bGlow\b', 'GLOW', peptide)
-        peptide = re.sub(r'\bKlow\b', 'KLOW', peptide)
-        peptide = re.sub(r'\bWolverine Stack\b', 'Wolverine Stack', peptide)
-        peptide = re.sub(r'\bDsip\b', 'DSIP', peptide)
+        peptide = _fix_peptide_name_case(m.group(1).replace('-', ' ').title())
+        dose    = m.group(2) + ' ' + m.group(3)
         return f'{peptide} — {dose} Vial'
-    # Fallback
-    return name.replace('-', ' ').title()
+    return _fix_peptide_name_case(name.replace('-', ' ').title())
 
 
 def build_dosages_page():
@@ -1166,7 +1157,7 @@ Browse our complete library of {total} peptide dosage protocols. Each protocol i
 _BLOG_EXCLUDE = {'about-us', 'contact-us', 'cookie-policy', 'disclaimer',
                  'privacy-policy', 'terms-conditions', 'dosages', 'blog',
                  'home', 'peptide-dosage-calculator', 'category',
-                 'peptide-stack-dosages', 'retatrutide'}
+                 'peptide-stack-dosages'}
 # Parent directories for dosage protocols (listed on dosages page, not articles)
 _DOSAGE_PARENT_DIRS = {'single-peptide-dosages', 'peptide-blend-dosages',
                        'peptide-stack-dosages'}
