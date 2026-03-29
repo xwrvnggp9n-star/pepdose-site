@@ -190,7 +190,10 @@ def derive_peptide_name(slug):
     name = slug.replace('what-is-', '')
     for suffix in ('-vial-dosage-protocol', '-dosage-protocol'):
         name = name.replace(suffix, '')
-    return _fix_peptide_name_case(name.replace('-', ' ').title())
+    name = _fix_peptide_name_case(name.replace('-', ' ').title())
+    # Wrap dosage amount in parentheses: "GHK-Cu 100 mg" → "GHK-Cu (100 mg)"
+    name = re.sub(r'\s+(\d+(?:\.\d+)?)\s*mg\b', r' (\1 mg)', name, flags=re.IGNORECASE)
+    return name
 
 
 def sponsor_url_for_slug(slug):
