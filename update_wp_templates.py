@@ -344,8 +344,8 @@ SEARCH_TEMPLATE = r'''<!-- wp:template-part {"slug":"header","tagName":"header",
 
 <!-- wp:group {"style":{"spacing":{"padding":{"top":"12px","bottom":"12px"}},"border":{"bottom":{"color":"#e5e0d5","width":"1px"}}},"layout":{"type":"default"}} -->
 <div class="wp-block-group" style="border-bottom-color:#e5e0d5;border-bottom-width:1px;padding-top:12px;padding-bottom:12px">
-<!-- wp:post-title {"level":3,"isLink":true,"style":{"typography":{"fontSize":"1.05rem","fontWeight":"600"},"color":{"text":"#2e2a22"},"spacing":{"margin":{"top":"0","bottom":"4px"}}}} /-->
-<!-- wp:post-excerpt {"moreText":"","excerptLength":30,"style":{"typography":{"fontSize":".9rem"},"color":{"text":"#6b7280"},"spacing":{"margin":{"top":"0","bottom":"0"}}}} /-->
+<!-- wp:post-title {"level":3,"isLink":true} /-->
+<!-- wp:post-excerpt {"moreText":"","excerptLength":30} /-->
 </div>
 <!-- /wp:group -->
 
