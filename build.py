@@ -417,16 +417,16 @@ def inject_related_reading(html, slug, is_dosage):
 {items}</ul>
 </section>'''
 
-    # Insert before the sponsored partner section, important-note, or references
-    for marker in ['<section id="important-note"',
-                   '<section class="references-section"']:
+    # Insert before references (after restructuring, references precedes the disclaimer)
+    for marker in ['<section class="references-section"',
+                   '<section id="important-note"']:
         if marker in html:
             return html.replace(marker, section + '\n' + marker, 1)
-    # Fallback: append before sponsor injection point
+    # Fallback: append
     return html + '\n' + section
 
 
-def inject_sponsor_cta(html, product_url, peptide_name):
+def inject_sponsor_cta(html, product_url, peptide_name, wmp_img_url=None):
     """Insert a styled CTA block before post navigation or at end of content."""
     is_generic = '/product/' not in product_url
     if is_generic:
@@ -437,10 +437,24 @@ def inject_sponsor_cta(html, product_url, peptide_name):
         heading  = f'Get {peptide_name} from {SPONSOR_NAME}'
         detail   = f'Third-party tested &middot; Use code <strong>{SPONSOR_CODE}</strong> for {SPONSOR_DEAL}'
         btn_text = 'View Product'
+
+    # Optional product image (protocol pages only)
+    img_html = ''
+    if wmp_img_url and not is_generic:
+        img_src = re.sub(r'\?.*$', '?fit=120%2C120&ssl=1', wmp_img_url)
+        img_html = (
+            f'<a href="{product_url}" rel="sponsored nofollow noopener" target="_blank" '
+            f'style="flex-shrink:0;display:block">'
+            f'<img src="{img_src}" alt="{peptide_name}" loading="lazy" '
+            f'width="80" height="80" '
+            f'style="display:block;border-radius:8px;width:80px;height:80px;object-fit:contain">'
+            f'</a>\n    '
+        )
+
     cta = f'''<div class="sponsor-cta">
   <div class="sponsor-cta-badge">Sponsored</div>
   <div class="sponsor-cta-body">
-    <div class="sponsor-cta-text">
+    {img_html}<div class="sponsor-cta-text">
       <strong>{heading}</strong>
       <span>{detail}</span>
     </div>
@@ -596,8 +610,8 @@ def inject_howto_schema(html, slug):
     if desc_match:
         description = re.sub(r'<[^>]+>', '', desc_match.group(1)).strip()[:200]
 
-    # Find the reconstitution steps <ol>
-    ol_match = re.search(r'<h3>(?:Reconstitution Steps|How to Reconstitute)</h3>\s*(<ol>.*?</ol>)', html, re.DOTALL)
+    # Find the reconstitution steps <ol> (h2 with icon after restructuring, plain h3 in source)
+    ol_match = re.search(r'<h[23][^>]*>.*?(?:Reconstitution Steps|How to Reconstitute).*?</h[23]>\s*(<ol>.*?</ol>)', html, re.DOTALL)
     if not ol_match:
         return html
 
@@ -703,6 +717,189 @@ def rewrite_page_heading(content, slug):
         new_h1 += f'\n<p class="page-subhead">{subhead}</p>'
 
     return content[:m.start()] + new_h1 + content[m.end():]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Protocol page restructuring
+# ─────────────────────────────────────────────────────────────────────────────
+_STANDARD_INJECTION_TIPS_HTML = '''\
+<section id="injection-tech-tips" class="section-block fade-in delay-2">
+<h2><i class="fas fa-syringe"></i> Injection Tips</h2>
+<ul>
+<li>Clean the vial stopper and injection site with separate alcohol swabs; allow both to air-dry fully before proceeding.</li>
+<li>Using a 29&ndash;31 gauge insulin syringe (5/16&Prime; to 1/2&Prime; needle), draw the calculated dose precisely.</li>
+<li>Pinch a fold of skin and insert the needle at <strong>45&deg;</strong> into subcutaneous fat (90&deg; is acceptable with a short needle into a well-pinched fold).</li>
+<li>Inject slowly over 2&ndash;3 seconds; do not aspirate. Withdraw the needle, apply gentle pressure, and do not rub the site.</li>
+<li>Rotate injection sites (abdomen, thighs, upper arms) and dispose of each syringe in a sharps container immediately after use.</li>
+</ul>
+</section>
+'''
+
+
+def _split_dosing_wrapper(wrapper_html):
+    """Split dosing-recon-wrapper into separate dosing-schedule and reconstitution sections.
+
+    Returns (dosing_html, recon_html).
+    """
+    if not wrapper_html:
+        return '', ''
+    # Extract the dosing schedule table + context paragraph
+    sched_m = re.search(
+        r'(<h2>Dosing Schedule</h2>.*?)(?=<h3>(?:Reconstitution Steps|How to Reconstitute)</h3>)',
+        wrapper_html, re.DOTALL
+    )
+    # Extract the reconstitution numbered steps
+    recon_m = re.search(
+        r'<h3>(?:Reconstitution Steps|How to Reconstitute)</h3>\s*(<ol>.*?</ol>)',
+        wrapper_html, re.DOTALL
+    )
+    dosing_html = ''
+    if sched_m:
+        dosing_html = (
+            '<section id="dosing-schedule-table" class="section-block fade-in delay-2">\n'
+            + sched_m.group(1).strip()
+            + '\n</section>\n'
+        )
+    recon_html = ''
+    if recon_m:
+        recon_html = (
+            '<section id="how-to-reconstitute" class="section-block fade-in delay-3">\n'
+            '<h2><i class="fas fa-flask"></i> How to Reconstitute</h2>\n'
+            + recon_m.group(1)
+            + '\n</section>\n'
+        )
+    return dosing_html, recon_html
+
+
+def _split_protocol_summary(summary_html):
+    """Extract overview, protocol-details, and storage from the protocol-summary grid.
+
+    Returns (overview_html, proto_details_html, storage_html) as standalone section-blocks.
+    """
+    if not summary_html:
+        return '', '', ''
+
+    def _card_to_section(article_id, section_id, heading_rename=None):
+        m = re.search(
+            rf'<article[^>]*id="{re.escape(article_id)}"[^>]*>(.*?)</article>',
+            summary_html, re.DOTALL
+        )
+        if not m:
+            return ''
+        inner = m.group(1).strip()
+        if heading_rename:
+            inner = inner.replace(heading_rename[0], heading_rename[1], 1)
+        # Promote h3 → h2 for standalone section headings
+        inner = re.sub(r'<h3>', '<h2>', inner)
+        inner = re.sub(r'</h3>', '</h2>', inner)
+        return (
+            f'<section id="{section_id}" class="section-block fade-in delay-1">\n'
+            f'{inner}\n'
+            f'</section>\n'
+        )
+
+    overview_html      = _card_to_section('protocol-overview',    'protocol-overview')
+    proto_details_html = _card_to_section('dosing-protocol',      'protocol-details',
+                                           heading_rename=('Dosing Details', 'Protocol Details'))
+    storage_html       = _card_to_section('storage-instructions', 'storage-instructions')
+    return overview_html, proto_details_html, storage_html
+
+
+def _merge_notes_and_benefits(notes_html, benefits_html):
+    """Merge 'Good to Know' and 'Benefits & What to Watch For' into one bulleted section."""
+    notes_items    = re.findall(r'<li>.*?</li>', notes_html,    re.DOTALL)
+    benefits_items = re.findall(r'<li>.*?</li>', benefits_html, re.DOTALL)
+    all_items = notes_items + benefits_items
+    if not all_items:
+        return notes_html or benefits_html
+    return (
+        '<section id="good-to-know" class="section-block fade-in delay-2">\n'
+        '<h2><i class="fas fa-lightbulb"></i> Good to Know</h2>\n'
+        '<ul>\n'
+        + '\n'.join(all_items)
+        + '\n</ul>\n</section>\n'
+    )
+
+
+def _extract_wmp_image_url(html):
+    """Extract the WMP product image URL from a protocol page intro-card."""
+    m = re.search(
+        r'<div class="intro-image">[^<]*<img[^>]*src="(https://i0\.wp\.com/whitemarketpeptides\.com/[^"]+)"',
+        html
+    )
+    return m.group(1) if m else None
+
+
+def restructure_protocol_page(html, slug):
+    """Reorder protocol page sections to the standard structure.
+
+    Source order:
+      [h1] intro-card → dosing-recon-wrapper → supplies-needed →
+      protocol-summary → important-notes → how-this-works →
+      benefits-side-effects → lifestyle-factors → injection-tech-tips →
+      important-note → references-section
+
+    Output order:
+      [h1] intro-card → overview → supplies-needed →
+      how-to-reconstitute → dosing-schedule-table → protocol-details →
+      storage → how-this-works → good-to-know (merged notes+benefits) →
+      lifestyle-factors → injection-tech-tips (standardised) →
+      references-section → important-note (disclaimer)
+
+    Related Reading and sponsor block are injected later by build.py.
+    """
+    SECTION_KEYS = [
+        ('intro_card',  '<div id="intro-card"'),
+        ('dosing_wrap', '<div id="dosing-schedule"'),
+        ('supplies',    '<section id="supplies-needed"'),
+        ('proto_summ',  '<section class="protocol-summary"'),
+        ('notes',       '<section id="important-notes"'),
+        ('how_works',   '<section id="how-this-works"'),
+        ('benefits',    '<section id="benefits-side-effects"'),
+        ('lifestyle',   '<section id="lifestyle-factors"'),
+        ('injection',   '<section id="injection-tech-tips"'),
+        ('disclaimer',  '<section id="important-note"'),
+        ('references',  '<section class="references-section"'),
+    ]
+
+    found = {k: html.find(m) for k, m in SECTION_KEYS if html.find(m) >= 0}
+
+    # Require core structural sections; skip non-standard pages
+    if not all(k in found for k in ('intro_card', 'dosing_wrap', 'proto_summ')):
+        return html
+
+    sorted_keys = sorted(found, key=lambda k: found[k])
+
+    # Slice each section from its marker start to the next marker start
+    sections = {}
+    for i, key in enumerate(sorted_keys):
+        start = found[key]
+        end   = found[sorted_keys[i + 1]] if i + 1 < len(sorted_keys) else len(html)
+        sections[key] = html[start:end]
+
+    prefix = html[:found['intro_card']]
+
+    dosing_html, recon_html             = _split_dosing_wrapper(sections.get('dosing_wrap', ''))
+    overview_html, proto_det_html, stor_html = _split_protocol_summary(sections.get('proto_summ', ''))
+    combined_html = _merge_notes_and_benefits(sections.get('notes', ''), sections.get('benefits', ''))
+
+    parts = [
+        prefix,
+        sections.get('intro_card', ''),
+        overview_html,
+        sections.get('supplies', ''),
+        recon_html,
+        dosing_html,
+        proto_det_html,
+        stor_html,
+        sections.get('how_works', ''),
+        combined_html,
+        sections.get('lifestyle', ''),
+        _STANDARD_INJECTION_TIPS_HTML,
+        sections.get('references', ''),
+        sections.get('disclaimer', ''),
+    ]
+    return ''.join(p for p in parts if p)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -834,11 +1031,17 @@ def process_file(src_path, dst_path):
                               'tesamorelin-reconstitution-storage')
     if is_article or is_dosage or is_educational:
         content = rewrite_page_heading(content, slug)
+
+    # Restructure dosage protocol pages to the standard section order
+    if is_dosage:
+        content = restructure_protocol_page(content, slug)
+
     if is_article or is_dosage or is_educational:
         peptide_name = derive_peptide_name(slug)
         if '/product/' in sponsor_url:
             content = inject_inline_sponsor_link(content, sponsor_url, peptide_name)
-        content = inject_sponsor_cta(content, sponsor_url, peptide_name)
+        wmp_img_url = _extract_wmp_image_url(content) if is_dosage else None
+        content = inject_sponsor_cta(content, sponsor_url, peptide_name, wmp_img_url=wmp_img_url)
 
     # Inject Related Reading cross-links for dosage protocol and article pages
     if is_dosage or is_article or is_educational:
