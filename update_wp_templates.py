@@ -330,38 +330,51 @@ else:
     print('  ✗ Header update failed')
 
 
-# ── Search results template (list-based, no blocks/images) ─────────────────
+# ── Search results template — JS-powered via WP REST API ───────────────────
+# WP.com Personal plan doesn't server-render dynamic blocks (wp:post-title,
+# wp:post-excerpt) inside FSE query loops in search templates, so we use
+# JavaScript to fetch results from the public WP REST API instead.
 SEARCH_TEMPLATE = r'''<!-- wp:template-part {"slug":"header","tagName":"header","theme":"blank-canvas-3"} /-->
 
-<!-- wp:group {"tagName":"main","style":{"spacing":{"padding":{"top":"2rem","bottom":"3rem","left":"1.5rem","right":"1.5rem"}}},"layout":{"type":"constrained","contentSize":"800px"}} -->
-<main class="wp-block-group" style="padding-top:2rem;padding-right:1.5rem;padding-bottom:3rem;padding-left:1.5rem">
-
-<!-- wp:query-title {"type":"search","style":{"typography":{"fontSize":"1.8rem"},"color":{"text":"#2e2a22"}}} /-->
-
-<!-- wp:query {"query":{"perPage":50,"pages":0,"offset":0,"postType":"any","order":"desc","orderBy":"relevance","author":"","search":"","exclude":[],"sticky":"","inherit":true},"layout":{"type":"default"}} -->
-<div class="wp-block-query">
-<!-- wp:post-template {"layout":{"type":"default"}} -->
-
-<!-- wp:group {"style":{"spacing":{"padding":{"top":"12px","bottom":"12px"}},"border":{"bottom":{"color":"#e5e0d5","width":"1px"}}},"layout":{"type":"default"}} -->
-<div class="wp-block-group" style="border-bottom-color:#e5e0d5;border-bottom-width:1px;padding-top:12px;padding-bottom:12px">
-<!-- wp:post-title {"level":3,"isLink":true} /-->
-<!-- wp:post-excerpt {"moreText":"","excerptLength":30} /-->
-</div>
-<!-- /wp:group -->
-
-<!-- /wp:post-template -->
-
-<!-- wp:query-no-results -->
-<!-- wp:paragraph {"style":{"color":{"text":"#6b7280"}}} -->
-<p class="has-text-color" style="color:#6b7280">No results found. Try a different search term, or browse our <a href="/articles/">Education &amp; Articles</a> or <a href="/dosages-and-protocols/">Dosages &amp; Protocols</a> pages.</p>
-<!-- /wp:paragraph -->
-<!-- /wp:query-no-results -->
-
-</div>
-<!-- /wp:query -->
-
+<!-- wp:html -->
+<main style="max-width:800px;margin:0 auto;padding:2rem 1.5rem 3rem">
+<h1 id="pd-search-heading" style="font-family:Poppins,sans-serif;font-size:1.8rem;color:#2e2a22;margin:0 0 1.5rem"></h1>
+<div id="pd-search-results"></div>
+<script>
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var q = (params.get('s') || '').trim();
+  var heading = document.getElementById('pd-search-heading');
+  var container = document.getElementById('pd-search-results');
+  heading.textContent = q ? 'Search results for \u201c' + q + '\u201d' : 'Search';
+  if (!q) {
+    container.innerHTML = '<p style="color:#6b7280;font-family:Poppins,sans-serif">Enter a search term above.</p>';
+    return;
+  }
+  container.innerHTML = '<p style="color:#6b7280;font-family:Poppins,sans-serif">Searching\u2026</p>';
+  var url = '/wp-json/wp/v2/search?search=' + encodeURIComponent(q) + '&per_page=20&subtype=any';
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(results){
+      if (!Array.isArray(results) || !results.length) {
+        container.innerHTML = '<p style="color:#6b7280;font-family:Poppins,sans-serif">No results found for \u201c' + q + '\u201d. Try browsing <a href="/articles/" style="color:#c85a30">Education &amp; Articles</a> or <a href="/dosages-and-protocols/" style="color:#c85a30">Dosages &amp; Protocols</a>.</p>';
+        return;
+      }
+      var html = '';
+      results.forEach(function(item){
+        html += '<div style="padding:12px 0;border-bottom:1px solid #e5e0d5">';
+        html += '<a href="' + item.url + '" style="color:#2e2a22;text-decoration:none;font-size:1.05rem;font-weight:600;font-family:Poppins,sans-serif">' + item.title + '</a>';
+        html += '</div>';
+      });
+      container.innerHTML = html;
+    })
+    .catch(function(){
+      container.innerHTML = '<p style="color:#c85a30;font-family:Poppins,sans-serif">Search unavailable. Try again shortly.</p>';
+    });
+})();
+</script>
 </main>
-<!-- /wp:group -->
+<!-- /wp:html -->
 
 <!-- wp:template-part {"slug":"footer","tagName":"footer","theme":"blank-canvas-3"} /-->'''
 
