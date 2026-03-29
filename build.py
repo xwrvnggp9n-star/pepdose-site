@@ -428,15 +428,24 @@ def inject_related_reading(html, slug, is_dosage):
 
 def inject_sponsor_cta(html, product_url, peptide_name):
     """Insert a styled CTA block before post navigation or at end of content."""
+    is_generic = '/product/' not in product_url
+    if is_generic:
+        heading  = f'Research Peptides from {SPONSOR_NAME}'
+        detail   = f'Full range of research-grade peptides &middot; Third-party tested &middot; Use code <strong>{SPONSOR_CODE}</strong> for {SPONSOR_DEAL}'
+        btn_text = 'Shop Now'
+    else:
+        heading  = f'Get {peptide_name} from {SPONSOR_NAME}'
+        detail   = f'Third-party tested &middot; Use code <strong>{SPONSOR_CODE}</strong> for {SPONSOR_DEAL}'
+        btn_text = 'View Product'
     cta = f'''<div class="sponsor-cta">
   <div class="sponsor-cta-badge">Sponsored</div>
   <div class="sponsor-cta-body">
     <div class="sponsor-cta-text">
-      <strong>Get {peptide_name} from {SPONSOR_NAME}</strong>
-      <span>Third-party tested &middot; Use code <strong>{SPONSOR_CODE}</strong> for {SPONSOR_DEAL}</span>
+      <strong>{heading}</strong>
+      <span>{detail}</span>
     </div>
     <a href="{product_url}" class="sponsor-cta-btn" rel="sponsored nofollow noopener" target="_blank">
-      View Product &rarr;
+      {btn_text} &rarr;
     </a>
   </div>
 </div>'''
@@ -827,7 +836,8 @@ def process_file(src_path, dst_path):
         content = rewrite_page_heading(content, slug)
     if is_article or is_dosage or is_educational:
         peptide_name = derive_peptide_name(slug)
-        content = inject_inline_sponsor_link(content, sponsor_url, peptide_name)
+        if '/product/' in sponsor_url:
+            content = inject_inline_sponsor_link(content, sponsor_url, peptide_name)
         content = inject_sponsor_cta(content, sponsor_url, peptide_name)
 
     # Inject Related Reading cross-links for dosage protocol and article pages
