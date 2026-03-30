@@ -394,7 +394,9 @@ SEARCH_TEMPLATE = r'''<!-- wp:template-part {"slug":"header","tagName":"header",
             u.indexOf('/single-peptide-dosages/') !== -1 ||
             u.indexOf('/peptide-blend-dosages/')  !== -1 ||
             u.indexOf('/peptide-stack-dosages/')  !== -1) return BADGE.protocol;
-        if (item.subtype === 'post') return BADGE.article;
+        if (u.indexOf('/what-is-') !== -1 || u.indexOf('/what-are-') !== -1 ||
+            u.indexOf('retatrutide-vs-') !== -1 ||
+            u.indexOf('-reconstitution-') !== -1) return BADGE.article;
         return null;
       }
       var PILL = 'display:inline-block;font-family:Poppins,sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#fff;padding:2px 8px;border-radius:20px;margin-top:5px;';
