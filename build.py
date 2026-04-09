@@ -20,6 +20,8 @@ import json
 import os
 import re
 import shutil
+import urllib.request
+import urllib.error
 from pathlib import Path
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -41,6 +43,51 @@ with open(CONTENT_FILE, encoding='utf-8') as f:
 
 SITE_NAME  = C['site_name']
 SITE_URL   = C.get('site_url', 'https://pep-dose.com')
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Load .env (same approach as deploy.py — no dotenv dependency)
+# ─────────────────────────────────────────────────────────────────────────────
+_ENV_FILE = BASE / '.env'
+if _ENV_FILE.exists():
+    for _line in _ENV_FILE.read_text().splitlines():
+        _line = _line.strip()
+        if not _line or _line.startswith('#'):
+            continue
+        _key, _, _val = _line.partition('=')
+        os.environ.setdefault(_key.strip(), _val.strip())
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Product registry (fetched from wmp-command-center at build time)
+# ─────────────────────────────────────────────────────────────────────────────
+_REGISTRY_URL = os.environ.get('REGISTRY_URL', '')
+_ALLOW_FALLBACK = os.environ.get('PEPDOSE_ALLOW_FALLBACK', '') == '1'
+
+def fetch_product_registry():
+    """Fetch product/pep-dose metadata from wmp-command-center registry endpoint.
+    Fails loudly unless PEPDOSE_ALLOW_FALLBACK=1 is set (local dev only)."""
+    if not _REGISTRY_URL:
+        if _ALLOW_FALLBACK:
+            print('  ⚠  REGISTRY_URL not set; PEPDOSE_ALLOW_FALLBACK=1 active — using config.json sponsor_links', flush=True)
+            return None
+        raise RuntimeError(
+            'REGISTRY_URL is not set in .env. '
+            'Set REGISTRY_URL to the /api/products/registry endpoint, '
+            'or set PEPDOSE_ALLOW_FALLBACK=1 for local dev without network.'
+        )
+    try:
+        req = urllib.request.Request(_REGISTRY_URL, headers={'Accept': 'application/json'})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            if resp.status != 200:
+                raise RuntimeError(f'Registry returned HTTP {resp.status}')
+            data = json.loads(resp.read().decode('utf-8'))
+            return data.get('skus', {})
+    except Exception as e:
+        if _ALLOW_FALLBACK:
+            print(f'  ⚠  Registry fetch failed ({e}); PEPDOSE_ALLOW_FALLBACK=1 — using config.json sponsor_links', flush=True)
+            return None
+        raise RuntimeError(f'Failed to fetch product registry from {_REGISTRY_URL}: {e}') from e
+
+_REGISTRY = fetch_product_registry()
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Color replacement: old hardcoded hex → new theme hex
@@ -149,7 +196,21 @@ def strip_sponsor_sections(text):
 # Sponsor backlink injection
 # ─────────────────────────────────────────────────────────────────────────────
 SPONSOR       = C.get('sponsor', {})
-SPONSOR_LINKS = C.get('sponsor_links', {})
+if _REGISTRY is not None:
+    # Build sponsor links from registry: flatten all sponsorPaths dicts across all SKUs
+    SPONSOR_LINKS = {}
+    for sku_data in _REGISTRY.values():
+        for slug, path in (sku_data.get('sponsorPaths') or {}).items():
+            SPONSOR_LINKS[slug] = path
+    # Also resolve slug aliases from registry
+    _REGISTRY_SLUG_ALIASES = {}
+    for sku_data in _REGISTRY.values():
+        canonical = sku_data.get('articleSlug', '')
+        for alias in (sku_data.get('slugAliases') or []):
+            _REGISTRY_SLUG_ALIASES[alias] = canonical
+else:
+    SPONSOR_LINKS = C.get('sponsor_links', {})
+    _REGISTRY_SLUG_ALIASES = {}
 SPONSOR_NAME  = SPONSOR.get('name', 'White Market Peptides')
 SPONSOR_URL   = SPONSOR.get('url', 'https://whitemarketpeptides.com')
 SPONSOR_CODE  = SPONSOR.get('discount_code', 'PEPDOSE')
@@ -1421,6 +1482,51 @@ For educational and research purposes only. Always follow the guidance of a qual
     return True
 
 
+def copy_calculator_widget():
+    """Copy calculator-widget.html to _dist/, injecting PDC_PROTOCOLS from registry if available."""
+    src = BASE / 'calculator-widget.html'
+    dst = DIST_DIR / 'calculator-widget.html'
+    if not src.exists():
+        print('  ⚠  calculator-widget.html not found, skipping')
+        return
+
+    content = src.read_text(encoding='utf-8')
+
+    if _REGISTRY is not None:
+        # Generate PDC_PROTOCOLS from registry data
+        entries = []
+        for sku_data in _REGISTRY.values():
+            for ce in (sku_data.get('calcEntries') or []):
+                label = ce.get('label', '')
+                vial = ce.get('vialMg', 0)
+                water = ce.get('waterMl', 0.0)
+                group = ce.get('group', 'single')
+                entries.append(f"    {{ name: {json.dumps(label):<20} vial: {vial:<4} water: {water}, group: {json.dumps(group)} }}")
+
+        # Sort: singles first, then blends (matching existing ordering)
+        blend_entries = [e for e in entries if '"blend"' in e]
+        single_entries = [e for e in entries if '"single"' in e]
+        ordered = single_entries + blend_entries
+
+        protocols_block = '  var PDC_PROTOCOLS = [\n' + ',\n'.join(ordered) + '\n  ];'
+
+        # Inject between markers
+        new_content = re.sub(
+            r'<!-- PDC_PROTOCOLS_START -->.*?<!-- PDC_PROTOCOLS_END -->',
+            f'<!-- PDC_PROTOCOLS_START -->\n  {protocols_block}\n  <!-- PDC_PROTOCOLS_END -->',
+            content,
+            flags=re.DOTALL
+        )
+        if new_content == content:
+            print('  ⚠  PDC_PROTOCOLS_START/END markers not found in calculator-widget.html — copying as-is')
+        else:
+            content = new_content
+            print(f'  ✓  PDC_PROTOCOLS injected ({len(ordered)} entries)')
+
+    dst.write_text(content, encoding='utf-8')
+    print(f'  ✓  calculator-widget.html → _dist/')
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Main
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1472,11 +1578,7 @@ def main():
         ok += 1
 
     # Copy standalone files that bypass the pipeline
-    for standalone in ['calculator-widget.html']:
-        src = BASE / standalone
-        if src.exists():
-            shutil.copy2(src, DIST_DIR / standalone)
-            print(f"\n  ✓  {standalone} copied (standalone)")
+    copy_calculator_widget()
 
     # robots.txt
     robots_src = BASE / 'robots.txt'

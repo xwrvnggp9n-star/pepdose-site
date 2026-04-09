@@ -75,34 +75,44 @@ Peptide dosage educational site deployed to WordPress.com.
 - Sponsor CTA blocks use `font-family: inherit` (not system sans-serif)
 - No local preview server — preview changes on the live WP site after deploying
 
+## Product Registry (wmp-command-center)
+- Sponsor links and calculator data are fetched from the wmp-command-center registry API at build time
+- `REGISTRY_URL` in `.env` points to `https://wmp-command-center.ue.r.appspot.com/api/products/registry`
+- `build.py` fails loudly if the registry is unreachable; set `PEPDOSE_ALLOW_FALLBACK=1` for local dev without network (degrades to empty sponsor links)
+- To add/edit pepDose metadata for a product: wmp-command-center → Products → [SKU] → pep-dose Settings panel
+- `calculator-widget.html` `PDC_PROTOCOLS` array is auto-injected by `build.py` between `<!-- PDC_PROTOCOLS_START -->` / `<!-- PDC_PROTOCOLS_END -->` markers from registry data
+- `_theme/calculator-embed.html` is a separate manual WP paste — it is NOT auto-generated and must be updated by hand if the calculator dropdown changes
+
 ## New Content Checklist
 When adding a new peptide or protocol to the site, ALL of the following must be updated:
 
 ### Adding a New Dosage Protocol Page
-1. **Source HTML** — Create `single-peptide-dosages/<slug>/index.html` (or `peptide-blend-dosages/` for blends)
-2. **Calculator dropdown** — Add entry to `PDC_PROTOCOLS` array in `calculator-widget.html` (name, vial size, water volume, group)
-3. **Sponsor link** — Add slug → WMP product URL mapping in `_theme/config.json` → `sponsor_links`
-4. **Cross-links in build.py**:
+1. **wmp-command-center** — In Products → [SKU] → pep-dose Settings, fill in article slug, protocol slug, calc entries (vial sizes), and sponsor paths
+2. **Source HTML** — Create `single-peptide-dosages/<slug>/index.html` (or `peptide-blend-dosages/` for blends)
+3. **Cross-links in build.py**:
    - Add to `_DOSAGE_RELATED` dict (maps peptide keywords → education article links shown on protocol pages)
    - Update `_ARTICLE_RELATED` dict entries for related education articles to link back to new protocol
-5. **Rebuild & deploy** — `python3 build.py && python3 deploy.py <slug>` + `git push` (pushes calculator to GitHub Pages)
+4. **Rebuild & deploy** — `python3 build.py && python3 deploy.py <slug>` + `git push` (pushes calculator to GitHub Pages)
+   - `build.py` auto-fetches sponsor links and calculator entries from the registry — no manual config.json editing needed
    - `deploy.py` auto-redeploys `dosages-and-protocols` catalog when a protocol slug is deployed
    - Verify: `python3 tests.py --live` — includes `test_live_dosages_catalog_completeness` that checks every source dir appears on the live catalog page
+5. **Manual** — Update `_theme/calculator-embed.html` `PDC_PROTOCOLS` array if this is a new peptide (this file is not auto-generated)
 
 ### Adding a New Education Article
-1. **Source HTML** — Create `<slug>/index.html` with article content
-2. **Article categories** — Add slug to appropriate category in `_ARTICLE_CATEGORIES` list in `build.py`
-3. **Cross-links in build.py**:
+1. **wmp-command-center** — If WMP sells this peptide, ensure pepDose metadata exists in Products → [SKU] → pep-dose Settings (sponsor paths mapping for this article slug)
+2. **Source HTML** — Create `<slug>/index.html` with article content
+3. **Article categories** — Add slug to appropriate category in `_ARTICLE_CATEGORIES` list in `build.py`
+4. **Cross-links in build.py**:
    - Add entry to `_ARTICLE_RELATED` dict (maps slug → list of related articles + protocol links)
    - Update related articles' `_ARTICLE_RELATED` entries to link back to new article
-4. **Sponsor link** — Add slug → WMP product URL mapping in `_theme/config.json` → `sponsor_links` (if WMP sells this peptide)
 5. **Rebuild & deploy** — `python3 build.py && python3 deploy.py <slug>` + `git push`
 
 ### Key Files That Must Stay in Sync
-| What | File | Section/Variable |
-|------|------|-----------------|
-| Calculator peptide list | `calculator-widget.html` | `PDC_PROTOCOLS` array |
-| Sponsor product links | `_theme/config.json` | `sponsor_links` object |
+| What | Where | Notes |
+|------|-------|-------|
+| Sponsor links + calculator entries | wmp-command-center Firestore | Managed via Products → pep-dose Settings UI |
+| Calculator dropdown (widget) | `calculator-widget.html` | Auto-injected by `build.py` from registry |
+| Calculator dropdown (WP embed) | `_theme/calculator-embed.html` | Manual update required |
 | Protocol cross-links | `build.py` | `_DOSAGE_RELATED` dict |
 | Article cross-links | `build.py` | `_ARTICLE_RELATED` dict |
 | Article categories | `build.py` | `_ARTICLE_CATEGORIES` list |
@@ -111,7 +121,7 @@ When adding a new peptide or protocol to the site, ALL of the following must be 
 | Articles catalog page | auto-generated | `build_blog_page()` reads `_ARTICLE_CATEGORIES` |
 
 ### Verification After Any Content Change
-- `python3 build.py` completes without errors
+- `python3 build.py` completes without errors (fetches registry successfully)
 - `python3 tests.py` passes all tests
 - Every protocol page has: sponsor CTA block, Related Reading section, calculator link
 - Every article page has: sponsor CTA block, Related Reading section, calculator link

@@ -16,6 +16,7 @@ __pycache__/
 
 # Claude memory
 .claude/
+.omc/
 wp-content/plugins/
 xmlrpc.php?rsd
 .env
